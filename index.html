@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ÆRIEL · photographs</title>
+<meta name="description" content="Photographs by ÆRIEL, shot on 35mm film and Polaroid in Santiago's underground nightlife. The archive opens here soon.">
+<meta property="og:title" content="aeriel.xyz">
+<meta property="og:description" content="Photographs on 35mm film and Polaroid from Santiago's underground nightlife.">
+<meta property="og:url" content="https://aeriel.xyz/">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#E9EAE6">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23000'/%3E%3Ctext x='32' y='45' font-family='Arial,sans-serif' font-size='36' font-weight='700' fill='%23E9EAE6' text-anchor='middle'%3E%C3%86%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@500;600&family=Schibsted+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #E9EAE6;      /* contact-print paper */
+    --ink: #1A1B1A;        /* body text */
+    --ink-soft: #5E605C;
+    --print-black: #000;   /* clear film base prints black */
+    --frame: #1D1E1C;      /* unexposed frame, slight fog */
+    --edge: #B9BAB2;       /* rebate edge printing */
+    --wax: #D0281C;        /* grease pencil */
+    --gutter: clamp(16px, 4vw, 48px);
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Schibsted Grotesk", system-ui, sans-serif;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+  }
+
+  a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
+  a:hover { text-decoration-color: var(--wax); }
+  a:focus-visible { outline: 2px solid var(--wax); outline-offset: 3px; border-radius: 2px; }
+
+  .bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 1.25rem var(--gutter);
+    font-size: 0.9375rem;
+  }
+  .bar .mark { font-weight: 700; letter-spacing: 0.02em; text-decoration: none; }
+  .bar nav { display: flex; gap: 1.25rem; }
+
+  /* ---------- contact sheet ---------- */
+  .sheet {
+    padding: clamp(0.5rem, 2vw, 1.5rem) var(--gutter) 0;
+    display: grid;
+    gap: clamp(10px, 1.6vw, 18px);
+  }
+
+  .strip {
+    --hole-h: clamp(5px, 0.9vw, 9px);
+    background: var(--print-black);
+    padding: calc(var(--hole-h) * 3.4) clamp(6px, 1vw, 12px);
+    position: relative;
+  }
+  /* sprocket holes, top and bottom */
+  .strip::before, .strip::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0;
+    height: var(--hole-h);
+    background: repeating-linear-gradient(90deg,
+      transparent 0 calc(var(--hole-h) * 0.9),
+      var(--paper) calc(var(--hole-h) * 0.9) calc(var(--hole-h) * 2.1),
+      transparent calc(var(--hole-h) * 2.1) calc(var(--hole-h) * 3));
+    border-radius: 2px;
+    opacity: 0.92;
+  }
+  .strip::before { top: calc(var(--hole-h) * 0.55); }
+  .strip::after  { bottom: calc(var(--hole-h) * 0.55); }
+
+  .edge {
+    position: absolute;
+    left: clamp(6px, 1vw, 12px); right: clamp(6px, 1vw, 12px);
+    display: flex;
+    justify-content: space-between;
+    font-family: "Archivo Narrow", sans-serif;
+    font-weight: 600;
+    font-size: clamp(7px, 0.85vw, 10px);
+    letter-spacing: 0.08em;
+    color: var(--edge);
+    line-height: 1;
+    pointer-events: none;
+  }
+  .edge.top { top: calc(var(--hole-h) * 1.85); }
+  .edge.bottom { bottom: calc(var(--hole-h) * 1.85); }
+  .edge span:nth-child(n+4) { display: none; }
+
+  .frames {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(4px, 0.7vw, 8px);
+    padding-block: calc(var(--hole-h) * 0.4);
+  }
+  .frames > * { aspect-ratio: 3 / 2; background: var(--frame); border-radius: 3px; }
+  .frames > :nth-child(n+4) { display: none; }
+
+  @media (min-width: 760px) {
+    .frames { grid-template-columns: repeat(6, 1fr); }
+    .frames > :nth-child(n+4) { display: block; }
+    .edge span:nth-child(n+4) { display: inline; }
+  }
+
+  /* the marked frame */
+  .pick {
+    position: relative;
+    z-index: 2;
+    display: grid !important;
+    place-items: center;
+    background: var(--frame);
+  }
+  .pick h1 {
+    margin: 0;
+    color: var(--paper);
+    font-weight: 500;
+    font-size: clamp(0.95rem, 2.1vw, 1.6rem);
+    letter-spacing: -0.01em;
+  }
+  .pencil {
+    position: absolute;
+    inset: -22% -14%;
+    width: 128%;
+    height: 144%;
+    overflow: visible;
+    pointer-events: none;
+  }
+  .pencil path {
+    fill: none;
+    stroke: var(--wax);
+    stroke-width: clamp(1.6px, 0.35vw, 2.6px);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: draw 1.1s cubic-bezier(.6,.1,.3,1) 0.5s forwards;
+  }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  @media (prefers-reduced-motion: reduce) {
+    .pencil path { animation: none; stroke-dashoffset: 0; }
+  }
+
+  /* ---------- text ---------- */
+  main.note {
+    padding: clamp(2.5rem, 7vw, 5rem) var(--gutter) 3rem;
+    display: grid;
+    gap: 1.5rem;
+    max-width: calc(36rem + var(--gutter) * 2);
+  }
+  .note p { margin: 0; }
+  .note .lede { font-size: clamp(1.25rem, 2.4vw, 1.6rem); line-height: 1.35; font-weight: 400; }
+  .note .soon { color: var(--ink-soft); }
+  .note ul { list-style: none; margin: 0.5rem 0 0; padding: 0; display: grid; gap: 0.4rem; }
+
+  footer {
+    padding: 2rem var(--gutter) 2.5rem;
+    color: var(--ink-soft);
+    font-size: 0.875rem;
+  }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <a class="mark" href="/">ÆRIEL</a>
+  <nav aria-label="Elsewhere">
+    <a href="https://www.instagram.com/aeriel.aiff/" rel="me">Instagram</a>
+    <a href="https://aeriel.net" rel="me">aeriel.net</a>
+  </nav>
+</header>
+
+<section class="sheet" aria-label="Contact sheet">
+  <div class="strip" aria-hidden="true">
+    <div class="edge top"><span>ÆRIEL 400</span><span>▸ 1</span><span>▸ 2</span><span>ÆRIEL 400</span><span>▸ 4</span><span>▸ 5</span></div>
+    <div class="frames"><div></div><div></div><div></div><div></div><div></div><div></div></div>
+    <div class="edge bottom"><span>1A</span><span>2A</span><span>3A</span><span>4A</span><span>5A</span><span>6A</span></div>
+  </div>
+
+  <div class="strip">
+    <div class="edge top" aria-hidden="true"><span>ÆRIEL 400</span><span>▸ 7</span><span>▸ 8</span><span>ÆRIEL 400</span><span>▸ 10</span><span>▸ 11</span></div>
+    <div class="frames">
+      <div aria-hidden="true"></div>
+      <div class="pick">
+        <h1>aeriel.xyz</h1>
+        <svg class="pencil" viewBox="0 0 120 90" preserveAspectRatio="none" aria-hidden="true">
+          <path pathLength="1" d="M69.6 8.1 C 36 5.4, 9.6 16.2, 8.4 41.4 C 7.2 66.6, 36 82.8, 66 81.9 C 96 81, 114 64.8, 112.8 43.2 C 111.6 21.6, 91.2 7.2, 60 9 C 48 9.9, 39.6 12.6, 34.8 15.3"/>
+        </svg>
+      </div>
+      <div aria-hidden="true"></div>
+      <div aria-hidden="true"></div>
+      <div aria-hidden="true"></div>
+      <div aria-hidden="true"></div>
+    </div>
+    <div class="edge bottom" aria-hidden="true"><span>7A</span><span>8A</span><span>9A</span><span>10A</span><span>11A</span><span>12A</span></div>
+  </div>
+
+  <div class="strip" aria-hidden="true">
+    <div class="edge top"><span>ÆRIEL 400</span><span>▸ 13</span><span>▸ 14</span><span>ÆRIEL 400</span><span>▸ 16</span><span>▸ 17</span></div>
+    <div class="frames"><div></div><div></div><div></div><div></div><div></div><div></div></div>
+    <div class="edge bottom"><span>13A</span><span>14A</span><span>15A</span><span>16A</span><span>17A</span><span>18A</span></div>
+  </div>
+</section>
+
+<main class="note">
+  <p class="lede">Photographs by ÆRIEL, shot on 35mm film and Polaroid in Santiago's underground nightlife: the spaces, the live sets, and the people in them.</p>
+  <p class="soon">The archive opens here soon. Until then, new frames go up on Instagram.</p>
+  <ul>
+    <li><a href="https://www.instagram.com/aeriel.aiff/">Instagram @aeriel.aiff</a></li>
+    <li><a href="https://aeriel.net">Music, events and essays at aeriel.net</a></li>
+  </ul>
+</main>
+
+<footer>Santiago de Chile</footer>
+
+</body>
+</html>
