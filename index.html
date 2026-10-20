@@ -2,226 +2,74 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ÆRIEL · photographs</title>
-<meta name="description" content="Photographs by ÆRIEL, shot on 35mm film and Polaroid in Santiago's underground nightlife. The archive opens here soon.">
-<meta property="og:title" content="aeriel.xyz">
-<meta property="og:description" content="Photographs on 35mm film and Polaroid from Santiago's underground nightlife.">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ÆRIEL IO Website</title>
+<meta name="description" content="ÆRIEL — Analog Archive. Polaroid and 35mm.">
+<meta property="og:title" content="ÆRIEL — Analog Archive">
 <meta property="og:url" content="https://aeriel.xyz/">
 <meta property="og:type" content="website">
-<meta name="theme-color" content="#E9EAE6">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23000'/%3E%3Ctext x='32' y='45' font-family='Arial,sans-serif' font-size='36' font-weight='700' fill='%23E9EAE6' text-anchor='middle'%3E%C3%86%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%27180 300 624 480%27%3E%3Crect x=%27180%27 y=%27300%27 width=%27624%27 height=%27480%27 fill=%27%231a1a1a%27/%3E%3Cpath fill=%27%23fff%27 fill-rule=%27evenodd%27 d=%27M761 742 L484 742 L483 652 L357 652 L316 742 L223 742 L222 739 L414 338 L757 338 L756 412 L570 413 L570 498 L746 499 L745 568 L570 568 L570 666 L761 666 Z M484 585 L484 413 L464 412 L386 585 Z%27/%3E%3C/svg%3E">
+<style>body{margin:0}img{max-width:100%}</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@500;600&family=Schibsted+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;800;900&family=DM+Mono:wght@400;500&display=swap">
 <style>
-  :root {
-    --paper: #E9EAE6;      /* contact-print paper */
-    --ink: #1A1B1A;        /* body text */
-    --ink-soft: #5E605C;
-    --print-black: #000;   /* clear film base prints black */
-    --frame: #1D1E1C;      /* unexposed frame, slight fog */
-    --edge: #B9BAB2;       /* rebate edge printing */
-    --wax: #D0281C;        /* grease pencil */
-    --gutter: clamp(16px, 4vw, 48px);
-  }
-
-  * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; }
-  body {
-    margin: 0;
-    background: var(--paper);
-    color: var(--ink);
-    font-family: "Schibsted Grotesk", system-ui, sans-serif;
-    font-size: 1.0625rem;
-    line-height: 1.55;
-  }
-
-  a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
-  a:hover { text-decoration-color: var(--wax); }
-  a:focus-visible { outline: 2px solid var(--wax); outline-offset: 3px; border-radius: 2px; }
-
-  .bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 1rem;
-    padding: 1.25rem var(--gutter);
-    font-size: 0.9375rem;
-  }
-  .bar .mark { font-weight: 700; letter-spacing: 0.02em; text-decoration: none; }
-  .bar nav { display: flex; gap: 1.25rem; }
-
-  /* ---------- contact sheet ---------- */
-  .sheet {
-    padding: clamp(0.5rem, 2vw, 1.5rem) var(--gutter) 0;
-    display: grid;
-    gap: clamp(10px, 1.6vw, 18px);
-  }
-
-  .strip {
-    --hole-h: clamp(5px, 0.9vw, 9px);
-    background: var(--print-black);
-    padding: calc(var(--hole-h) * 3.4) clamp(6px, 1vw, 12px);
-    position: relative;
-  }
-  /* sprocket holes, top and bottom */
-  .strip::before, .strip::after {
-    content: "";
-    position: absolute;
-    left: 0; right: 0;
-    height: var(--hole-h);
-    background: repeating-linear-gradient(90deg,
-      transparent 0 calc(var(--hole-h) * 0.9),
-      var(--paper) calc(var(--hole-h) * 0.9) calc(var(--hole-h) * 2.1),
-      transparent calc(var(--hole-h) * 2.1) calc(var(--hole-h) * 3));
-    border-radius: 2px;
-    opacity: 0.92;
-  }
-  .strip::before { top: calc(var(--hole-h) * 0.55); }
-  .strip::after  { bottom: calc(var(--hole-h) * 0.55); }
-
-  .edge {
-    position: absolute;
-    left: clamp(6px, 1vw, 12px); right: clamp(6px, 1vw, 12px);
-    display: flex;
-    justify-content: space-between;
-    font-family: "Archivo Narrow", sans-serif;
-    font-weight: 600;
-    font-size: clamp(7px, 0.85vw, 10px);
-    letter-spacing: 0.08em;
-    color: var(--edge);
-    line-height: 1;
-    pointer-events: none;
-  }
-  .edge.top { top: calc(var(--hole-h) * 1.85); }
-  .edge.bottom { bottom: calc(var(--hole-h) * 1.85); }
-  .edge span:nth-child(n+4) { display: none; }
-
-  .frames {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: clamp(4px, 0.7vw, 8px);
-    padding-block: calc(var(--hole-h) * 0.4);
-  }
-  .frames > * { aspect-ratio: 3 / 2; background: var(--frame); border-radius: 3px; }
-  .frames > :nth-child(n+4) { display: none; }
-
-  @media (min-width: 760px) {
-    .frames { grid-template-columns: repeat(6, 1fr); }
-    .frames > :nth-child(n+4) { display: block; }
-    .edge span:nth-child(n+4) { display: inline; }
-  }
-
-  /* the marked frame */
-  .pick {
-    position: relative;
-    z-index: 2;
-    display: grid !important;
-    place-items: center;
-    background: var(--frame);
-  }
-  .pick h1 {
-    margin: 0;
-    color: var(--paper);
-    font-weight: 500;
-    font-size: clamp(0.95rem, 2.1vw, 1.6rem);
-    letter-spacing: -0.01em;
-  }
-  .pencil {
-    position: absolute;
-    inset: -22% -14%;
-    width: 128%;
-    height: 144%;
-    overflow: visible;
-    pointer-events: none;
-  }
-  .pencil path {
-    fill: none;
-    stroke: var(--wax);
-    stroke-width: clamp(1.6px, 0.35vw, 2.6px);
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-    animation: draw 1.1s cubic-bezier(.6,.1,.3,1) 0.5s forwards;
-  }
-  @keyframes draw { to { stroke-dashoffset: 0; } }
-  @media (prefers-reduced-motion: reduce) {
-    .pencil path { animation: none; stroke-dashoffset: 0; }
-  }
-
-  /* ---------- text ---------- */
-  main.note {
-    padding: clamp(2.5rem, 7vw, 5rem) var(--gutter) 3rem;
-    display: grid;
-    gap: 1.5rem;
-    max-width: calc(36rem + var(--gutter) * 2);
-  }
-  .note p { margin: 0; }
-  .note .lede { font-size: clamp(1.25rem, 2.4vw, 1.6rem); line-height: 1.35; font-weight: 400; }
-  .note .soon { color: var(--ink-soft); }
-  .note ul { list-style: none; margin: 0.5rem 0 0; padding: 0; display: grid; gap: 0.4rem; }
-
-  footer {
-    padding: 2rem var(--gutter) 2.5rem;
-    color: var(--ink-soft);
-    font-size: 0.875rem;
-  }
+/* Layout: oversized name and subtitle on the ground, then a three-column wall of scans shown whole. Tokens follow the ÆRIEL design system, Night first, Paper second. */
+:root{--surface-100:#1a1a1a;--surface-200:#262626;--line:#767676;--line-subtle:#3a3a3a;--ink:#ffffff;--ink-muted:#b8b8b8;--pink:#f5386c;--pink-text:#ff5c88;--on-pink:#1a1a1a;--focus:#f5e12e;--font-sans:"Archivo","Helvetica Neue",Arial,sans-serif;--font-mono:"DM Mono",ui-monospace,Menlo,monospace;--space-2:8px;--space-3:12px;--space-4:16px;--space-8:32px;--space-12:48px;--space-16:64px;--shadow-print:0 1px 2px rgba(0,0,0,.35),0 14px 32px rgba(0,0,0,.4);color-scheme:dark}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--surface-100:#f8f1dc;--surface-200:#ffffff;--line:#1a1a1a;--line-subtle:#d9cfae;--ink:#1a1a1a;--ink-muted:#4a4a4a;--pink-text:#c4123f;--focus:#1a1a1a;--shadow-print:0 1px 2px rgba(0,0,0,.25),0 12px 28px rgba(0,0,0,.2);color-scheme:light}}
+:root[data-theme="light"]{--surface-100:#f8f1dc;--surface-200:#ffffff;--line:#1a1a1a;--line-subtle:#d9cfae;--ink:#1a1a1a;--ink-muted:#4a4a4a;--pink-text:#c4123f;--focus:#1a1a1a;--shadow-print:0 1px 2px rgba(0,0,0,.25),0 12px 28px rgba(0,0,0,.2);color-scheme:light}
+body{background:var(--surface-100);color:var(--ink);font:400 16px/24px var(--font-sans);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:var(--space-12)}
+.wrap{max-width:1320px;margin:0 auto;display:flex;flex-direction:column;gap:var(--space-16)}
+header{position:relative;display:flex;flex-direction:column;gap:var(--space-4);padding-top:var(--space-8);min-width:0}
+.dots{position:absolute;top:0;right:0;width:clamp(72px,16vw,176px);aspect-ratio:1;border-radius:50%;background-image:radial-gradient(circle,var(--pink) 0 24%,transparent 26%);background-size:16px 16px}
+h1{margin:0;font:900 clamp(72px,20vw,260px)/.88 var(--font-sans);letter-spacing:-.035em;color:var(--ink)}
+.sub{margin:0;font:800 clamp(28px,5vw,56px)/1 var(--font-sans);letter-spacing:-.01em;color:var(--pink-text)}
+.meta{margin:0;font:500 11px/14px var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted)}
+.wall{columns:3 340px;column-gap:var(--space-8)}
+figure{margin:0 0 var(--space-8);break-inside:avoid;display:flex;flex-direction:column;gap:var(--space-2)}
+figure img{display:block;width:100%;height:auto}
+figure.print img{border-radius:2px;box-shadow:var(--shadow-print)}
+footer{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--space-4);border-top:1px solid var(--line-subtle);padding-top:var(--space-8)}
+footer svg{height:40px;width:auto;fill:var(--ink)}
+a{color:var(--pink-text)}a:focus-visible,img:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+@media (max-width:520px){.wall{columns:1}}
 </style>
 </head>
 <body>
-
-<header class="bar">
-  <a class="mark" href="/">ÆRIEL</a>
-  <nav aria-label="Elsewhere">
-    <a href="https://www.instagram.com/aeriel.aiff/" rel="me">Instagram</a>
-    <a href="https://aeriel.net" rel="me">aeriel.net</a>
-  </nav>
+<div class="wrap">
+<header>
+<div class="dots" aria-hidden="true"></div>
+<h1>ÆRIEL</h1>
+<p class="sub">Analog Archive</p>
+<p class="meta">Polaroid and 35mm</p>
 </header>
-
-<section class="sheet" aria-label="Contact sheet">
-  <div class="strip" aria-hidden="true">
-    <div class="edge top"><span>ÆRIEL 400</span><span>▸ 1</span><span>▸ 2</span><span>ÆRIEL 400</span><span>▸ 4</span><span>▸ 5</span></div>
-    <div class="frames"><div></div><div></div><div></div><div></div><div></div><div></div></div>
-    <div class="edge bottom"><span>1A</span><span>2A</span><span>3A</span><span>4A</span><span>5A</span><span>6A</span></div>
-  </div>
-
-  <div class="strip">
-    <div class="edge top" aria-hidden="true"><span>ÆRIEL 400</span><span>▸ 7</span><span>▸ 8</span><span>ÆRIEL 400</span><span>▸ 10</span><span>▸ 11</span></div>
-    <div class="frames">
-      <div aria-hidden="true"></div>
-      <div class="pick">
-        <h1>aeriel.xyz</h1>
-        <svg class="pencil" viewBox="0 0 120 90" preserveAspectRatio="none" aria-hidden="true">
-          <path pathLength="1" d="M69.6 8.1 C 36 5.4, 9.6 16.2, 8.4 41.4 C 7.2 66.6, 36 82.8, 66 81.9 C 96 81, 114 64.8, 112.8 43.2 C 111.6 21.6, 91.2 7.2, 60 9 C 48 9.9, 39.6 12.6, 34.8 15.3"/>
-        </svg>
-      </div>
-      <div aria-hidden="true"></div>
-      <div aria-hidden="true"></div>
-      <div aria-hidden="true"></div>
-      <div aria-hidden="true"></div>
-    </div>
-    <div class="edge bottom" aria-hidden="true"><span>7A</span><span>8A</span><span>9A</span><span>10A</span><span>11A</span><span>12A</span></div>
-  </div>
-
-  <div class="strip" aria-hidden="true">
-    <div class="edge top"><span>ÆRIEL 400</span><span>▸ 13</span><span>▸ 14</span><span>ÆRIEL 400</span><span>▸ 16</span><span>▸ 17</span></div>
-    <div class="frames"><div></div><div></div><div></div><div></div><div></div><div></div></div>
-    <div class="edge bottom"><span>13A</span><span>14A</span><span>15A</span><span>16A</span><span>17A</span><span>18A</span></div>
-  </div>
-</section>
-
-<main class="note">
-  <p class="lede">Photographs by ÆRIEL, shot on 35mm film and Polaroid in Santiago's underground nightlife: the spaces, the live sets, and the people in them.</p>
-  <p class="soon">The archive opens here soon. Until then, new frames go up on Instagram.</p>
-  <ul>
-    <li><a href="https://www.instagram.com/aeriel.aiff/">Instagram @aeriel.aiff</a></li>
-    <li><a href="https://aeriel.net">Music, events and essays at aeriel.net</a></li>
-  </ul>
+<main class="wall" aria-label="Analog photographs">
+<figure class="print"><img src="img/polaroid-sequin-gown-stage.jpg" width="1156" height="1400" alt="Woman in a sequined gown holding a microphone on a draped stage" loading="lazy"></figure>
+<figure class="film"><img src="img/film35-dj-brick-wall.jpg" width="1400" height="946" alt="DJ in a red tank top at turntables before a brick wall" loading="lazy"></figure>
+<figure class="film"><img src="img/film35-pink-dress-window.jpg" width="946" height="1400" alt="Person in a pink dress standing in sunlight before a tall industrial window" loading="lazy"></figure>
+<figure class="print"><img src="img/polaroid-bw-fan-profile.jpg" width="1147" height="1400" alt="Profile of a person raising an arm beside a large patterned fan" loading="lazy"></figure>
+<figure class="film"><img src="img/film35-bw-embrace.jpg" width="1400" height="946" alt="Two people embracing and laughing in black and white" loading="lazy"></figure>
+<figure class="print"><img src="img/polaroid-couch-portrait.jpg" width="1384" height="1400" alt="Person seated cross-legged on a cream sofa under a painting" loading="lazy"></figure>
+<figure class="film"><img src="img/film35-pearl-cowboy-hat.jpg" width="946" height="1400" alt="Person in a pearl-covered cowboy hat and silver trousers at a bar" loading="lazy"></figure>
+<figure class="film"><img src="img/film35-bw-runway.jpg" width="1400" height="946" alt="Two people in white gowns and crowns on a runway before a crowd" loading="lazy"></figure>
+<figure class="print"><img src="img/polaroid-gold-frame-trio.jpg" width="1157" height="1400" alt="Three people toasting with cups at night" loading="lazy"></figure>
+<figure class="film"><img src="img/film35-bw-ruffled-jacket-seated.jpg" width="946" height="1400" alt="Black and white portrait of a person seated in a ruffled jacket" loading="lazy"></figure>
+<figure class="print"><img src="img/polaroid-bw-trophy-pair.jpg" width="1143" height="1400" alt="Two people looking up, one holding a trophy" loading="lazy"></figure>
+<figure class="film"><img src="img/film35-dj-sequin-jacket.jpg" width="1400" height="946" alt="DJ in a sequin jacket and headphones holding up a Polaroid" loading="lazy"></figure>
+<figure class="print"><img src="img/polaroid-blue-jacket-orange-door.jpg" width="1146" height="1400" alt="Person in a blue jacket and patterned shirt before an orange door" loading="lazy"></figure>
+<figure class="film"><img src="img/film35-bw-flash-back.jpg" width="946" height="1400" alt="Person in a metallic two-piece walking away, covering their face" loading="lazy"></figure>
+<figure class="print"><img src="img/polaroid-gold-frame-harness.jpg" width="1186" height="1400" alt="Person in white bandages and a red harness with a spiked crown" loading="lazy"></figure>
+<figure class="film"><img src="img/film35-bw-dj-booth.jpg" width="1400" height="946" alt="Mustached person leaning on a speaker at a DJ booth" loading="lazy"></figure>
+<figure class="print"><img src="img/polaroid-lilac-wig-fur.jpg" width="1158" height="1400" alt="Person with a lilac wig, sunglasses and a white fur jacket" loading="lazy"></figure>
+<figure class="print"><img src="img/polaroid-bw-butterfly-hat.jpg" width="1176" height="1400" alt="Person in a sheer floral bodysuit holding a large hat to their head" loading="lazy"></figure>
+<figure class="film"><img src="img/film35-bw-ruffled-jacket-standing.jpg" width="946" height="1400" alt="Mustached person standing in a ruffled jacket and wide trousers" loading="lazy"></figure>
+<figure class="print"><img src="img/polaroid-night-lights-portrait.jpg" width="1173" height="1400" alt="Portrait of a person at night before a wall of lights" loading="lazy"></figure>
+<figure class="print"><img src="img/polaroid-gold-frame-fur-coat.jpg" width="1157" height="1400" alt="Person in sunglasses and a fur coat before a bookshelf" loading="lazy"></figure>
 </main>
-
-<footer>Santiago de Chile</footer>
-
+<footer>
+<svg viewBox="216 332 552 416" role="img" aria-label="Æ"><path fill-rule="evenodd" d="M761 742 L484 742 L483 652 L357 652 L316 742 L223 742 L222 739 L414 338 L757 338 L756 412 L570 413 L570 498 L746 499 L745 568 L570 568 L570 666 L761 666 Z M484 585 L484 413 L464 412 L386 585 Z"/></svg>
+<p class="meta">aeriel.xyz · Placeholder site · New work coming</p>
+</footer>
+</div>
 </body>
 </html>
