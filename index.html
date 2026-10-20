@@ -3,73 +3,266 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>ÆRIEL IO Website</title>
-<meta name="description" content="ÆRIEL — Analog Archive. Polaroid and 35mm.">
-<meta property="og:title" content="ÆRIEL — Analog Archive">
+<title>ÆRIEL · Analog Archive</title>
+<meta name="description" content="ÆRIEL. Analog archive: Polaroid and 35mm.">
+<meta property="og:title" content="ÆRIEL · Analog Archive">
+<meta property="og:description" content="Polaroid and 35mm.">
 <meta property="og:url" content="https://aeriel.xyz/">
 <meta property="og:type" content="website">
+<meta name="theme-color" content="#1a1a1a">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%27180 300 624 480%27%3E%3Crect x=%27180%27 y=%27300%27 width=%27624%27 height=%27480%27 fill=%27%231a1a1a%27/%3E%3Cpath fill=%27%23fff%27 fill-rule=%27evenodd%27 d=%27M761 742 L484 742 L483 652 L357 652 L316 742 L223 742 L222 739 L414 338 L757 338 L756 412 L570 413 L570 498 L746 499 L745 568 L570 568 L570 666 L761 666 Z M484 585 L484 413 L464 412 L386 585 Z%27/%3E%3C/svg%3E">
-<style>body{margin:0}img{max-width:100%}</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;800;900&family=DM+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;800;900&family=Big+Shoulders+Display:wght@800&family=DM+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: oversized name and subtitle on the ground, then a three-column wall of scans shown whole. Tokens follow the ÆRIEL design system, Night first, Paper second. */
-:root{--surface-100:#1a1a1a;--surface-200:#262626;--line:#767676;--line-subtle:#3a3a3a;--ink:#ffffff;--ink-muted:#b8b8b8;--pink:#f5386c;--pink-text:#ff5c88;--on-pink:#1a1a1a;--focus:#f5e12e;--font-sans:"Archivo","Helvetica Neue",Arial,sans-serif;--font-mono:"DM Mono",ui-monospace,Menlo,monospace;--space-2:8px;--space-3:12px;--space-4:16px;--space-8:32px;--space-12:48px;--space-16:64px;--shadow-print:0 1px 2px rgba(0,0,0,.35),0 14px 32px rgba(0,0,0,.4);color-scheme:dark}
-@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--surface-100:#f8f1dc;--surface-200:#ffffff;--line:#1a1a1a;--line-subtle:#d9cfae;--ink:#1a1a1a;--ink-muted:#4a4a4a;--pink-text:#c4123f;--focus:#1a1a1a;--shadow-print:0 1px 2px rgba(0,0,0,.25),0 12px 28px rgba(0,0,0,.2);color-scheme:light}}
-:root[data-theme="light"]{--surface-100:#f8f1dc;--surface-200:#ffffff;--line:#1a1a1a;--line-subtle:#d9cfae;--ink:#1a1a1a;--ink-muted:#4a4a4a;--pink-text:#c4123f;--focus:#1a1a1a;--shadow-print:0 1px 2px rgba(0,0,0,.25),0 12px 28px rgba(0,0,0,.2);color-scheme:light}
-body{background:var(--surface-100);color:var(--ink);font:400 16px/24px var(--font-sans);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:var(--space-12)}
-.wrap{max-width:1320px;margin:0 auto;display:flex;flex-direction:column;gap:var(--space-16)}
-header{position:relative;display:flex;flex-direction:column;gap:var(--space-4);padding-top:var(--space-8);min-width:0}
-.dots{position:absolute;top:0;right:0;width:clamp(72px,16vw,176px);aspect-ratio:1;border-radius:50%;background-image:radial-gradient(circle,var(--pink) 0 24%,transparent 26%);background-size:16px 16px}
-h1{margin:0;font:900 clamp(72px,20vw,260px)/.88 var(--font-sans);letter-spacing:-.035em;color:var(--ink)}
-.sub{margin:0;font:800 clamp(28px,5vw,56px)/1 var(--font-sans);letter-spacing:-.01em;color:var(--pink-text)}
-.meta{margin:0;font:500 11px/14px var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted)}
-.wall{columns:3 340px;column-gap:var(--space-8)}
-figure{margin:0 0 var(--space-8);break-inside:avoid;display:flex;flex-direction:column;gap:var(--space-2)}
-figure img{display:block;width:100%;height:auto}
-figure.print img{border-radius:2px;box-shadow:var(--shadow-print)}
-footer{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--space-4);border-top:1px solid var(--line-subtle);padding-top:var(--space-8)}
-footer svg{height:40px;width:auto;fill:var(--ink)}
-a{color:var(--pink-text)}a:focus-visible,img:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
-@media (max-width:520px){.wall{columns:1}}
+/* ÆRIEL design system. Night is the default ground, Paper the alternate. Every value below is a system token. */
+:root{
+--surface-100:#1a1a1a;--surface-200:#262626;--surface-300:#333333;--line:#767676;--line-subtle:#3a3a3a;--ink:#ffffff;--ink-muted:#b8b8b8;
+--pink:#f5386c;--on-pink:#1a1a1a;--pink-text:#ff5c88;--bubblegum:#ee9bb4;--on-bubblegum:#1a1a1a;--coral:#f0797d;--on-coral:#1a1a1a;
+--acid:#f5e12e;--on-acid:#1a1a1a;--gold:#c2a170;--on-gold:#1a1a1a;--gold-text:#c2a170;--gold-frame:#6b6527;--on-gold-frame:#ffffff;
+--polaroid:#e4ebe5;--on-polaroid:#1a1a1a;--cream:#f8f1dc;--on-cream:#1a1a1a;--night:#0c3247;--on-night:#ffffff;--blood:#c8202f;--on-blood:#ffffff;
+--film-border:#0b0b0b;--focus:#f5e12e;--mark:var(--pink);
+--font-sans:"Archivo","Helvetica Neue",Arial,sans-serif;--font-condensed:"Big Shoulders Display","Archivo Narrow",Impact,sans-serif;--font-mono:"DM Mono",ui-monospace,Menlo,monospace;
+--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-6:24px;--space-8:32px;--space-12:48px;--space-16:64px;
+--radius-none:0;--radius-sm:2px;--radius-film:10px;--radius-pill:999px;
+--shadow-print:0 1px 2px rgba(0,0,0,.35),0 14px 32px rgba(0,0,0,.4);color-scheme:dark}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--surface-100:#f8f1dc;--surface-200:#ffffff;--surface-300:#ece3c6;--line:#1a1a1a;--line-subtle:#d9cfae;--ink:#1a1a1a;--ink-muted:#4a4a4a;--pink-text:#c4123f;--gold-text:#7a5f2a;--focus:#1a1a1a;--mark:#1a1a1a;--shadow-print:0 1px 2px rgba(0,0,0,.25),0 12px 28px rgba(0,0,0,.2);color-scheme:light}}
+:root[data-theme="light"]{--surface-100:#f8f1dc;--surface-200:#ffffff;--surface-300:#ece3c6;--line:#1a1a1a;--line-subtle:#d9cfae;--ink:#1a1a1a;--ink-muted:#4a4a4a;--pink-text:#c4123f;--gold-text:#7a5f2a;--focus:#1a1a1a;--mark:#1a1a1a;--shadow-print:0 1px 2px rgba(0,0,0,.25),0 12px 28px rgba(0,0,0,.2);color-scheme:light}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--surface-100);color:var(--ink);font:400 16px/24px var(--font-sans);padding-left:max(var(--space-4),env(safe-area-inset-left,0px));padding-right:max(var(--space-4),env(safe-area-inset-right,0px))}
+@media (min-width:1100px){body{padding-inline:var(--space-16)}}
+img{max-width:100%}
+a{color:var(--pink-text)}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.wrap{max-width:1320px;margin:0 auto}
+section{padding-block:var(--space-16);scroll-margin-top:var(--space-8)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.mark{display:block;fill:currentColor}
+
+/* type */
+.display-xl{font:900 clamp(64px,12.5vw,184px)/.86 var(--font-sans);letter-spacing:-.035em;margin:0}
+.display-l{font:800 clamp(40px,7vw,64px)/.94 var(--font-sans);letter-spacing:-1px;margin:0;text-wrap:balance}
+.display-m{font:800 clamp(28px,4vw,40px)/1 var(--font-sans);letter-spacing:-.5px;margin:0}
+.poster{font:800 clamp(56px,11vw,120px)/.9 var(--font-condensed);letter-spacing:.5px;text-transform:uppercase;margin:0}
+.poster-s{font:800 clamp(28px,4vw,36px)/1 var(--font-condensed);letter-spacing:1px;text-transform:uppercase;margin:0}
+.body-l{font:400 18px/28px var(--font-sans);max-width:56ch;margin:0}
+.label{font:500 11px/14px var(--font-mono);letter-spacing:.12em;text-transform:uppercase;margin:0}
+.gold-text{color:var(--gold-text)}.pink-text{color:var(--pink-text)}
+
+/* components */
+.ae-btn{display:inline-flex;align-items:center;gap:var(--space-2);font:800 14px/1 var(--font-sans);letter-spacing:.06em;text-transform:uppercase;padding:14px 20px;border:2px solid var(--ink);border-radius:var(--radius-none);background:transparent;color:var(--ink);cursor:pointer;text-decoration:none;transition:background-color 120ms linear,border-color 120ms linear,color 120ms linear}
+.ae-btn:hover{background:var(--surface-300)}
+.ae-btn--primary{background:var(--pink);border-color:var(--pink);color:var(--on-pink)}
+.ae-btn--primary:hover{background:var(--acid);border-color:var(--acid);color:var(--on-acid)}
+.ae-btn--sm{padding:10px 14px;font-size:12px}
+.ae-tag{display:inline-block;font:500 11px/14px var(--font-mono);letter-spacing:.12em;text-transform:uppercase;padding:var(--space-1) var(--space-2);border:1px solid var(--line);color:var(--ink);border-radius:var(--radius-none)}
+.ae-tag--pink{background:var(--pink);border-color:var(--pink);color:var(--on-pink)}
+.ae-tag--acid{background:var(--acid);border-color:var(--acid);color:var(--on-acid)}
+.ae-cap{font:400 12px/16px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);margin:0}
+.ae-print{display:block;background:var(--polaroid);padding:var(--space-3) var(--space-3) var(--space-12);border-radius:var(--radius-sm);box-shadow:var(--shadow-print);color:var(--on-polaroid);margin:0;position:relative}
+.ae-print--gold{background:var(--gold-frame);color:var(--on-gold-frame)}
+.ae-print img{display:block;width:100%;height:auto;aspect-ratio:1/1;object-fit:cover;border-radius:var(--radius-none)}
+.ae-print .ae-cap{color:inherit;position:absolute;left:var(--space-3);right:var(--space-3);bottom:var(--space-4)}
+.ae-film{display:block;background:var(--film-border);padding:var(--space-3);border-radius:var(--radius-film);margin:0}
+.ae-film img{display:block;width:100%;height:auto}
+.ae-film .ae-cap{color:#b8b8b8;margin-top:var(--space-2)}
+.ae-halftone{background-image:radial-gradient(circle,var(--ink) 0 22%,transparent 24%);background-size:var(--space-4) var(--space-4)}
+.ae-waves{height:var(--space-12);background:repeating-linear-gradient(0deg,var(--ink) 0 6px,transparent 6px 12px);-webkit-mask-image:radial-gradient(circle at 50% 0,#000 98%,transparent 100%);mask-image:radial-gradient(circle at 50% 0,#000 98%,transparent 100%)}
+
+/* nav */
+nav{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);flex-wrap:wrap;padding-block:var(--space-6);border-bottom:1px solid var(--line-subtle)}
+nav .home{color:var(--ink);display:flex;align-items:center;gap:var(--space-3);text-decoration:none}
+nav .home .mark{height:32px;width:auto}
+nav .home span{font:800 15px/1 var(--font-sans);letter-spacing:.08em}
+nav ul{display:flex;gap:var(--space-6);list-style:none;margin:0;padding:0}
+nav a.l{color:var(--ink);text-decoration:none;font:800 13px/1 var(--font-sans);letter-spacing:.08em;text-transform:uppercase;padding:var(--space-2) 0;border-bottom:2px solid transparent;transition:border-color 120ms linear}
+nav a.l:hover{border-color:var(--pink)}
+.navr{display:flex;align-items:center;gap:var(--space-6)}
+
+/* cover */
+.cover{display:grid;grid-template-columns:1.35fr 1fr;gap:var(--space-12);align-items:stretch;padding-block:var(--space-12) var(--space-16)}
+.cover .txt{display:flex;flex-direction:column;gap:var(--space-6);justify-content:flex-end;min-width:0}
+.cover .sub{font:800 clamp(28px,4.4vw,52px)/1 var(--font-sans);letter-spacing:-.01em;color:var(--pink-text);margin:0}
+.row{display:flex;gap:var(--space-3);flex-wrap:wrap;align-items:center}
+.blocks{position:relative;min-height:460px;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(5,1fr)}
+.blocks .lift{grid-column:1/4;grid-row:1/6;align-self:center;z-index:1;margin-right:calc(var(--space-12) * -1)}
+.blocks .slab{grid-column:3/5;grid-row:1/3;background:var(--pink);position:relative;overflow:hidden}
+.blocks .slab::after{content:"";position:absolute;inset:0;background-image:radial-gradient(circle,var(--surface-100) 0 24%,transparent 26%);background-size:var(--space-8) var(--space-8);background-position:var(--space-4) var(--space-4)}
+.blocks .c{grid-column:4;grid-row:3/6;background:var(--coral)}
+.blocks .y{grid-column:3;grid-row:4/6;background:var(--acid)}
+.blocks .b{grid-column:3;grid-row:3;background:var(--bubblegum)}
+.blocks .lift .ae-print{transform:rotate(-3deg);max-width:420px}
+
+.rule{display:grid;grid-template-columns:auto 1fr;gap:var(--space-8);align-items:center;padding-block:var(--space-8);border-block:1px solid var(--line-subtle)}
+.rule .ae-halftone{width:112px;height:112px;border-radius:50%}
+.rule .ae-waves{background:repeating-linear-gradient(0deg,var(--pink) 0 6px,transparent 6px 12px)}
+
+.head{display:grid;grid-template-columns:1fr auto;gap:var(--space-4) var(--space-8);align-items:end;margin-bottom:var(--space-12)}
+.head .t{display:flex;flex-direction:column;gap:var(--space-4)}
+.head .label{color:var(--gold-text)}
+
+/* walls */
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-8);align-items:start}
+.grid4 > :nth-child(4n+2),.grid4 > :nth-child(4n+4){margin-top:var(--space-12)}
+.film{columns:3 300px;column-gap:var(--space-8)}
+.film > *{break-inside:avoid;margin-bottom:var(--space-8)}
+.open{all:unset;display:block;cursor:zoom-in}
+.open:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+
+/* closing slab */
+.slab-end{background:var(--pink);color:var(--on-pink);display:grid;grid-template-columns:auto 1fr;gap:var(--space-12);align-items:center;padding:var(--space-12) var(--space-8);margin-block:var(--space-16)}
+.slab-end .mark{height:clamp(96px,16vw,200px);width:auto;fill:var(--on-pink)}
+.slab-end .t{display:flex;flex-direction:column;gap:var(--space-4)}
+.slab-end .label{color:var(--on-pink)}
+
+footer{border-top:1px solid var(--line-subtle);padding-block:var(--space-12);display:flex;justify-content:space-between;align-items:center;gap:var(--space-6);flex-wrap:wrap}
+footer .mark{height:44px;width:auto;fill:var(--mark)}
+
+/* viewer */
+dialog{border:0;padding:0;background:transparent;max-width:none;max-height:none;width:100%;height:100%;color:var(--ink)}
+dialog::backdrop{background:var(--surface-100)}
+dialog .stage{position:fixed;inset:0;display:grid;grid-template-rows:auto 1fr auto;gap:var(--space-4);padding:var(--space-4) max(var(--space-4),env(safe-area-inset-left,0px));background:var(--surface-100)}
+dialog .bar{display:flex;justify-content:space-between;align-items:center;gap:var(--space-4)}
+dialog .pic{display:grid;place-items:center;min-height:0}
+dialog .pic > *{max-height:100%;max-width:min(100%,900px)}
+dialog .pic .ae-print{width:min(100%,calc(100dvh - 220px))}
+dialog .pic .ae-film{width:auto;max-width:min(100%,1100px)}
+dialog .pic .ae-film img{max-height:calc(100dvh - 240px);width:auto;max-width:100%}
+
+@media (max-width:900px){
+.cover{grid-template-columns:1fr}
+.blocks{min-height:380px}
+.grid4{grid-template-columns:1fr 1fr;gap:var(--space-6)}
+.grid4 > *{margin-top:0!important}
+.grid4 > :nth-child(even){margin-top:var(--space-8)!important}
+.slab-end{grid-template-columns:1fr;justify-items:center;text-align:center}
+}
+@media (max-width:560px){
+nav ul{display:none}
+section{padding-block:var(--space-12)}
+.head{grid-template-columns:1fr}
+.rule{grid-template-columns:1fr}
+.rule .ae-halftone{width:80px;height:80px}
+.blocks{min-height:320px}
+.blocks .lift{margin-right:0}
+.grid4{grid-template-columns:1fr 1fr;gap:var(--space-4)}
+.ae-print{padding:var(--space-2) var(--space-2) var(--space-12)}
+.ae-print .ae-cap{left:var(--space-2);right:var(--space-2);bottom:var(--space-2);font-size:10px;line-height:14px}
+}
 </style>
 </head>
 <body>
 <div class="wrap">
-<header>
-<div class="dots" aria-hidden="true"></div>
-<h1>ÆRIEL</h1>
+
+<nav aria-label="Main">
+<a class="home" href="#top" aria-label="ÆRIEL, top of page"><svg class="mark" viewBox="216 332 552 416" aria-hidden="true"><path fill-rule="evenodd" d="M761 742 L484 742 L483 652 L357 652 L316 742 L223 742 L222 739 L414 338 L757 338 L756 412 L570 413 L570 498 L746 499 L745 568 L570 568 L570 666 L761 666 Z M484 585 L484 413 L464 412 L386 585 Z"/></svg><span>ÆRIEL</span></a>
+<div class="navr">
+<ul>
+<li><a class="l" href="#polaroid">Polaroid</a></li>
+<li><a class="l" href="#film">35mm</a></li>
+</ul>
+<button class="ae-btn ae-btn--sm" id="theme" type="button" aria-pressed="false">Paper</button>
+</div>
+</nav>
+
+<header class="cover" id="top">
+<div class="txt">
+<p class="ae-cap">aeriel.xyz · Placeholder site</p>
+<h1 class="display-xl">ÆRIEL</h1>
 <p class="sub">Analog Archive</p>
-<p class="meta">Polaroid and 35mm</p>
+<p class="body-l">Polaroid and 35mm from the night: queer identities, joy, the global south.</p>
+<div class="row"><a class="ae-btn ae-btn--primary" href="#polaroid">View Polaroids →</a><a class="ae-btn" href="#film">View 35mm</a></div>
+<div class="row"><span class="ae-tag">Polaroid</span><span class="ae-tag">35mm</span><span class="ae-tag ae-tag--acid">New work coming</span></div>
+</div>
+<div class="blocks" aria-hidden="true">
+<div class="slab"></div><div class="b"></div><div class="c"></div><div class="y"></div>
+<div class="lift"><figure class="ae-print ae-print--gold"><img src="img/win-polaroid-gold-frame-harness.jpg" width="900" height="900" alt=""><figcaption class="ae-cap">Polaroid · Gold frame</figcaption></figure></div>
+</div>
 </header>
-<main class="wall" aria-label="Analog photographs">
-<figure class="print"><img src="img/polaroid-sequin-gown-stage.jpg" width="1156" height="1400" alt="Woman in a sequined gown holding a microphone on a draped stage" loading="lazy"></figure>
-<figure class="film"><img src="img/film35-dj-brick-wall.jpg" width="1400" height="946" alt="DJ in a red tank top at turntables before a brick wall" loading="lazy"></figure>
-<figure class="film"><img src="img/film35-pink-dress-window.jpg" width="946" height="1400" alt="Person in a pink dress standing in sunlight before a tall industrial window" loading="lazy"></figure>
-<figure class="print"><img src="img/polaroid-bw-fan-profile.jpg" width="1147" height="1400" alt="Profile of a person raising an arm beside a large patterned fan" loading="lazy"></figure>
-<figure class="film"><img src="img/film35-bw-embrace.jpg" width="1400" height="946" alt="Two people embracing and laughing in black and white" loading="lazy"></figure>
-<figure class="print"><img src="img/polaroid-couch-portrait.jpg" width="1384" height="1400" alt="Person seated cross-legged on a cream sofa under a painting" loading="lazy"></figure>
-<figure class="film"><img src="img/film35-pearl-cowboy-hat.jpg" width="946" height="1400" alt="Person in a pearl-covered cowboy hat and silver trousers at a bar" loading="lazy"></figure>
-<figure class="film"><img src="img/film35-bw-runway.jpg" width="1400" height="946" alt="Two people in white gowns and crowns on a runway before a crowd" loading="lazy"></figure>
-<figure class="print"><img src="img/polaroid-gold-frame-trio.jpg" width="1157" height="1400" alt="Three people toasting with cups at night" loading="lazy"></figure>
-<figure class="film"><img src="img/film35-bw-ruffled-jacket-seated.jpg" width="946" height="1400" alt="Black and white portrait of a person seated in a ruffled jacket" loading="lazy"></figure>
-<figure class="print"><img src="img/polaroid-bw-trophy-pair.jpg" width="1143" height="1400" alt="Two people looking up, one holding a trophy" loading="lazy"></figure>
-<figure class="film"><img src="img/film35-dj-sequin-jacket.jpg" width="1400" height="946" alt="DJ in a sequin jacket and headphones holding up a Polaroid" loading="lazy"></figure>
-<figure class="print"><img src="img/polaroid-blue-jacket-orange-door.jpg" width="1146" height="1400" alt="Person in a blue jacket and patterned shirt before an orange door" loading="lazy"></figure>
-<figure class="film"><img src="img/film35-bw-flash-back.jpg" width="946" height="1400" alt="Person in a metallic two-piece walking away, covering their face" loading="lazy"></figure>
-<figure class="print"><img src="img/polaroid-gold-frame-harness.jpg" width="1186" height="1400" alt="Person in white bandages and a red harness with a spiked crown" loading="lazy"></figure>
-<figure class="film"><img src="img/film35-bw-dj-booth.jpg" width="1400" height="946" alt="Mustached person leaning on a speaker at a DJ booth" loading="lazy"></figure>
-<figure class="print"><img src="img/polaroid-lilac-wig-fur.jpg" width="1158" height="1400" alt="Person with a lilac wig, sunglasses and a white fur jacket" loading="lazy"></figure>
-<figure class="print"><img src="img/polaroid-bw-butterfly-hat.jpg" width="1176" height="1400" alt="Person in a sheer floral bodysuit holding a large hat to their head" loading="lazy"></figure>
-<figure class="film"><img src="img/film35-bw-ruffled-jacket-standing.jpg" width="946" height="1400" alt="Mustached person standing in a ruffled jacket and wide trousers" loading="lazy"></figure>
-<figure class="print"><img src="img/polaroid-night-lights-portrait.jpg" width="1173" height="1400" alt="Portrait of a person at night before a wall of lights" loading="lazy"></figure>
-<figure class="print"><img src="img/polaroid-gold-frame-fur-coat.jpg" width="1157" height="1400" alt="Person in sunglasses and a fur coat before a bookshelf" loading="lazy"></figure>
+
+<div class="rule" aria-hidden="true"><div class="ae-halftone"></div><div class="ae-waves"></div></div>
+
+<main>
+<section id="polaroid" aria-labelledby="h-pol">
+<div class="head"><div class="t"><p class="label">01 · Polaroid</p><h2 class="display-l" id="h-pol">Polaroid</h2><p class="body-l">Instant prints in white frame and gold frame, black and white and colour.</p></div><p class="ae-cap">11 prints</p></div>
+<div class="grid4">
+<button class="open" type="button"><figure class="ae-print"><img src="img/win-polaroid-sequin-gown-stage.jpg" width="900" height="900" alt="Woman in a sequined gown holding a microphone on a draped stage" loading="lazy"><figcaption class="ae-cap">Polaroid · Colour</figcaption></figure></button>
+<button class="open" type="button"><figure class="ae-print ae-print--gold"><img src="img/win-polaroid-gold-frame-fur-coat.jpg" width="900" height="900" alt="Person in sunglasses and a fur coat before a bookshelf" loading="lazy"><figcaption class="ae-cap">Polaroid · Gold frame</figcaption></figure></button>
+<button class="open" type="button"><figure class="ae-print"><img src="img/win-polaroid-bw-fan-profile.jpg" width="900" height="900" alt="Profile of a person raising an arm beside a large patterned fan" loading="lazy"><figcaption class="ae-cap">Polaroid · Black and white</figcaption></figure></button>
+<button class="open" type="button"><figure class="ae-print"><img src="img/win-polaroid-couch-portrait.jpg" width="900" height="900" alt="Person seated cross-legged on a cream sofa under a painting" loading="lazy"><figcaption class="ae-cap">Polaroid · Colour</figcaption></figure></button>
+<button class="open" type="button"><figure class="ae-print ae-print--gold"><img src="img/win-polaroid-gold-frame-trio.jpg" width="900" height="900" alt="Three people toasting with cups at night" loading="lazy"><figcaption class="ae-cap">Polaroid · Gold frame</figcaption></figure></button>
+<button class="open" type="button"><figure class="ae-print"><img src="img/win-polaroid-bw-trophy-pair.jpg" width="900" height="900" alt="Two people looking up, one holding a trophy" loading="lazy"><figcaption class="ae-cap">Polaroid · Black and white</figcaption></figure></button>
+<button class="open" type="button"><figure class="ae-print"><img src="img/win-polaroid-blue-jacket-orange-door.jpg" width="900" height="900" alt="Person in a blue jacket and patterned shirt before an orange door" loading="lazy"><figcaption class="ae-cap">Polaroid · Colour</figcaption></figure></button>
+<button class="open" type="button"><figure class="ae-print ae-print--gold"><img src="img/win-polaroid-gold-frame-harness.jpg" width="900" height="900" alt="Person in white bandages and a red harness with a spiked crown" loading="lazy"><figcaption class="ae-cap">Polaroid · Gold frame</figcaption></figure></button>
+<button class="open" type="button"><figure class="ae-print"><img src="img/win-polaroid-lilac-wig-fur.jpg" width="900" height="900" alt="Person with a lilac wig, sunglasses and a white fur jacket" loading="lazy"><figcaption class="ae-cap">Polaroid · Colour</figcaption></figure></button>
+<button class="open" type="button"><figure class="ae-print"><img src="img/win-polaroid-bw-butterfly-hat.jpg" width="900" height="900" alt="Person in a sheer floral bodysuit holding a large hat to their head" loading="lazy"><figcaption class="ae-cap">Polaroid · Black and white</figcaption></figure></button>
+<button class="open" type="button"><figure class="ae-print"><img src="img/win-polaroid-night-lights-portrait.jpg" width="900" height="900" alt="Portrait of a person at night before a wall of lights" loading="lazy"><figcaption class="ae-cap">Polaroid · Colour</figcaption></figure></button>
+</div>
+</section>
+
+<div class="rule" aria-hidden="true"><div class="ae-halftone"></div><div class="ae-waves"></div></div>
+
+<section id="film" aria-labelledby="h-film">
+<div class="head"><div class="t"><p class="label">02 · 35mm</p><h2 class="display-l" id="h-film">35mm</h2><p class="body-l">Film scans on their black border, at their own ratio.</p></div><p class="ae-cap">10 frames</p></div>
+<div class="film">
+<button class="open" type="button"><figure class="ae-film"><img src="img/film35-dj-brick-wall.jpg" width="1400" height="946" alt="DJ in a red tank top at turntables before a brick wall" loading="lazy"><figcaption class="ae-cap">35mm · Colour</figcaption></figure></button>
+<button class="open" type="button"><figure class="ae-film"><img src="img/film35-pink-dress-window.jpg" width="946" height="1400" alt="Person in a pink dress standing in sunlight before a tall industrial window" loading="lazy"><figcaption class="ae-cap">35mm · Colour</figcaption></figure></button>
+<button class="open" type="button"><figure class="ae-film"><img src="img/film35-bw-embrace.jpg" width="1400" height="946" alt="Two people embracing and laughing in black and white" loading="lazy"><figcaption class="ae-cap">35mm · Black and white</figcaption></figure></button>
+<button class="open" type="button"><figure class="ae-film"><img src="img/film35-pearl-cowboy-hat.jpg" width="946" height="1400" alt="Person in a pearl-covered cowboy hat and silver trousers at a bar" loading="lazy"><figcaption class="ae-cap">35mm · Colour</figcaption></figure></button>
+<button class="open" type="button"><figure class="ae-film"><img src="img/film35-bw-runway.jpg" width="1400" height="946" alt="Two people in white gowns and crowns on a runway before a crowd" loading="lazy"><figcaption class="ae-cap">35mm · Black and white</figcaption></figure></button>
+<button class="open" type="button"><figure class="ae-film"><img src="img/film35-bw-ruffled-jacket-seated.jpg" width="946" height="1400" alt="Black and white portrait of a person seated in a ruffled jacket" loading="lazy"><figcaption class="ae-cap">35mm · Black and white</figcaption></figure></button>
+<button class="open" type="button"><figure class="ae-film"><img src="img/film35-dj-sequin-jacket.jpg" width="1400" height="946" alt="DJ in a sequin jacket and headphones holding up a Polaroid" loading="lazy"><figcaption class="ae-cap">35mm · Colour</figcaption></figure></button>
+<button class="open" type="button"><figure class="ae-film"><img src="img/film35-bw-flash-back.jpg" width="946" height="1400" alt="Person in a metallic two-piece walking away, covering their face" loading="lazy"><figcaption class="ae-cap">35mm · Black and white</figcaption></figure></button>
+<button class="open" type="button"><figure class="ae-film"><img src="img/film35-bw-dj-booth.jpg" width="1400" height="946" alt="Mustached person leaning on a speaker at a DJ booth" loading="lazy"><figcaption class="ae-cap">35mm · Black and white</figcaption></figure></button>
+<button class="open" type="button"><figure class="ae-film"><img src="img/film35-bw-ruffled-jacket-standing.jpg" width="946" height="1400" alt="Mustached person standing in a ruffled jacket and wide trousers" loading="lazy"><figcaption class="ae-cap">35mm · Black and white</figcaption></figure></button>
+</div>
+</section>
 </main>
+
+<aside class="slab-end" aria-label="Coming soon">
+<svg class="mark" viewBox="216 332 552 416" role="img" aria-label="Æ"><path fill-rule="evenodd" d="M761 742 L484 742 L483 652 L357 652 L316 742 L223 742 L222 739 L414 338 L757 338 L756 412 L570 413 L570 498 L746 499 L745 568 L570 568 L570 666 L761 666 Z M484 585 L484 413 L464 412 L386 585 Z"/></svg>
+<div class="t">
+<p class="label">aeriel.xyz</p>
+<p class="poster">New work coming</p>
+<p class="poster-s">Polaroid · 35mm</p>
+</div>
+</aside>
+
 <footer>
-<svg viewBox="216 332 552 416" role="img" aria-label="Æ"><path fill-rule="evenodd" d="M761 742 L484 742 L483 652 L357 652 L316 742 L223 742 L222 739 L414 338 L757 338 L756 412 L570 413 L570 498 L746 499 L745 568 L570 568 L570 666 L761 666 Z M484 585 L484 413 L464 412 L386 585 Z"/></svg>
-<p class="meta">aeriel.xyz · Placeholder site · New work coming</p>
+<svg class="mark" viewBox="216 332 552 416" role="img" aria-label="Æ"><path fill-rule="evenodd" d="M761 742 L484 742 L483 652 L357 652 L316 742 L223 742 L222 739 L414 338 L757 338 L756 412 L570 413 L570 498 L746 499 L745 568 L570 568 L570 666 L761 666 Z M484 585 L484 413 L464 412 L386 585 Z"/></svg>
+<p class="ae-cap">aeriel.xyz · Placeholder site · New work coming</p>
 </footer>
 </div>
+
+<dialog id="viewer" aria-label="Photograph">
+<div class="stage">
+<div class="bar"><p class="ae-cap" id="count"></p><button class="ae-btn ae-btn--sm" type="button" data-close>✕ Close</button></div>
+<div class="pic" id="pic"></div>
+<div class="bar"><button class="ae-btn ae-btn--sm" type="button" data-step="-1">← Previous</button><button class="ae-btn ae-btn--sm" type="button" data-step="1">Next →</button></div>
+</div>
+</dialog>
+
+<script>
+(function(){
+var root=document.documentElement,btn=document.getElementById('theme');
+function isLight(){var t=root.getAttribute('data-theme');return t?t==='light':window.matchMedia('(prefers-color-scheme: light)').matches}
+function sync(){var l=isLight();btn.textContent=l?'Night':'Paper';btn.setAttribute('aria-pressed',String(l))}
+btn.addEventListener('click',function(){var t=isLight()?'dark':'light';root.setAttribute('data-theme',t);try{localStorage.setItem('ae-theme',t)}catch(e){}sync()});
+try{var s=localStorage.getItem('ae-theme');if(s)root.setAttribute('data-theme',s)}catch(e){}
+window.matchMedia('(prefers-color-scheme: light)').addEventListener('change',sync);
+sync();
+
+var dlg=document.getElementById('viewer'),pic=document.getElementById('pic'),count=document.getElementById('count');
+var items=[].slice.call(document.querySelectorAll('main .open')),cur=0,opener=null;
+if(!dlg.showModal)return;
+function show(i){cur=(i+items.length)%items.length;var f=items[cur].querySelector('figure').cloneNode(true);var im=f.querySelector('img');im.removeAttribute('loading');pic.replaceChildren(f);count.textContent=(cur+1)+' / '+items.length}
+items.forEach(function(b,i){b.setAttribute('aria-label','Open: '+b.querySelector('img').alt);b.addEventListener('click',function(){opener=b;show(i);dlg.showModal()})});
+dlg.addEventListener('click',function(e){var t=e.target.closest('[data-step],[data-close]');if(t){if(t.hasAttribute('data-close'))dlg.close();else show(cur+Number(t.dataset.step))}else if(e.target===pic||e.target===dlg)dlg.close()});
+dlg.addEventListener('keydown',function(e){if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});
+dlg.addEventListener('close',function(){pic.replaceChildren();if(opener)opener.focus()});
+})();
+</script>
 </body>
 </html>
