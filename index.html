@@ -20,7 +20,7 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;800;900&family=Big+Shoulders+Display:wght@800&family=DM+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Big+Shoulders+Display:wght@800&family=DM+Mono:wght@400;500&display=swap">
 <style>
 /* ÆRIEL design system. Night is the default ground, Paper the alternate. Every value below is a system token. */
 :root{
@@ -80,9 +80,8 @@ section{padding-block:var(--space-16);scroll-margin-top:var(--space-8)}
 
 /* nav */
 nav{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);flex-wrap:wrap;padding-block:var(--space-6);border-bottom:1px solid var(--line-subtle)}
-nav .home{color:var(--ink);display:flex;align-items:center;gap:var(--space-3);text-decoration:none}
+nav .home{color:var(--ink);display:inline-block;text-decoration:none}
 nav .home .mark{height:32px;width:auto}
-nav .home span{font:800 15px/1 var(--font-sans);letter-spacing:.08em}
 nav ul{display:flex;gap:var(--space-6);list-style:none;margin:0;padding:0}
 nav a.l{color:var(--ink);text-decoration:none;font:800 13px/1 var(--font-sans);letter-spacing:.08em;text-transform:uppercase;padding:var(--space-2) 0;border-bottom:2px solid transparent;transition:border-color 120ms linear}
 nav a.l:hover{border-color:var(--pink)}
@@ -151,6 +150,8 @@ section{padding-block:var(--space-12)}
 .ae-print .ae-cap{left:var(--space-2);right:var(--space-2);bottom:var(--space-2);font-size:10px;line-height:14px}
 }
 
+/* the Æ in ÆRIEL is set in Archivo Expanded (width 125), like the photography mark; the rest of the name stays normal width */
+.ae-wide{font-stretch:125%;font-variation-settings:"wdth" 125}
 
 @media (max-width:560px){.ae-print{padding:var(--space-2) var(--space-2) var(--space-8)}}
 /* languages: same pattern as aeriel.net, spans marked with lang="" */
@@ -202,7 +203,7 @@ footer a.net .mark{height:44px;width:auto;fill:currentColor}
 <div class="wrap">
 
 <nav data-aria-en="Main" data-aria-es="Principal" data-aria-pt="Principal" aria-label="Main">
-<a class="home" href="#top" data-aria-en="ÆRIEL, top of page" data-aria-es="ÆRIEL, inicio de la página" data-aria-pt="ÆRIEL, topo da página" aria-label="ÆRIEL, top of page">ÆRIEL</a>
+<a class="home" href="#top" data-aria-en="ÆRIEL, top of page" data-aria-es="ÆRIEL, inicio de la página" data-aria-pt="ÆRIEL, topo da página" aria-label="ÆRIEL, top of page"><span class="ae-wide">Æ</span>RIEL</a>
 <div class="navr">
 <div class="langs" role="group" data-aria-en="Language" data-aria-es="Idioma" data-aria-pt="Idioma" aria-label="Language">
 <button type="button" data-lang="en" aria-label="English">EN</button><button type="button" data-lang="es" aria-label="Español">ES</button><button type="button" data-lang="pt" aria-label="Português">PT</button>
@@ -214,7 +215,7 @@ footer a.net .mark{height:44px;width:auto;fill:currentColor}
 <header class="cover" id="top">
 <div class="txt">
 <p class="ae-cap">aeriel.xyz · <span lang="en">Placeholder site</span><span lang="es">Sitio provisorio</span><span lang="pt">Site provisório</span></p>
-<h1 class="display-xl">ÆRIEL</h1>
+<h1 class="display-xl" aria-label="ÆRIEL"><span class="ae-wide">Æ</span>RIEL</h1>
 <p class="sub"><span lang="en">Analog Archive</span><span lang="es">Archivo analógico</span><span lang="pt">Arquivo analógico</span></p>
 <div class="row"><a class="ae-btn ae-btn--primary" href="#archive"><span lang="en">View the archive →</span><span lang="es">Ver el archivo →</span><span lang="pt">Ver o arquivo →</span></a></div>
 <div class="row"><span class="ae-tag">Polaroid</span><span class="ae-tag">35mm</span><span class="ae-tag ae-tag--acid"><span lang="en">New work coming</span><span lang="es">Nuevo trabajo pronto</span><span lang="pt">Novo trabalho em breve</span></span></div>
