@@ -13,7 +13,7 @@
 <meta property="og:locale:alternate" content="es_CL">
 <meta property="og:locale:alternate" content="pt_BR">
 <meta name="theme-color" content="#1a1a1a">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200"%3E%3Crect width="1200" height="1200" fill="%231a1a1a"/%3E%3Cpath fill="%23ffffff" transform="translate%28111.5 944%29 scale%281%2C-1%29" d="M0 0 291 688H970V523H605L627 428H914V270H664L688 165H977V0H516L494 97H260L226 0ZM315 251H460L414 459Q413 464 412 469L410 478Q409 482 408.0 487.0Q407 492 406 496H402Q401 492 399.0 487.0Q397 482 396 478L393 469Q391 464 389 459Z"/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200"%3E%3Crect width="1200" height="1200" fill="%231a1a1a"/%3E%3Cpath fill="%23ffffff" transform="translate%28163.3 850.6%29 scale%280.7285%2C-0.7285%29" d="M-10 0 391 688H1201V517H718L747 428H1134V266H799L829 171H1209V0H634L607 91H291L243 0ZM381 262H557L522 387Q519 397 516.0 409.5Q513 422 510.0 435.5Q507 449 504.5 462.5Q502 476 500 486H492Q489 478 484.0 466.0Q479 454 472.5 441.0Q466 428 459.5 414.0Q453 400 446 387Z"/%3E%3C/svg%3E">
 <script>
 /* Pick the language before first paint: saved choice, then browser language, then English. */
 (function(){var l='en';try{var s=localStorage.getItem('preferred-lang');if(['en','es','pt'].indexOf(s)>-1)l=s;else throw 0}catch(e){var ls=navigator.languages||[navigator.language||''];for(var i=0;i<ls.length;i++){var c=(ls[i]||'').slice(0,2).toLowerCase();if(c==='es'||c==='pt'||c==='en'){l=c;break}}}document.documentElement.lang=l})();
@@ -172,14 +172,19 @@ nav .home{font:900 22px/1 var(--font-sans);letter-spacing:-.02em;color:var(--ink
 .filters button{border:2px solid var(--ink);padding:10px 14px}
 
 /* collage: one mixed wall. Without script it is a column wall; with script, prints are placed and moved in 3D. */
-.collage{columns:4 260px;column-gap:var(--space-8)}
-.collage .tile{break-inside:avoid;margin-bottom:var(--space-8)}
+.collage{columns:4 260px;column-gap:var(--space-3)}
+.collage .tile{break-inside:avoid;margin-bottom:var(--space-3)}
 .collage.js{columns:auto;position:relative;perspective:1800px;perspective-origin:50% 30%;transition:height 600ms cubic-bezier(.2,.7,.2,1)}
 .collage.js .tile{position:absolute;top:0;left:0;margin:0;will-change:transform;backface-visibility:hidden}
 .collage.js .tile[hidden]{display:none}
 .open{all:unset;display:block;cursor:zoom-in}
 .open:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
-.slab-end .mark{height:clamp(88px,14vw,180px);width:auto;fill:var(--on-pink)}
+.ae-film{background:none;padding:0;border-radius:var(--radius-none)}
+.slab-end{grid-template-columns:auto 1fr;gap:var(--space-8);align-items:start}
+.slab-end .t{gap:var(--space-2);min-width:0}
+@media (min-width:641px){.slab-end .poster{white-space:nowrap;font-size:min(92px,6.3vw)}}
+.slab-end .mark{height:var(--mark-h,clamp(96px,13vw,190px));width:auto;fill:var(--on-pink);display:block}
+.pull{transform-origin:50% 50%;will-change:transform}
 .contact{display:flex;flex-direction:column;gap:var(--space-2)}
 .contact .label{color:var(--gold-text)}
 .clink{color:var(--ink);font:800 18px/1.2 var(--font-sans);letter-spacing:-.01em;text-decoration:none;border-bottom:2px solid transparent;align-self:flex-start;transition:border-color 120ms linear}
@@ -187,7 +192,9 @@ nav .home{font:900 22px/1 var(--font-sans);letter-spacing:-.02em;color:var(--ink
 footer{align-items:flex-end}
 footer a.net{display:block;color:var(--mark);border-radius:var(--radius-none)}
 footer a.net .mark{height:44px;width:auto;fill:currentColor}
-@media (max-width:560px){.navr{gap:var(--space-3)}.collage{columns:2;column-gap:var(--space-4)}.collage .tile{margin-bottom:var(--space-4)}.filters button{padding:8px 10px;font-size:11px}}
+@media (max-width:900px){.slab-end{grid-template-columns:auto 1fr;justify-items:start;text-align:left}}
+@media (max-width:640px){.slab-end{grid-template-columns:1fr;gap:var(--space-6);padding:var(--space-8) var(--space-6)}.slab-end .mark{height:72px!important}}
+@media (max-width:560px){.navr{gap:var(--space-3)}.collage{columns:2;column-gap:var(--space-2)}.collage .tile{margin-bottom:var(--space-2)}.filters button{padding:8px 10px;font-size:11px}}
 </style>
 
 </head>
@@ -209,7 +216,6 @@ footer a.net .mark{height:44px;width:auto;fill:currentColor}
 <p class="ae-cap">aeriel.xyz · <span lang="en">Placeholder site</span><span lang="es">Sitio provisorio</span><span lang="pt">Site provisório</span></p>
 <h1 class="display-xl">ÆRIEL</h1>
 <p class="sub"><span lang="en">Analog Archive</span><span lang="es">Archivo analógico</span><span lang="pt">Arquivo analógico</span></p>
-<p class="body-l"><span lang="en">Polaroid and 35mm from the night: queer identities, joy, the global south.</span><span lang="es">Polaroid y 35mm de la noche: identidades queer, alegría, el sur global.</span><span lang="pt">Polaroid e 35mm da noite: identidades queer, alegria, o sul global.</span></p>
 <div class="row"><a class="ae-btn ae-btn--primary" href="#archive"><span lang="en">View the archive →</span><span lang="es">Ver el archivo →</span><span lang="pt">Ver o arquivo →</span></a></div>
 <div class="row"><span class="ae-tag">Polaroid</span><span class="ae-tag">35mm</span><span class="ae-tag ae-tag--acid"><span lang="en">New work coming</span><span lang="es">Nuevo trabajo pronto</span><span lang="pt">Novo trabalho em breve</span></span></div>
 </div>
@@ -265,11 +271,10 @@ footer a.net .mark{height:44px;width:auto;fill:currentColor}
 </main>
 
 <aside class="slab-end" data-aria-en="Coming soon" data-aria-es="Próximamente" data-aria-pt="Em breve" aria-label="Coming soon">
-<svg class="mark" viewBox="0 -688 977 688" role="img" aria-label="Æ"><path transform="scale(1,-1)" d="M0 0 291 688H970V523H605L627 428H914V270H664L688 165H977V0H516L494 97H260L226 0ZM315 251H460L414 459Q413 464 412 469L410 478Q409 482 408.0 487.0Q407 492 406 496H402Q401 492 399.0 487.0Q397 482 396 478L393 469Q391 464 389 459Z"/></svg>
+<svg class="mark" viewBox="-10 -688 1219 688" role="img" aria-label="Æ"><path transform="scale(1,-1)" d="M-10 0 391 688H1201V517H718L747 428H1134V266H799L829 171H1209V0H634L607 91H291L243 0ZM381 262H557L522 387Q519 397 516.0 409.5Q513 422 510.0 435.5Q507 449 504.5 462.5Q502 476 500 486H492Q489 478 484.0 466.0Q479 454 472.5 441.0Q466 428 459.5 414.0Q453 400 446 387Z"/></svg>
 <div class="t">
-<p class="label">aeriel.xyz</p>
-<p class="poster"><span lang="en">New work coming</span><span lang="es">Nuevo trabajo pronto</span><span lang="pt">Novo trabalho em breve</span></p>
-<p class="poster-s">Polaroid · 35mm</p>
+<p class="label"><span lang="en">Alpha site</span><span lang="es">Sitio alfa</span><span lang="pt">Site alfa</span></p>
+<p class="poster"><span lang="en">New stuff coming soon</span><span lang="es">Cosas nuevas muy pronto</span><span lang="pt">Coisas novas em breve</span></p>
 </div>
 </aside>
 
@@ -326,6 +331,7 @@ function setLanguage(l,persist){
   tiles.forEach(function(t){t.firstElementChild.setAttribute('aria-label',I18N.open[l]+t.querySelector('img').alt)});
   syncTheme();
   if(window.__layout)window.__layout(false);
+  if(window.__sizeMark)window.__sizeMark();
 }
 document.querySelectorAll('.langs button').forEach(function(b){b.addEventListener('click',function(){setLanguage(b.dataset.lang)})});
 
@@ -335,7 +341,7 @@ var still=window.matchMedia('(prefers-reduced-motion: reduce)');
 box.classList.add('js');
 function match(t){return filter==='all'||t.dataset.kind===filter||t.dataset.tone===filter}
 function cols(){var w=box.clientWidth;return w>=1100?4:w>=720?3:2}
-function gap(){return box.clientWidth<520?16:32}
+function gap(){return box.clientWidth<520?8:12}
 function tf(p,extra){return 'translate3d('+p.x+'px,'+p.y+'px,0)'+(extra||'')}
 function layout(animate){
   var n=cols(),g=gap(),cw=(box.clientWidth-g*(n-1))/n,hs=[],i;
@@ -391,11 +397,68 @@ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){lay
 setLanguage(lang(),false);
 layout(false);
 
+/* banner: the Æ is as tall as the two lines of text beside it (cap top of the small line to baseline of the last line) */
+var slab=document.querySelector('.slab-end'),stext=slab.querySelector('.t'),smark=slab.querySelector('.mark');
+function sizeMark(){
+  if(window.matchMedia('(max-width:640px)').matches){slab.style.removeProperty('--mark-h');smark.style.marginTop='';return}
+  var labs=[].slice.call(stext.querySelectorAll('.label > span')).filter(function(e){return e.offsetParent});
+  var pos=[].slice.call(stext.querySelectorAll('.poster > span')).filter(function(e){return e.offsetParent});
+  var l=(labs[0]||stext.querySelector('.label')),p=(pos[0]||stext.querySelector('.poster'));
+  var lr=l.getBoundingClientRect(),pr=p.getBoundingClientRect(),tr=stext.getBoundingClientRect();
+  var lfs=parseFloat(getComputedStyle(l).fontSize),pfs=parseFloat(getComputedStyle(p).fontSize);
+  /* cap top of the label and baseline of the poster, from font metrics */
+  var top=lr.top+(lr.height-lfs*.72)/2;
+  var lines=p.getClientRects(),last=lines[lines.length-1];
+  var bottom=last.bottom-(last.height-pfs*.82)/2-pfs*.02;
+  slab.style.setProperty('--mark-h',Math.max(48,bottom-top)+'px');
+  smark.style.marginTop=(top-tr.top)+'px';
+}
+window.__sizeMark=sizeMark;
+if(window.ResizeObserver)new ResizeObserver(sizeMark).observe(stext);else window.addEventListener('resize',sizeMark);
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(sizeMark);
+sizeMark();
+
+/* mouse pull: each print leans slightly toward the pointer and drifts a few pixels to it */
+(function(){
+  var fine=window.matchMedia('(hover: hover) and (pointer: fine)');
+  var els=[].slice.call(document.querySelectorAll('#collage .tile figure, .blocks .lift .ae-print'));
+  els.forEach(function(e){e.classList.add('pull');e._c={x:0,y:0,rx:0,ry:0};e._t={x:0,y:0,rx:0,ry:0}});
+  var mx=null,my=null,raf=0,R=520,MOVE=7,TILT=4;
+  function targets(){
+    els.forEach(function(e){
+      var t=e._t;
+      if(mx===null||e.closest('[hidden]')){t.x=t.y=t.rx=t.ry=0;return}
+      var r=e.getBoundingClientRect();
+      if(r.bottom<-R||r.top>innerHeight+R){t.x=t.y=t.rx=t.ry=0;return}
+      var dx=mx-(r.left+r.width/2),dy=my-(r.top+r.height/2),d=Math.hypot(dx,dy);
+      var f=Math.max(0,1-d/R);f=f*f*(3-2*f);
+      var ux=d?dx/d:0,uy=d?dy/d:0;
+      t.x=ux*MOVE*f;t.y=uy*MOVE*f;t.ry=ux*TILT*f;t.rx=-uy*TILT*f;
+    });
+  }
+  function frame(){
+    var moving=false;
+    els.forEach(function(e){
+      var c=e._c,t=e._t;
+      c.x+=(t.x-c.x)*.12;c.y+=(t.y-c.y)*.12;c.rx+=(t.rx-c.rx)*.12;c.ry+=(t.ry-c.ry)*.12;
+      if(Math.abs(t.x-c.x)+Math.abs(t.y-c.y)+Math.abs(t.rx-c.rx)+Math.abs(t.ry-c.ry)>.01)moving=true;
+      e.style.transform='perspective(900px) translate3d('+c.x.toFixed(2)+'px,'+c.y.toFixed(2)+'px,0) rotateX('+c.rx.toFixed(2)+'deg) rotateY('+c.ry.toFixed(2)+'deg)';
+    });
+    raf=moving?requestAnimationFrame(frame):0;
+  }
+  function kick(){targets();if(!raf)raf=requestAnimationFrame(frame)}
+  function on(){return fine.matches&&!still.matches}
+  document.addEventListener('pointermove',function(ev){if(ev.pointerType!=='mouse'||!on())return;mx=ev.clientX;my=ev.clientY;kick()},{passive:true});
+  document.addEventListener('pointerleave',function(){mx=my=null;kick()});
+  window.addEventListener('blur',function(){mx=my=null;kick()});
+  window.addEventListener('scroll',function(){if(mx!==null)kick()},{passive:true});
+})();
+
 /* viewer: steps through the prints the current filter shows, in wall order */
 var dlg=document.getElementById('viewer'),pic=document.getElementById('pic'),count=document.getElementById('count'),list=[],cur=0,opener=null;
 if(!dlg.showModal)return;
 function visible(){return tiles.filter(function(t){return pos.has(t)}).sort(function(a,b){var p=pos.get(a),q=pos.get(b);return p.y-q.y||p.x-q.x})}
-function show(i){cur=(i+list.length)%list.length;var f=list[cur].querySelector('figure').cloneNode(true);f.style.transform='none';f.querySelector('img').removeAttribute('loading');pic.replaceChildren(f);count.textContent=(cur+1)+' / '+list.length}
+function show(i){cur=(i+list.length)%list.length;var f=list[cur].querySelector('figure').cloneNode(true);f.style.transform='none';f.classList.remove('pull');f.querySelector('img').removeAttribute('loading');pic.replaceChildren(f);count.textContent=(cur+1)+' / '+list.length}
 tiles.forEach(function(t){t.firstElementChild.addEventListener('click',function(){opener=t.firstElementChild;list=visible();show(list.indexOf(t));dlg.showModal()})});
 dlg.addEventListener('click',function(e){var t=e.target.closest('[data-step],[data-close]');if(t){if(t.hasAttribute('data-close'))dlg.close();else show(cur+Number(t.dataset.step))}else if(e.target===pic||e.target===dlg)dlg.close()});
 dlg.addEventListener('keydown',function(e){if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});
