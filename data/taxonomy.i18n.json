@@ -310,6 +310,226 @@
       "en": "Content note",
       "es": "Advertencia",
       "pt": "Aviso"
+    },
+    "chColour": {
+      "en": "Colour",
+      "es": "Color",
+      "pt": "Cor"
+    },
+    "chModes": {
+      "en": "Colour mode",
+      "es": "Modo de color",
+      "pt": "Modo de cor"
+    },
+    "chAll": {
+      "en": "All",
+      "es": "Todo",
+      "pt": "Tudo"
+    },
+    "chAtm": {
+      "en": "Atmosphere",
+      "es": "Atmósfera",
+      "pt": "Atmosfera"
+    },
+    "chAcc": {
+      "en": "Focal accent",
+      "es": "Acento focal",
+      "pt": "Acento focal"
+    },
+    "chAccents": {
+      "en": "Focal accents",
+      "es": "Acentos focales",
+      "pt": "Acentos focais"
+    },
+    "chPick": {
+      "en": "Pick up to 3 colours",
+      "es": "Elige hasta 3 colores",
+      "pt": "Escolha até 3 cores"
+    },
+    "chMax": {
+      "en": "Up to 3 colours: the oldest was replaced",
+      "es": "Hasta 3 colores: se reemplazó el más antiguo",
+      "pt": "Até 3 cores: a mais antiga foi substituída"
+    },
+    "chJourney": {
+      "en": "Colour journey",
+      "es": "Recorrido cromático",
+      "pt": "Percurso cromático"
+    },
+    "chProfile": {
+      "en": "Chromatic profile · 128 colours",
+      "es": "Perfil cromático · 128 colores",
+      "pt": "Perfil cromático · 128 cores"
+    },
+    "chLoupe": {
+      "en": "Move across the bar to read each colour",
+      "es": "Recorre la barra para leer cada color",
+      "pt": "Percorra a barra para ler cada cor"
+    },
+    "chSort": {
+      "en": "Sort archive by chromatic similarity",
+      "es": "Ordenar el archivo por similitud cromática",
+      "pt": "Ordenar o arquivo por semelhança cromática"
+    },
+    "chSetA": {
+      "en": "Set as progression origin [A]",
+      "es": "Fijar como origen [A]",
+      "pt": "Definir como origem [A]"
+    },
+    "chSetB": {
+      "en": "Set as destination [B]",
+      "es": "Fijar como destino [B]",
+      "pt": "Definir como destino [B]"
+    },
+    "chSortedBy": {
+      "en": "Sorted by colour from",
+      "es": "Ordenado por color desde",
+      "pt": "Ordenado por cor a partir de"
+    },
+    "chRef": {
+      "en": "Reference",
+      "es": "Referencia",
+      "pt": "Referência"
+    },
+    "chOrigin": {
+      "en": "Origin",
+      "es": "Origen",
+      "pt": "Origem"
+    },
+    "chDest": {
+      "en": "Destination",
+      "es": "Destino",
+      "pt": "Destino"
+    },
+    "chSteps": {
+      "en": "Cases",
+      "es": "Casos",
+      "pt": "Casos"
+    },
+    "chPath": {
+      "en": "Path",
+      "es": "Trayecto",
+      "pt": "Trajeto"
+    },
+    "chDirect": {
+      "en": "Direct interpolation",
+      "es": "Interpolación directa",
+      "pt": "Interpolação direta"
+    },
+    "chChain": {
+      "en": "Curatorial chain",
+      "es": "Cadena curatorial",
+      "pt": "Cadeia curatorial"
+    },
+    "chPolar": {
+      "en": "Pick polar opposite",
+      "es": "Elegir el opuesto polar",
+      "pt": "Escolher o oposto polar"
+    },
+    "chSwap": {
+      "en": "Swap A and B",
+      "es": "Invertir A y B",
+      "pt": "Inverter A e B"
+    },
+    "chExit": {
+      "en": "Exit",
+      "es": "Salir",
+      "pt": "Sair"
+    },
+    "chPickA": {
+      "en": "Pick the origin [A]: click a print, or a colour in the strip.",
+      "es": "Elige el origen [A]: haz clic en una copia o en un color de la franja.",
+      "pt": "Escolha a origem [A]: clique numa cópia ou numa cor da faixa."
+    },
+    "chPickB": {
+      "en": "Pick the destination [B]: click a print, or a colour in the strip.",
+      "es": "Elige el destino [B]: haz clic en una copia o en un color de la franja.",
+      "pt": "Escolha o destino [B]: clique numa cópia ou numa cor da faixa."
+    },
+    "chEmpty": {
+      "en": "Empty",
+      "es": "Vacío",
+      "pt": "Vazio"
+    },
+    "chTracing": {
+      "en": "Tracing the path",
+      "es": "Trazando el recorrido",
+      "pt": "Traçando o percurso"
+    },
+    "chCase": {
+      "en": "Case",
+      "es": "Caso",
+      "pt": "Caso"
+    },
+    "chRibbon": {
+      "en": "Morph · 128-colour transport from case to case",
+      "es": "Transformación · transporte de 128 colores de caso en caso",
+      "pt": "Transformação · transporte de 128 cores de caso a caso"
+    },
+    "chCapped": {
+      "en": "Only {n} photographs fit this journey.",
+      "es": "Solo {n} fotografías caben en este recorrido.",
+      "pt": "Só {n} fotografias cabem neste percurso."
+    },
+    "chTotal": {
+      "en": "total",
+      "es": "total",
+      "pt": "total"
+    },
+    "chFilterSw": {
+      "en": "Show photographs with ",
+      "es": "Ver fotografías con ",
+      "pt": "Ver fotografias com "
+    },
+    "chInAtm": {
+      "en": " in the atmosphere",
+      "es": " en la atmósfera",
+      "pt": " na atmosfera"
+    },
+    "chInAcc": {
+      "en": " as a focal accent",
+      "es": " como acento focal",
+      "pt": " como acento focal"
+    },
+    "chInAny": {
+      "en": "",
+      "es": " ",
+      "pt": ""
+    },
+    "chDist": {
+      "en": "Chromatic distance",
+      "es": "Distancia cromática",
+      "pt": "Distância cromática"
+    },
+    "chWeight": {
+      "en": "of the frame",
+      "es": "del cuadro",
+      "pt": "do quadro"
+    },
+    "chJourneyOf": {
+      "en": "Colour journey",
+      "es": "Recorrido cromático",
+      "pt": "Percurso cromático"
+    },
+    "chSlotA": {
+      "en": "Origin [A]",
+      "es": "Origen [A]",
+      "pt": "Origem [A]"
+    },
+    "chSlotB": {
+      "en": "Destination [B]",
+      "es": "Destino [B]",
+      "pt": "Destino [B]"
+    },
+    "chChoose": {
+      "en": "Choose",
+      "es": "Elegir",
+      "pt": "Escolher"
+    },
+    "chSwatchCase": {
+      "en": "Colour",
+      "es": "Color",
+      "pt": "Cor"
     }
   },
   "filters": {

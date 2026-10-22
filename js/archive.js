@@ -16,6 +16,10 @@
   var EASE = 'cubic-bezier(0.22, 1, 0.36, 1)', DUR = 620;
 
   var D, TX, tiles = [], byCode = {}, facets = new Map(), labels = {}, filters = [], openTile = null, ro = null;
+  /* one optional extension (js/chroma.js) can add matching, ordering, drawer sections, crumbs and URL state */
+  var ext = null, extQueue = [];
+  window.AR = { register: function (e) { ext = e; } };
+  function X(name) { return ext && typeof ext[name] === 'function' ? ext[name].apply(ext, [].slice.call(arguments, 1)) : undefined; }
 
   /* ---------- i18n ---------- */
   function lang() { return ['en', 'es', 'pt'].indexOf(root.lang) > -1 ? root.lang : 'en'; }
@@ -97,8 +101,10 @@
     return f;
   }
   function matches(p) {
+    var forced = X('force', p);   // a progression shows exactly its cases, whatever the filters
+    if (forced !== undefined) return forced;
     var f = facets.get(p);
-    return filters.every(function (x) { return (f[x[0]] || []).indexOf(x[1]) > -1; });
+    return filters.every(function (x) { return (f[x[0]] || []).indexOf(x[1]) > -1; }) && X('match', p) !== false;
   }
 
   /* ---------- tiles ---------- */
@@ -123,10 +129,11 @@
       'sizes="(min-width:1100px) 25vw, (min-width:720px) 33vw, (min-width:400px) 50vw, 100vw" width="' + p.thumb.w + '" height="' + p.thumb.h + '" alt="" loading="' + (i < 8 ? 'eager' : 'lazy') + '" decoding="async"></button>' +
       '<button class="ar-i" type="button" aria-expanded="false" aria-controls="ar-d-' + p.code + '"><span aria-hidden="true">i</span></button>' +
       '</div></div>' +
+      '<p class="ar-case ae-cap" hidden></p>' +
       '<div class="ar-drawer" id="ar-d-' + p.code + '" role="region" tabindex="-1" hidden></div>';
     t._p = p;
     t.querySelector('.ar-i').addEventListener('click', function () { toggle(t); });
-    t.querySelector('.ar-open').addEventListener('click', function () { openViewer(t); });
+    t.querySelector('.ar-open').addEventListener('click', function () { if (X('tileClick', t) === true) return; openViewer(t); });
     t.querySelector('.ar-drawer').addEventListener('click', onDrawerClick);
     return t;
   }
@@ -162,6 +169,8 @@
     if (p.city) line.push(tag('city', slug(p.city), tv(p.city), 'ar-link'));
     if (line.length) h += '<p class="ar-line">' + line.join('<span aria-hidden="true"> · </span>') + '</p>';
     var cap = tr(p.caption); if (cap) h += '<div class="ar-cap">' + md(cap) + '</div>';
+    var extra = X('drawer', p);   // the colour profile sits right under the caption, before the record fields
+    if (extra) h += extra;
 
     // relational fields
     var f = '';
@@ -196,7 +205,7 @@
     if (p.warnings) f += field(ui('content'), '<span class="ar-plain">' + esc(p.warnings.map(tv).join(', ')) + '</span>');
     h += '<div class="ar-fields">' + f + '</div>';
 
-    if (p.palette && p.palette.length) {
+    if (!extra && p.palette && p.palette.length) {
       h += '<div class="ar-f ar-f--wide"><p class="label">' + esc(ui('palette')) + '</p><div class="ar-pal" role="img" aria-label="' + esc(ui('palette')) + '">' +
         p.palette.map(function (c) { return '<span style="background:' + esc(c[0]) + ';flex-grow:' + (c[1] == null ? 1 : Math.max(c[1], 0.5)) + '" title="' + esc(c[0]) + '"></span>'; }).join('') + '</div></div>';
     }
@@ -205,6 +214,7 @@
     return h;
   }
   function onDrawerClick(ev) {
+    if (X('drawerClick', ev, ev.currentTarget.parentNode) === true) return;
     var b = ev.target.closest('[data-k]');
     if (!b) return;
     setFilters([[b.dataset.k, b.dataset.v]], true);
@@ -213,14 +223,19 @@
   /* ---------- layout: order, open state, height lock ---------- */
   function cols() { return getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length || 1; }
   function visibleTiles() { return tiles.filter(function (t) { return !t.hidden; }); }
+  function seqMode() { return X('mode') === 'seq'; }
   function applyOrder() {
-    var n = cols(), vis = visibleTiles();
+    var vis = visibleTiles(), custom = X('order');   // custom: tiles in the order an extension wants (sort / sequence)
+    if (custom) { var rank = new Map(custom.map(function (t, i) { return [t, i]; })); vis.sort(function (a, b) { return (rank.has(a) ? rank.get(a) : 1e6) - (rank.has(b) ? rank.get(b) : 1e6); }); }
+    if (seqMode()) { grid.dataset.cols = 'seq'; vis.forEach(function (t, i) { t.style.order = String(i * 2 + 2); }); X('afterOrder'); return; }
+    var n = cols();
     grid.dataset.cols = n;
     vis.forEach(function (t, i) { t.style.order = String(i * 2); });
     if (openTile && !openTile.hidden) {
       var i = vis.indexOf(openTile), rowStart = Math.floor(i / n) * n;
       openTile.style.order = String(rowStart * 2 - 1);   // lands in column 1 of its own row
     }
+    X('afterOrder');
   }
   function lockHeight() {
     if (!openTile) return;
@@ -263,7 +278,7 @@
   }
   function unfold(t) {
     if (!motion()) return;
-    var d = t.querySelector('.ar-drawer'), stacked = cols() <= 2;
+    var d = t.querySelector('.ar-drawer'), stacked = !seqMode() && cols() <= 2;
     d.style.transformOrigin = stacked ? '50% 0' : '0 50%';
     d.animate([
       { opacity: 0, transform: stacked ? 'perspective(1200px) rotateX(-10deg) translateY(-12px)' : 'perspective(1200px) rotateY(-14deg) translateX(-18px)', clipPath: stacked ? 'inset(0 0 100% 0)' : 'inset(0 100% 0 0)' },
@@ -297,7 +312,7 @@
       labelTile(t);
     }
     applyOrder(); lockHeight(); watch(t);
-    pullReset();
+    pullReset(); X('afterLayout');
   }
   var seq = 0;   // newest action wins: a close that is still folding never undoes a later open
   function toggle(t) {
@@ -311,7 +326,8 @@
     }
     setOpen(t); play(first, t); unfold(t);
     var r = t.getBoundingClientRect();
-    if (r.top < 0 || r.bottom > innerHeight) t.scrollIntoView({ block: r.height > innerHeight ? 'start' : 'nearest', behavior: motion() ? 'smooth' : 'auto' });
+    if (seqMode()) t.scrollIntoView({ block: 'nearest', inline: 'start', behavior: motion() ? 'smooth' : 'auto' });   // slide the track to the opened case
+    else if (r.top < 0 || r.bottom > innerHeight) t.scrollIntoView({ block: r.height > innerHeight ? 'start' : 'nearest', behavior: motion() ? 'smooth' : 'auto' });
   }
 
   /* ---------- filters ---------- */
@@ -324,32 +340,41 @@
     var q = new URLSearchParams(location.search);
     Object.keys(TX.filters).forEach(function (k) { q.delete(k); });
     filters.forEach(function (f) { q.append(f[0], f[1]); });
+    X('writeParams', q);
     var s = q.toString(), url = location.pathname + (s ? '?' + s : '') + location.hash;
     if (url !== location.pathname + location.search + location.hash) history[push ? 'pushState' : 'replaceState']({ ar: 1 }, '', url);
   }
-  function setFilters(next, push) {
-    var same = JSON.stringify(next) === JSON.stringify(filters);
-    if (same && !openTile) return;
-    var leaving = tiles.filter(function (t) { return !t.hidden && !matchesAfter(t._p, next); });
+  /* every state change (filters, colour filter, sort, progression) goes through update():
+     fold the open drawer, fade out leaving prints, then apply, re-order and FLIP from the old positions */
+  var fseq = 0;
+  function update(change, push) {
     var closing = openTile, gen = ++fseq; seq++;
+    var before = visibleTiles();
+    change();
+    var leaving = before.filter(function (t) { return !matches(t._p); });
     var pre = [fold(closing)];
     if (motion()) leaving.forEach(function (t) { pre.push(t.querySelector('.ar-ph').animate([{ opacity: 1 }, { opacity: 0, transform: 'perspective(1200px) translateZ(-80px)' }], { duration: 200, easing: 'cubic-bezier(.4,0,1,1)', fill: 'forwards' }).finished.catch(function () {})); });
-    Promise.all(pre).then(function () {
-      if (gen !== fseq) return;   // a newer filter change superseded this one
+    return Promise.all(pre).then(function () {
+      if (gen !== fseq) return;   // a newer change superseded this one
       var first = rects();
+      X('firstRects', first);
       leaving.forEach(function (t) { first.delete(t); t.querySelector('.ar-ph').getAnimations().forEach(function (a) { a.cancel(); }); });
-      filters = next;
       if (closing && openTile === closing) setOpen(null);
+      X('applyLayout');
       tiles.forEach(function (t) { t.hidden = !matches(t._p); });
       applyOrder();
       renderBar(); writeURL(push);
       play(first);
+      X('afterLayout', true);
       var head = document.getElementById('ar-top');
-      if (push && head && head.getBoundingClientRect().top < 0) head.scrollIntoView({ behavior: motion() ? 'smooth' : 'auto' });
+      if (push && head && head.getBoundingClientRect().top < 0 && X('keepScroll') !== true) head.scrollIntoView({ behavior: motion() ? 'smooth' : 'auto' });
     });
   }
-  var fseq = 0;
-  function matchesAfter(p, next) { var keep = filters; filters = next; var m = matches(p); filters = keep; return m; }
+  function setFilters(next, push) {
+    if (JSON.stringify(next) === JSON.stringify(filters) && !openTile) return;
+    X('onFilters');
+    return update(function () { filters = next; }, push);
+  }
 
   function context(k, v) {
     var h = '';
@@ -402,15 +427,16 @@
     });
     var empty = document.getElementById('ar-empty');
     empty.hidden = n > 0; empty.textContent = ui('none');
-    if (!filters.length) { bar.hidden = true; bar.innerHTML = ''; return; }
-    var h = '<div class="ar-crumbs"><p class="label">' + esc(ui('filterBy')) + '</p>';
+    var extra = X('crumbs') || '';
+    if (!filters.length && !extra) { bar.hidden = true; bar.innerHTML = ''; X('afterBar'); return; }
+    var h = '<div class="ar-crumbs"><p class="label">' + esc(ui('filterBy')) + '</p>' + extra;
     h += filters.map(function (f) {
       var lab = labels[f[0]] && labels[f[0]][f[1]] ? labels[f[0]][f[1]]() : f[1];
       return '<button type="button" class="ar-crumb" data-rm="' + esc(f[0]) + '" data-rv="' + esc(f[1]) + '" aria-label="' + esc(ui('remove') + fl(f[0]) + ' ' + lab) + '"><span class="ar-crumb-k">' + esc(fl(f[0])) + '</span> ' + esc(lab) + ' <span aria-hidden="true">✕</span></button>';
     }).join('');
     h += '<button type="button" class="ae-btn ae-btn--sm ar-clear" data-clear>' + esc(ui('clear')) + ' ✕</button></div>';
-    if (filters.length === 1) { var c = context(filters[0][0], filters[0][1]); if (c) h += '<div class="ar-ctx">' + c + '</div>'; }
-    bar.innerHTML = h; bar.hidden = false;
+    if (filters.length === 1 && !extra) { var c = context(filters[0][0], filters[0][1]); if (c) h += '<div class="ar-ctx">' + c + '</div>'; }
+    bar.innerHTML = h; bar.hidden = false; X('afterBar');
   }
 
   /* ---------- viewer (full-size print, steps through the visible wall) ---------- */
@@ -467,12 +493,14 @@
 
   /* ---------- events ---------- */
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && openTile && !(dlg && dlg.open)) { e.preventDefault(); toggle(openTile); }
+    if (e.key === 'Escape' && openTile && !(dlg && dlg.open)) { e.preventDefault(); toggle(openTile); return; }
+    if (e.key === 'Escape' && !(dlg && dlg.open)) X('escape', e);
   });
   document.getElementById('ar-active').addEventListener('click', function (e) {
+    if (X('barClick', e) === true) return;
     var m = e.target.closest('.ar-more');
     if (m) { var b = m.parentNode, full = b.querySelector('.ar-bio-full'), open = full.hidden; full.hidden = !open; b.querySelector('.ar-bio-short').hidden = open; m.setAttribute('aria-expanded', String(open)); m.textContent = ui(open ? 'less' : 'more'); return; }
-    if (e.target.closest('[data-clear]')) { setFilters([], true); return; }
+    if (e.target.closest('[data-clear]')) { X('clear'); update(function () { filters = []; }, true); return; }
     var r = e.target.closest('[data-rm]');
     if (r) { setFilters(filters.filter(function (f) { return !(f[0] === r.dataset.rm && f[1] === r.dataset.rv); }), true); return; }
     var t = e.target.closest('[data-k]');
@@ -481,19 +509,29 @@
   document.querySelectorAll('#ar-quick button').forEach(function (b) {
     b.addEventListener('click', function () { setFilters(b.dataset.k ? [[b.dataset.k, b.dataset.v]] : [], true); });
   });
-  window.addEventListener('popstate', function () { if (D) setFilters(readURL(), false); });
+  window.addEventListener('popstate', function () { if (D) update(function () { filters = readURL(); X('readParams'); }, false); });
   var lastCols = 0;
-  if (window.ResizeObserver) new ResizeObserver(function () { var n = cols(); if (n !== lastCols) { lastCols = n; applyOrder(); } lockHeight(); }).observe(grid);
+  if (window.ResizeObserver) new ResizeObserver(function () { var n = cols(); if (n !== lastCols) { lastCols = n; applyOrder(); } lockHeight(); X('afterLayout'); }).observe(grid);
   document.addEventListener('ae:lang', function () {
     if (!D) return;
     tiles.forEach(labelTile);
     if (openTile) { var d = openTile.querySelector('.ar-drawer'), st = d.scrollTop; d.innerHTML = drawerHTML(openTile._p); d.scrollTop = st; }
-    renderBar();
+    X('onLang'); renderBar();
   });
+
+  /* ---------- API for the extension ---------- */
+  var api = {
+    data: function () { return D; }, tx: function () { return TX; }, ui: ui, tv: tv, esc: esc, lang: lang, slug: slug,
+    tiles: function () { return tiles; }, byCode: function (c) { return byCode[c]; }, visibleTiles: visibleTiles,
+    filters: function () { return filters; }, matchesFilters: function (p) { var f = facets.get(p); return filters.every(function (x) { return (f[x[0]] || []).indexOf(x[1]) > -1; }); },
+    update: update, setFilters: setFilters, setOnlyFilters: function (fs) { filters = fs; },
+    openTile: function () { return openTile; }, alt: alt, motion: motion, EASE: EASE, grid: grid, renderBar: renderBar
+  };
 
   /* ---------- boot ---------- */
   var status = document.getElementById('ar-status');
   Promise.all(['data/archive.json', 'data/taxonomy.i18n.json'].map(function (u) { return fetch(u).then(function (r) { if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); }); }))
+    .then(function (r) { return Promise.resolve(X('load')).then(function () { return r; }); })
     .then(function (r) {
       D = r[0]; TX = r[1];
       var frag = document.createDocumentFragment();
@@ -501,8 +539,9 @@
       grid.replaceChildren(frag);
       tiles.forEach(labelTile);
       filters = readURL();
+      X('init', api); X('readParams'); X('applyLayout');
       tiles.forEach(function (t) { t.hidden = !matches(t._p); });
-      applyOrder(); renderBar();
+      applyOrder(); renderBar(); writeURL(false); X('afterLayout');
       grid.removeAttribute('aria-busy'); if (status) status.remove();
     })
     .catch(function (err) {
