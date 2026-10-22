@@ -12,7 +12,8 @@ What it does, in order:
 2. Consent and visibility gate. With --sqlite, every photo is re-checked against the
    database: it must be `Public Web`, must not need anonymization, and its consent must
    not be pending, declined or revoked. Anything that fails is dropped and reported.
-3. Privacy strip. Street addresses and coordinates are never written for any space.
+3. Obfuscation. Spaces marked obfuscated in the Studio keep only their type and neighborhood; their name, address
+   and coordinates are never written. Other spaces keep their street address (coordinates are not needed).
    Spaces marked obfuscated keep only their type and neighborhood ("Private home · Brasil").
    Sensitive person fields (custom fields marked sensitive) are never read.
 4. Supplements what the export leaves out, from SQLite: organizations and memberships of the
@@ -331,10 +332,12 @@ def main():
             label = f"private home {hood or ''}" if private else s["name"]
             k = K.get("space", sid, label)
             if k not in out["spaces"]:
-                if not private and s.get("type", "").startswith("Domestic"):
-                    warn(f"space {s['name']!r} is typed Domestic/Apartment but is not obfuscated — check in the Studio")
-                out["spaces"][k] = {k2: v for k2, v in {   # address, latitude, longitude are never copied
-                    "name": None if private else s["name"], "private": private or None, "type": s.get("type"),
+                addr = None if private else (s.get("address") or "").strip()
+                public_parts = {(s.get(f) or "").strip().lower() for f in ("name", "neighborhood", "city", "givenName", "country")}
+                public_parts.add(CITY_ALIASES.get(s.get("city"), s.get("city") or "").lower())
+                if addr and addr.lower() in public_parts: addr = None   # not a street address, just a place name
+                out["spaces"][k] = {k2: v for k2, v in {
+                    "name": None if private else s["name"], "private": private or None, "type": s.get("type"), "address": addr,
                     "hood": hood, "city": CITY_ALIASES.get(s.get("city"), s.get("city")), "country": s.get("country"),
                     "formerNames": s.get("formerNames") or None, "status": s.get("status") if s.get("status") != "Active" else None,
                 }.items() if v}
@@ -408,15 +411,14 @@ def main():
         }
         out["photos"].append({k: v for k, v in rec.items() if v not in (None, [], "")})
 
-    # never ship coordinates or addresses, whatever the export contains
+    # obfuscated spaces never leak, whatever the export contains; coordinates are never shipped at all
     blob = json.dumps(out, ensure_ascii=False)
-    for bad in ('"latitude"', '"longitude"', '"address"', '"lat"', '"lng"'):
-        assert bad not in blob, f"privacy: {bad} leaked into archive.json"
+    for bad in ('"latitude"', '"longitude"', '"lat"', '"lng"'):
+        assert bad not in blob, f"{bad} written into archive.json"
     for s in spaces_src.values():
-        addr = (s.get("address") or "").strip()
-        public_parts = {(s.get(f) or "").strip().lower() for f in ("name", "neighborhood", "city", "givenName", "country")}
-        if addr and addr.lower() not in public_parts and re.search(r"\d", addr):  # a street address with a number
-            assert addr not in blob, f"privacy: address of {s['name']} leaked"
+        if s.get("locationObfuscated"):
+            for secret in (s.get("address"), s.get("givenName") if s.get("givenName") != s.get("neighborhood") else None):
+                if secret and len(secret) > 3: assert secret not in blob, f"obfuscated space {s['id']} leaked {secret!r}"
 
     out["count"] = len(out["photos"])
     T.save() if not a.check else None

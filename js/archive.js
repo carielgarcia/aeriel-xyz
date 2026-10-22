@@ -385,7 +385,7 @@
       h += '<p class="ae-cap">' + esc([tv(s.type), s.editions ? s.editions + ' ' + ui(s.editions === 1 ? 'edition' : 'editions') : ''].filter(Boolean).join(' · ')) + '</p>';
     } else if (k === 'space' && D.spaces[v]) {
       var sp = D.spaces[v];
-      h += '<p class="ae-cap">' + esc([tv(sp.type), sp.hood, sp.city, tv(sp.country)].filter(Boolean).join(' · ')) + '</p>';
+      h += '<p class="ae-cap">' + esc([tv(sp.type), sp.address, sp.hood, sp.city, tv(sp.country)].filter(Boolean).join(' · ')) + '</p>';
     }
     return h;
   }
