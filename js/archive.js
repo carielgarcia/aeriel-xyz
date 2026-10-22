@@ -360,7 +360,7 @@
       if (pp.free) hs.push('<span class="ar-plain">' + esc(ui('free')) + '</span>');
       if (hs.length) h += '<div class="ar-vals">' + hs.join('') + '</div>';
       var ig = pp.links && pp.links.instagram && pp.links.instagram[0];
-      if (ig) h += '<p><a class="clink ar-ext" href="' + esc(ig) + '" target="_blank" rel="noopener">Instagram @' + esc(ig.replace(/\/+$/, '').split('/').pop()) + ' ↗</a></p>';
+      if (ig && /^https:\/\//i.test(ig)) h += '<p><a class="clink ar-ext" href="' + esc(ig) + '" target="_blank" rel="noopener">Instagram @' + esc(ig.replace(/\/+$/, '').split('/').pop()) + ' ↗</a></p>';
       var bio = tr(pp.bio);
       if (bio) h += bioBlock(bio);
     } else if ((k === 'house' || k === 'org') && D.orgs[v]) {
