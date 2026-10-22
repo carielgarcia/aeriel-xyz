@@ -172,14 +172,81 @@ nav .home{font:900 22px/1 var(--font-sans);letter-spacing:-.02em;color:var(--ink
 .filters{gap:var(--space-2)}
 .filters button{border:2px solid var(--ink);padding:10px 14px}
 
-/* collage: one mixed wall. Without script it is a column wall; with script, prints are placed and moved in 3D. */
-.collage{columns:4 260px;column-gap:var(--space-3)}
-.collage .tile{break-inside:avoid;margin-bottom:var(--space-3)}
-.collage.js{columns:auto;position:relative;perspective:1800px;perspective-origin:50% 30%;transition:height 600ms cubic-bezier(.2,.7,.2,1)}
-.collage.js .tile{position:absolute;top:0;left:0;margin:0;will-change:transform;backface-visibility:hidden}
-.collage.js .tile[hidden]{display:none}
-.open{all:unset;display:block;cursor:zoom-in}
-.open:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+/* archive wall: CSS Grid of Polaroid scans (the scan keeps its own frame); the serif i opens a record drawer */
+.ar-grid{--cols:4;--g:var(--space-3);display:grid;grid-template-columns:repeat(var(--cols),minmax(0,1fr));gap:var(--g);align-items:start;min-height:240px}
+@media (max-width:1099px){.ar-grid{--cols:3}}
+@media (max-width:719px){.ar-grid{--cols:2;--g:var(--space-2)}}
+@media (max-width:399px){.ar-grid{--cols:1}}
+.ar-tile{position:relative;min-width:0}
+.ar-tile[hidden]{display:none}
+.ar-ph{position:relative;transform-origin:0 0;will-change:transform}
+.ar-pull{position:relative;transform-origin:50% 50%}
+.ar-open{all:unset;display:block;cursor:zoom-in;width:100%}
+.ar-open:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.ar-img{display:block;width:100%;height:auto;aspect-ratio:var(--ar);border-radius:var(--radius-sm);box-shadow:var(--shadow-print);background:var(--border,var(--polaroid))}
+/* the i sits on the Polaroid's bottom margin, lower right: a round sticker, fixed ink so it reads on white and gold frames in both themes */
+.ar-i{all:unset;box-sizing:border-box;position:absolute;right:5%;bottom:3.6%;width:30px;height:30px;border-radius:var(--radius-pill);display:grid;place-items:center;cursor:pointer;background:#1a1a1a;color:#ffffff;font:italic 400 19px/1 Georgia,"Times New Roman",Times,serif;transition:background-color 120ms linear,color 120ms linear}
+.ar-i span{transform:translateY(-1px)}
+.ar-i:hover{background:var(--acid);color:var(--on-acid)}
+.ar-i[aria-expanded="true"]{background:var(--pink);color:var(--on-pink)}
+.ar-i:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+@media (max-width:719px){.ar-i{width:26px;height:26px;font-size:16px}}
+/* open: the tile spans the row; print in column 1, drawer across the rest, locked to the print's height */
+.ar-tile.is-open{grid-column:1/-1;display:grid;grid-template-columns:calc((100% - (var(--cols) - 1) * var(--g)) / var(--cols)) minmax(0,1fr);column-gap:var(--g);align-items:start;z-index:2}
+.ar-drawer{height:var(--ph,auto);max-height:var(--ph,none);overflow-y:auto;overscroll-behavior:contain;background:var(--surface-200);color:var(--ink);padding:var(--space-6);display:flex;flex-direction:column;gap:var(--space-4);scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.ar-drawer[hidden]{display:none}
+.ar-drawer:focus{outline:none}
+.ar-drawer::-webkit-scrollbar{width:6px}
+.ar-drawer::-webkit-scrollbar-track{background:transparent}
+.ar-drawer::-webkit-scrollbar-thumb{background:var(--line);border-radius:0}
+.ar-grid[data-cols="1"] .ar-tile.is-open,.ar-grid[data-cols="2"] .ar-tile.is-open{grid-template-columns:minmax(0,1fr);row-gap:var(--g)}
+.ar-grid[data-cols="1"] .ar-drawer,.ar-grid[data-cols="2"] .ar-drawer{padding:var(--space-4)}
+.ar-code{color:var(--gold-text)}
+.ar-who{display:flex;flex-wrap:wrap;gap:var(--space-2) var(--space-6);align-items:baseline}
+.ar-person{display:inline-flex;flex-wrap:wrap;align-items:baseline;gap:var(--space-2)}
+.ar-name,.ar-link{all:unset;cursor:pointer;color:var(--ink);border-bottom:2px solid transparent;transition:border-color 120ms linear}
+.ar-name{font:800 clamp(20px,2.2vw,26px)/1.1 var(--font-sans);letter-spacing:-.01em}
+.ar-link{font:400 12px/16px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted)}
+.ar-name:hover,.ar-link:hover{border-color:var(--pink)}
+.ar-name:focus-visible,.ar-link:focus-visible,.ar-tag:focus-visible,.ar-crumb:focus-visible,.ar-more:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.ar-line{margin:0;display:flex;flex-wrap:wrap;gap:0 var(--space-1);font:400 12px/16px var(--font-mono);color:var(--ink-muted)}
+.ar-cap p:not(.label),.ar-note p:not(.label),.ar-bio p:not(.label){margin:0 0 var(--space-2);font:400 16px/24px var(--font-sans);max-width:62ch}
+.ar-fields{display:grid;grid-template-columns:repeat(auto-fill,minmax(176px,1fr));gap:var(--space-4) var(--space-6);padding-top:var(--space-4);border-top:1px solid var(--line-subtle)}
+.ar-f{display:flex;flex-direction:column;gap:var(--space-2);min-width:0}
+.ar-f .label,.ar-note .label{color:var(--gold-text)}
+.ar-f--wide{grid-column:1/-1}
+.ar-vals{display:flex;flex-wrap:wrap;gap:var(--space-2);align-items:center}
+.ar-pair{display:inline-flex;flex-direction:column;gap:var(--space-1);align-items:flex-start}
+.ar-sub,.ar-plain{font:400 11px/14px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted)}
+.ar-tag{all:unset;box-sizing:border-box;cursor:pointer;display:inline-block;font:500 11px/14px var(--font-mono);letter-spacing:.12em;text-transform:uppercase;padding:var(--space-1) var(--space-2);border:1px solid var(--line);color:var(--ink);border-radius:var(--radius-none);transition:background-color 120ms linear,border-color 120ms linear,color 120ms linear;max-width:100%;overflow-wrap:anywhere}
+.ar-tag:hover{background:var(--acid);border-color:var(--acid);color:var(--on-acid)}
+.ar-tag--quiet{border-color:var(--line-subtle);color:var(--ink-muted)}
+.ar-pal{display:flex;height:var(--space-4);width:100%}
+.ar-pal span{flex-basis:0;min-width:1px}
+.ar-rights{margin-top:auto;padding-top:var(--space-2)}
+.ar-mdh{color:var(--gold-text);margin:var(--space-4) 0 var(--space-2)}
+.ar-bio ul,.ar-cap ul{margin:0 0 var(--space-2);padding-left:var(--space-6)}
+.ar-bio li{font:400 16px/24px var(--font-sans);margin-bottom:var(--space-1);max-width:62ch}
+/* active filter bar */
+.ar-active{display:flex;flex-direction:column;gap:var(--space-4);margin:calc(var(--space-6) * -1) 0 var(--space-8);padding-bottom:var(--space-6);border-bottom:1px solid var(--line-subtle)}
+.ar-active[hidden]{display:none}
+.ar-crumbs{display:flex;flex-wrap:wrap;gap:var(--space-3);align-items:center}
+.ar-crumbs .label{color:var(--gold-text)}
+.ar-crumb{all:unset;cursor:pointer;font:800 14px/1 var(--font-sans);letter-spacing:.02em;padding:10px 14px;background:var(--pink);color:var(--on-pink);transition:background-color 120ms linear}
+.ar-crumb:hover{background:var(--acid);color:var(--on-acid)}
+.ar-crumb-k{font:500 11px/1 var(--font-mono);letter-spacing:.12em;text-transform:uppercase}
+.ar-clear{margin-left:auto}
+.ar-ctx{display:flex;flex-direction:column;gap:var(--space-3);max-width:72ch}
+.ar-ctx .ae-cap{margin:0}
+.ar-ctx p{margin:0}
+.ar-more{all:unset;cursor:pointer;font:800 12px/1 var(--font-sans);letter-spacing:.06em;text-transform:uppercase;border-bottom:2px solid var(--ink);padding-bottom:2px;color:var(--ink)}
+.ar-more:hover{border-color:var(--pink)}
+.ar-ext{font-size:16px}
+.ar-empty{font:800 clamp(20px,2.4vw,28px)/1.1 var(--font-sans);margin:var(--space-8) 0}
+.ar-status{grid-column:1/-1}
+dialog .pic .ar-full{display:block;max-height:calc(100dvh - 200px);width:auto;max-width:100%;height:auto;border-radius:var(--radius-sm);box-shadow:var(--shadow-print)}
+@media (max-width:560px){.ar-clear{margin-left:0}.ar-drawer .ar-fields{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}}
+@media (prefers-reduced-motion:reduce){.ar-ph{will-change:auto}}
 .ae-film{background:none;padding:0;border-radius:var(--radius-none)}
 .slab-end{grid-template-columns:auto 1fr;gap:var(--space-8);align-items:start}
 .slab-end .t{gap:var(--space-2);min-width:0}
@@ -195,7 +262,7 @@ footer a.net{display:block;color:var(--mark);border-radius:var(--radius-none)}
 footer a.net .mark{height:44px;width:auto;fill:currentColor}
 @media (max-width:900px){.slab-end{grid-template-columns:auto 1fr;justify-items:start;text-align:left}}
 @media (max-width:640px){.slab-end{grid-template-columns:1fr;gap:var(--space-6);padding:var(--space-8) var(--space-6)}.slab-end .mark{height:72px!important}}
-@media (max-width:560px){.navr{gap:var(--space-3)}.collage{columns:2;column-gap:var(--space-2)}.collage .tile{margin-bottom:var(--space-2)}.filters button{padding:8px 10px;font-size:11px}}
+@media (max-width:560px){.navr{gap:var(--space-3)}.filters button{padding:8px 10px;font-size:11px}}
 </style>
 
 </head>
@@ -230,44 +297,25 @@ footer a.net .mark{height:44px;width:auto;fill:currentColor}
 
 <main>
 <section id="archive" aria-labelledby="h-arch">
-<div class="arch-head">
+<div class="arch-head" id="ar-top">
 <p class="label">01 · <span lang="en">Archive</span><span lang="es">Archivo</span><span lang="pt">Arquivo</span></p>
 <h2 class="display-l" id="h-arch"><span lang="en">The archive</span><span lang="es">El archivo</span><span lang="pt">O arquivo</span></h2>
-<p class="body-l"><span lang="en">Polaroid and 35mm, colour and black and white, on one wall. Pick a filter to sort them.</span><span lang="es">Polaroid y 35mm, en color y en blanco y negro, en un solo muro. Elige un filtro para ordenarlas.</span><span lang="pt">Polaroid e 35mm, em cor e em preto e branco, num só mural. Escolha um filtro para organizá-las.</span></p>
+<p class="body-l"><span lang="en">Polaroids, colour and black and white, with who, where and when. Open the <i>i</i> on a print to read its record; every name, place and date in it filters the wall.</span><span lang="es">Polaroids, en color y en blanco y negro, con quién, dónde y cuándo. Abre la <i>i</i> de una copia para leer su ficha; cada nombre, lugar y fecha filtra el muro.</span><span lang="pt">Polaroids, em cor e em preto e branco, com quem, onde e quando. Abra o <i>i</i> de uma cópia para ler a ficha; cada nome, lugar e data filtra o mural.</span></p>
 </div>
 <div class="fbar">
-<div class="filters" role="group" data-aria-en="Filter photographs" data-aria-es="Filtrar fotografías" data-aria-pt="Filtrar fotografias" aria-label="Filter photographs">
-<button type="button" data-filter="all" aria-pressed="true"><span lang="en">All</span><span lang="es">Todo</span><span lang="pt">Tudo</span></button>
-<button type="button" data-filter="polaroid" aria-pressed="false">Polaroid</button>
-<button type="button" data-filter="film" aria-pressed="false">35mm</button>
-<button type="button" data-filter="colour" aria-pressed="false"><span lang="en">Colour</span><span lang="es">Color</span><span lang="pt">Cor</span></button>
-<button type="button" data-filter="bw" aria-pressed="false"><span lang="en">Black and white</span><span lang="es">Blanco y negro</span><span lang="pt">Preto e branco</span></button>
+<div class="filters" id="ar-quick" role="group" data-aria-en="Filter photographs" data-aria-es="Filtrar fotografías" data-aria-pt="Filtrar fotografias" aria-label="Filter photographs">
+<button type="button" aria-pressed="true"><span lang="en">All</span><span lang="es">Todo</span><span lang="pt">Tudo</span></button>
+<button type="button" data-k="color" data-v="full-color" aria-pressed="false"><span lang="en">Colour</span><span lang="es">Color</span><span lang="pt">Cor</span></button>
+<button type="button" data-k="color" data-v="black-white" aria-pressed="false"><span lang="en">Black and white</span><span lang="es">Blanco y negro</span><span lang="pt">Preto e branco</span></button>
+<button type="button" data-k="frame" data-v="classic-white" aria-pressed="false"><span lang="en">White frame</span><span lang="es">Marco blanco</span><span lang="pt">Moldura branca</span></button>
+<button type="button" data-k="frame" data-v="color-frame" aria-pressed="false"><span lang="en">Colour frame</span><span lang="es">Marco de color</span><span lang="pt">Moldura colorida</span></button>
 </div>
-<p class="ae-cap" aria-live="polite"><span id="n">21</span> <span lang="en">photographs</span><span lang="es">fotografías</span><span lang="pt">fotografias</span></p>
+<p class="ae-cap" aria-live="polite" id="ar-n">42 <span lang="en">photographs</span><span lang="es">fotografías</span><span lang="pt">fotografias</span></p>
 </div>
-<div class="collage" id="collage">
-<div class="tile" data-kind="polaroid" data-tone="colour"><button class="open" type="button"><figure class="ae-print"><img src="img/win-polaroid-sequin-gown-stage.jpg" width="900" height="900" alt="Woman in a sequined gown holding a microphone on a draped stage" data-alt-en="Woman in a sequined gown holding a microphone on a draped stage" data-alt-es="Mujer con vestido de lentejuelas sosteniendo un micrófono en un escenario con cortinas" data-alt-pt="Mulher de vestido de paetês segurando um microfone num palco com cortinas" loading="lazy"></figure></button></div>
-<div class="tile" data-kind="film" data-tone="colour"><button class="open" type="button"><figure class="ae-film"><img src="img/film35-dj-brick-wall.jpg" width="1400" height="946" alt="DJ in a red tank top at turntables before a brick wall" data-alt-en="DJ in a red tank top at turntables before a brick wall" data-alt-es="DJ con musculosa roja en las tornamesas frente a un muro de ladrillo" data-alt-pt="DJ de regata vermelha nos toca-discos diante de uma parede de tijolos" loading="lazy"></figure></button></div>
-<div class="tile" data-kind="film" data-tone="colour"><button class="open" type="button"><figure class="ae-film"><img src="img/film35-pink-dress-window.jpg" width="946" height="1400" alt="Person in a pink dress standing in sunlight before a tall industrial window" data-alt-en="Person in a pink dress standing in sunlight before a tall industrial window" data-alt-es="Persona con vestido rosado de pie bajo el sol frente a un alto ventanal industrial" data-alt-pt="Pessoa de vestido rosa em pé sob o sol diante de uma alta janela industrial" loading="lazy"></figure></button></div>
-<div class="tile" data-kind="polaroid" data-tone="bw"><button class="open" type="button"><figure class="ae-print"><img src="img/win-polaroid-bw-fan-profile.jpg" width="900" height="900" alt="Profile of a person raising an arm beside a large patterned fan" data-alt-en="Profile of a person raising an arm beside a large patterned fan" data-alt-es="Perfil de una persona levantando un brazo junto a un gran abanico estampado" data-alt-pt="Perfil de uma pessoa erguendo um braço ao lado de um grande leque estampado" loading="lazy"></figure></button></div>
-<div class="tile" data-kind="film" data-tone="bw"><button class="open" type="button"><figure class="ae-film"><img src="img/film35-bw-embrace.jpg" width="1400" height="946" alt="Two people embracing and laughing in black and white" data-alt-en="Two people embracing and laughing in black and white" data-alt-es="Dos personas abrazándose y riendo, en blanco y negro" data-alt-pt="Duas pessoas se abraçando e rindo, em preto e branco" loading="lazy"></figure></button></div>
-<div class="tile" data-kind="polaroid" data-tone="colour"><button class="open" type="button"><figure class="ae-print"><img src="img/win-polaroid-couch-portrait.jpg" width="900" height="900" alt="Person seated cross-legged on a cream sofa under a painting" data-alt-en="Person seated cross-legged on a cream sofa under a painting" data-alt-es="Persona sentada con las piernas cruzadas en un sofá crema bajo un cuadro" data-alt-pt="Pessoa sentada de pernas cruzadas num sofá creme sob um quadro" loading="lazy"></figure></button></div>
-<div class="tile" data-kind="film" data-tone="colour"><button class="open" type="button"><figure class="ae-film"><img src="img/film35-pearl-cowboy-hat.jpg" width="946" height="1400" alt="Person in a pearl-covered cowboy hat and silver trousers at a bar" data-alt-en="Person in a pearl-covered cowboy hat and silver trousers at a bar" data-alt-es="Persona con sombrero vaquero cubierto de perlas y pantalones plateados en un bar" data-alt-pt="Pessoa de chapéu de caubói coberto de pérolas e calça prateada num bar" loading="lazy"></figure></button></div>
-<div class="tile" data-kind="film" data-tone="bw"><button class="open" type="button"><figure class="ae-film"><img src="img/film35-bw-runway.jpg" width="1400" height="946" alt="Two people in white gowns and crowns on a runway before a crowd" data-alt-en="Two people in white gowns and crowns on a runway before a crowd" data-alt-es="Dos personas con vestidos blancos y coronas en una pasarela frente al público" data-alt-pt="Duas pessoas de vestidos brancos e coroas numa passarela diante do público" loading="lazy"></figure></button></div>
-<div class="tile" data-kind="polaroid" data-tone="colour"><button class="open" type="button"><figure class="ae-print ae-print--gold"><img src="img/win-polaroid-gold-frame-trio.jpg" width="900" height="900" alt="Three people toasting with cups at night" data-alt-en="Three people toasting with cups at night" data-alt-es="Tres personas brindando con vasos de noche" data-alt-pt="Três pessoas brindando com copos à noite" loading="lazy"></figure></button></div>
-<div class="tile" data-kind="film" data-tone="bw"><button class="open" type="button"><figure class="ae-film"><img src="img/film35-bw-ruffled-jacket-seated.jpg" width="946" height="1400" alt="Black and white portrait of a person seated in a ruffled jacket" data-alt-en="Black and white portrait of a person seated in a ruffled jacket" data-alt-es="Retrato en blanco y negro de una persona sentada con chaqueta de vuelos" data-alt-pt="Retrato em preto e branco de uma pessoa sentada com jaqueta de babados" loading="lazy"></figure></button></div>
-<div class="tile" data-kind="polaroid" data-tone="bw"><button class="open" type="button"><figure class="ae-print"><img src="img/win-polaroid-bw-trophy-pair.jpg" width="900" height="900" alt="Two people looking up, one holding a trophy" data-alt-en="Two people looking up, one holding a trophy" data-alt-es="Dos personas mirando hacia arriba, una sostiene un trofeo" data-alt-pt="Duas pessoas olhando para cima, uma segura um troféu" loading="lazy"></figure></button></div>
-<div class="tile" data-kind="film" data-tone="colour"><button class="open" type="button"><figure class="ae-film"><img src="img/film35-dj-sequin-jacket.jpg" width="1400" height="946" alt="DJ in a sequin jacket and headphones holding up a Polaroid" data-alt-en="DJ in a sequin jacket and headphones holding up a Polaroid" data-alt-es="DJ con chaqueta de lentejuelas y audífonos mostrando una Polaroid" data-alt-pt="DJ de jaqueta de paetês e fones de ouvido mostrando uma Polaroid" loading="lazy"></figure></button></div>
-<div class="tile" data-kind="polaroid" data-tone="colour"><button class="open" type="button"><figure class="ae-print"><img src="img/win-polaroid-blue-jacket-orange-door.jpg" width="900" height="900" alt="Person in a blue jacket and patterned shirt before an orange door" data-alt-en="Person in a blue jacket and patterned shirt before an orange door" data-alt-es="Persona con chaqueta azul y camisa estampada frente a una puerta naranja" data-alt-pt="Pessoa de jaqueta azul e camisa estampada diante de uma porta laranja" loading="lazy"></figure></button></div>
-<div class="tile" data-kind="film" data-tone="bw"><button class="open" type="button"><figure class="ae-film"><img src="img/film35-bw-flash-back.jpg" width="946" height="1400" alt="Person in a metallic two-piece walking away, covering their face" data-alt-en="Person in a metallic two-piece walking away, covering their face" data-alt-es="Persona con un dos piezas metálico alejándose, cubriéndose la cara" data-alt-pt="Pessoa de duas peças metálico se afastando, cobrindo o rosto" loading="lazy"></figure></button></div>
-<div class="tile" data-kind="polaroid" data-tone="colour"><button class="open" type="button"><figure class="ae-print ae-print--gold"><img src="img/win-polaroid-gold-frame-harness.jpg" width="900" height="900" alt="Person in white bandages and a red harness with a spiked crown" data-alt-en="Person in white bandages and a red harness with a spiked crown" data-alt-es="Persona con vendas blancas y un arnés rojo, con una corona puntiaguda" data-alt-pt="Pessoa com ataduras brancas e um arnês vermelho, com uma coroa pontiaguda" loading="lazy"></figure></button></div>
-<div class="tile" data-kind="film" data-tone="bw"><button class="open" type="button"><figure class="ae-film"><img src="img/film35-bw-dj-booth.jpg" width="1400" height="946" alt="Mustached person leaning on a speaker at a DJ booth" data-alt-en="Mustached person leaning on a speaker at a DJ booth" data-alt-es="Persona con bigote apoyada en un parlante en la cabina del DJ" data-alt-pt="Pessoa de bigode apoiada numa caixa de som na cabine do DJ" loading="lazy"></figure></button></div>
-<div class="tile" data-kind="polaroid" data-tone="colour"><button class="open" type="button"><figure class="ae-print"><img src="img/win-polaroid-lilac-wig-fur.jpg" width="900" height="900" alt="Person with a lilac wig, sunglasses and a white fur jacket" data-alt-en="Person with a lilac wig, sunglasses and a white fur jacket" data-alt-es="Persona con peluca lila, lentes de sol y chaqueta de piel blanca" data-alt-pt="Pessoa com peruca lilás, óculos escuros e jaqueta de pele branca" loading="lazy"></figure></button></div>
-<div class="tile" data-kind="polaroid" data-tone="bw"><button class="open" type="button"><figure class="ae-print"><img src="img/win-polaroid-bw-butterfly-hat.jpg" width="900" height="900" alt="Person in a sheer floral bodysuit holding a large hat to their head" data-alt-en="Person in a sheer floral bodysuit holding a large hat to their head" data-alt-es="Persona con un body transparente de flores sosteniendo un gran sombrero sobre la cabeza" data-alt-pt="Pessoa com um body transparente florido segurando um grande chapéu na cabeça" loading="lazy"></figure></button></div>
-<div class="tile" data-kind="film" data-tone="bw"><button class="open" type="button"><figure class="ae-film"><img src="img/film35-bw-ruffled-jacket-standing.jpg" width="946" height="1400" alt="Mustached person standing in a ruffled jacket and wide trousers" data-alt-en="Mustached person standing in a ruffled jacket and wide trousers" data-alt-es="Persona con bigote de pie, con chaqueta de vuelos y pantalones anchos" data-alt-pt="Pessoa de bigode em pé, com jaqueta de babados e calça larga" loading="lazy"></figure></button></div>
-<div class="tile" data-kind="polaroid" data-tone="colour"><button class="open" type="button"><figure class="ae-print"><img src="img/win-polaroid-night-lights-portrait.jpg" width="900" height="900" alt="Portrait of a person at night before a wall of lights" data-alt-en="Portrait of a person at night before a wall of lights" data-alt-es="Retrato de una persona de noche frente a una pared de luces" data-alt-pt="Retrato de uma pessoa à noite diante de uma parede de luzes" loading="lazy"></figure></button></div>
-<div class="tile" data-kind="polaroid" data-tone="colour"><button class="open" type="button"><figure class="ae-print ae-print--gold"><img src="img/win-polaroid-gold-frame-fur-coat.jpg" width="900" height="900" alt="Person in sunglasses and a fur coat before a bookshelf" data-alt-en="Person in sunglasses and a fur coat before a bookshelf" data-alt-es="Persona con lentes de sol y abrigo de piel frente a un librero" data-alt-pt="Pessoa de óculos escuros e casaco de pele diante de uma estante" loading="lazy"></figure></button></div>
-</div>
+<div class="ar-active" id="ar-active" aria-live="polite" hidden></div>
+<div class="ar-grid" id="ar-grid" aria-busy="true"><p class="ae-cap ar-status" id="ar-status"><span lang="en">Loading the archive</span><span lang="es">Cargando el archivo</span><span lang="pt">Carregando o arquivo</span></p></div>
+<p class="ar-empty" id="ar-empty" hidden></p>
+<noscript><p class="body-l">The archive needs JavaScript. · El archivo necesita JavaScript. · O arquivo precisa de JavaScript.</p></noscript>
 </section>
 </main>
 
@@ -319,7 +367,6 @@ try{var st=localStorage.getItem('ae-theme');if(st)root.setAttribute('data-theme'
 window.matchMedia('(prefers-color-scheme: light)').addEventListener('change',syncTheme);
 
 /* language */
-var tiles=[].slice.call(document.querySelectorAll('#collage .tile'));
 function setLanguage(l,persist){
   if(!I18N.title[l])l='en';
   root.lang=l;
@@ -329,74 +376,15 @@ function setLanguage(l,persist){
   document.querySelectorAll('.langs button').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.lang===l))});
   document.querySelectorAll('img[data-alt-'+l+']').forEach(function(im){im.alt=im.getAttribute('data-alt-'+l)});
   document.querySelectorAll('[data-aria-'+l+']').forEach(function(el){el.setAttribute('aria-label',el.getAttribute('data-aria-'+l))});
-  tiles.forEach(function(t){t.firstElementChild.setAttribute('aria-label',I18N.open[l]+t.querySelector('img').alt)});
   syncTheme();
-  if(window.__layout)window.__layout(false);
+  document.dispatchEvent(new CustomEvent('ae:lang',{detail:l}));
   if(window.__sizeMark)window.__sizeMark();
 }
 document.querySelectorAll('.langs button').forEach(function(b){b.addEventListener('click',function(){setLanguage(b.dataset.lang)})});
 
-/* collage: place prints in the shortest column; filters move them in 3D */
-var box=document.getElementById('collage'),filter='all',pos=new Map();
-var still=window.matchMedia('(prefers-reduced-motion: reduce)');
-box.classList.add('js');
-function match(t){return filter==='all'||t.dataset.kind===filter||t.dataset.tone===filter}
-function cols(){var w=box.clientWidth;return w>=1100?4:w>=720?3:2}
-function gap(){return box.clientWidth<520?8:12}
-function tf(p,extra){return 'translate3d('+p.x+'px,'+p.y+'px,0)'+(extra||'')}
-function layout(animate){
-  var n=cols(),g=gap(),cw=(box.clientWidth-g*(n-1))/n,hs=[],i;
-  for(i=0;i<n;i++)hs.push(0);
-  var shown=0,next=new Map();
-  tiles.forEach(function(t){
-    var on=match(t);
-    if(!on){return}
-    t.hidden=false;t.style.width=cw+'px';
-    var c=hs.indexOf(Math.min.apply(null,hs));
-    next.set(t,{x:c*(cw+g),y:hs[c]});
-    hs[c]+=t.offsetHeight+g;shown++;
-  });
-  box.style.height=Math.max(0,Math.max.apply(null,hs)-g)+'px';
-  document.getElementById('n').textContent=shown;
-  var k=0,motion=animate&&!still.matches&&Element.prototype.animate;
-  tiles.forEach(function(t){
-    var was=pos.get(t),now=next.get(t);
-    if(now){
-      if(t._out){t._out.cancel();t._out=null}
-      t.style.transform=tf(now);
-      if(motion){
-        var d=Math.min(k++*28,420);
-        if(was&&!t.dataset.out){
-          if(was.x!==now.x||was.y!==now.y){
-            var mid={x:(was.x+now.x)/2,y:(was.y+now.y)/2};
-            t.animate([{transform:tf(was)},{transform:tf(mid,' translateZ(140px) rotateY('+(now.x<was.x?-24:24)+'deg) rotateX(8deg)'),offset:.5},{transform:tf(now)}],{duration:760,delay:d,easing:'cubic-bezier(.2,.7,.2,1)',fill:'backwards'});
-          }
-        }else{
-          t.animate([{transform:tf(now,' translateZ(-260px) rotateY(-90deg)'),opacity:0},{transform:tf(now),opacity:1}],{duration:620,delay:220+d,easing:'cubic-bezier(.2,.7,.2,1)',fill:'backwards'});
-        }
-      }
-      delete t.dataset.out;pos.set(t,now);
-    }else if(pos.has(t)){
-      var p=pos.get(t);pos.delete(t);t.dataset.out='1';
-      if(motion){
-        var a=t.animate([{transform:tf(p),opacity:1},{transform:tf(p,' translateZ(-260px) rotateY(90deg)'),opacity:0}],{duration:420,easing:'cubic-bezier(.4,0,.6,1)',fill:'forwards'});
-        t._out=a;a.onfinish=function(){if(t.dataset.out){t.hidden=true;a.cancel();t._out=null}};
-      }else t.hidden=true;
-    }else t.hidden=true;
-  });
-}
-window.__layout=layout;
-function setFilter(f,animate){
-  filter=f;
-  document.querySelectorAll('.filters button').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.filter===f))});
-  layout(animate);
-}
-document.querySelectorAll('.filters button').forEach(function(b){b.addEventListener('click',function(){if(b.dataset.filter!==filter)setFilter(b.dataset.filter,true)})});
-var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(function(){layout(false)},120)});
-tiles.forEach(function(t){var im=t.querySelector('img');if(!im.complete)im.addEventListener('load',function(){layout(false)},{once:true})});
-if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){layout(false)});
 setLanguage(lang(),false);
-layout(false);
+
+var still=window.matchMedia('(prefers-reduced-motion: reduce)');
 
 /* banner: the Æ is as tall as the two lines of text beside it (cap top of the small line to baseline of the last line) */
 var slab=document.querySelector('.slab-end'),stext=slab.querySelector('.t'),smark=slab.querySelector('.mark');
@@ -422,7 +410,7 @@ sizeMark();
 /* mouse pull: each print leans slightly toward the pointer and drifts a few pixels to it */
 (function(){
   var fine=window.matchMedia('(hover: hover) and (pointer: fine)');
-  var els=[].slice.call(document.querySelectorAll('#collage .tile figure, .blocks .lift .ae-print'));
+  var els=[].slice.call(document.querySelectorAll('.blocks .lift .ae-print'));
   els.forEach(function(e){e.classList.add('pull');e._c={x:0,y:0,rx:0,ry:0};e._t={x:0,y:0,rx:0,ry:0}});
   var mx=null,my=null,raf=0,R=520,MOVE=7,TILT=4;
   function targets(){
@@ -455,16 +443,8 @@ sizeMark();
   window.addEventListener('scroll',function(){if(mx!==null)kick()},{passive:true});
 })();
 
-/* viewer: steps through the prints the current filter shows, in wall order */
-var dlg=document.getElementById('viewer'),pic=document.getElementById('pic'),count=document.getElementById('count'),list=[],cur=0,opener=null;
-if(!dlg.showModal)return;
-function visible(){return tiles.filter(function(t){return pos.has(t)}).sort(function(a,b){var p=pos.get(a),q=pos.get(b);return p.y-q.y||p.x-q.x})}
-function show(i){cur=(i+list.length)%list.length;var f=list[cur].querySelector('figure').cloneNode(true);f.style.transform='none';f.classList.remove('pull');f.querySelector('img').removeAttribute('loading');pic.replaceChildren(f);count.textContent=(cur+1)+' / '+list.length}
-tiles.forEach(function(t){t.firstElementChild.addEventListener('click',function(){opener=t.firstElementChild;list=visible();show(list.indexOf(t));dlg.showModal()})});
-dlg.addEventListener('click',function(e){var t=e.target.closest('[data-step],[data-close]');if(t){if(t.hasAttribute('data-close'))dlg.close();else show(cur+Number(t.dataset.step))}else if(e.target===pic||e.target===dlg)dlg.close()});
-dlg.addEventListener('keydown',function(e){if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});
-dlg.addEventListener('close',function(){pic.replaceChildren();if(opener)opener.focus()});
 })();
 </script>
+<script src="js/archive.js" defer></script>
 </body>
 </html>

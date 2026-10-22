@@ -1,0 +1,690 @@
+{
+  "_note": "UI labels and database enum values in en / es / pt (Brazil). Values not listed here are proper nouns (cameras, genres, ballroom titles) and are shown as written. build_archive.py warns about any new enum value that is missing.",
+  "ui": {
+    "subjects": {
+      "en": "In the frame",
+      "es": "En el cuadro",
+      "pt": "No quadro"
+    },
+    "houses": {
+      "en": "Ballroom houses",
+      "es": "Houses de ballroom",
+      "pt": "Houses de ballroom"
+    },
+    "collectives": {
+      "en": "Collectives and organizations",
+      "es": "Colectivos y organizaciones",
+      "pt": "Coletivos e organizações"
+    },
+    "event": {
+      "en": "Event",
+      "es": "Evento",
+      "pt": "Evento"
+    },
+    "series": {
+      "en": "Series",
+      "es": "Serie",
+      "pt": "Série"
+    },
+    "space": {
+      "en": "Space",
+      "es": "Espacio",
+      "pt": "Espaço"
+    },
+    "neighborhood": {
+      "en": "Neighborhood",
+      "es": "Barrio",
+      "pt": "Bairro"
+    },
+    "city": {
+      "en": "City",
+      "es": "Ciudad",
+      "pt": "Cidade"
+    },
+    "country": {
+      "en": "Country",
+      "es": "País",
+      "pt": "País"
+    },
+    "date": {
+      "en": "Date",
+      "es": "Fecha",
+      "pt": "Data"
+    },
+    "year": {
+      "en": "Year",
+      "es": "Año",
+      "pt": "Ano"
+    },
+    "medium": {
+      "en": "Medium",
+      "es": "Soporte",
+      "pt": "Suporte"
+    },
+    "camera": {
+      "en": "Camera",
+      "es": "Cámara",
+      "pt": "Câmera"
+    },
+    "filmStock": {
+      "en": "Film stock",
+      "es": "Película",
+      "pt": "Filme"
+    },
+    "frame": {
+      "en": "Frame type",
+      "es": "Tipo de marco",
+      "pt": "Tipo de moldura"
+    },
+    "color": {
+      "en": "Colour",
+      "es": "Color",
+      "pt": "Cor"
+    },
+    "lighting": {
+      "en": "Lighting",
+      "es": "Iluminación",
+      "pt": "Iluminação"
+    },
+    "time": {
+      "en": "Time of night",
+      "es": "Momento de la noche",
+      "pt": "Momento da noite"
+    },
+    "themes": {
+      "en": "Aesthetic themes",
+      "es": "Temas estéticos",
+      "pt": "Temas estéticos"
+    },
+    "body": {
+      "en": "Body presentation",
+      "es": "Presentación corporal",
+      "pt": "Apresentação corporal"
+    },
+    "process": {
+      "en": "Process",
+      "es": "Proceso",
+      "pt": "Processo"
+    },
+    "role": {
+      "en": "Role in frame",
+      "es": "Rol en el cuadro",
+      "pt": "Papel no quadro"
+    },
+    "palette": {
+      "en": "Palette · 128 colours",
+      "es": "Paleta · 128 colores",
+      "pt": "Paleta · 128 cores"
+    },
+    "note": {
+      "en": "Photographer's note",
+      "es": "Nota de la fotografía",
+      "pt": "Nota da fotografia"
+    },
+    "rights": {
+      "en": "Rights",
+      "es": "Derechos",
+      "pt": "Direitos"
+    },
+    "sonic": {
+      "en": "Sound",
+      "es": "Sonido",
+      "pt": "Som"
+    },
+    "filterBy": {
+      "en": "Filtered by",
+      "es": "Filtrado por",
+      "pt": "Filtrado por"
+    },
+    "clear": {
+      "en": "Clear filter",
+      "es": "Quitar filtro",
+      "pt": "Limpar filtro"
+    },
+    "remove": {
+      "en": "Remove filter: ",
+      "es": "Quitar filtro: ",
+      "pt": "Remover filtro: "
+    },
+    "all": {
+      "en": "All",
+      "es": "Todo",
+      "pt": "Tudo"
+    },
+    "photographs": {
+      "en": "photographs",
+      "es": "fotografías",
+      "pt": "fotografias"
+    },
+    "photograph": {
+      "en": "photograph",
+      "es": "fotografía",
+      "pt": "fotografia"
+    },
+    "info": {
+      "en": "Information about this photograph",
+      "es": "Información de esta fotografía",
+      "pt": "Informações desta fotografia"
+    },
+    "closeInfo": {
+      "en": "Close information",
+      "es": "Cerrar información",
+      "pt": "Fechar informações"
+    },
+    "open": {
+      "en": "Open: ",
+      "es": "Abrir: ",
+      "pt": "Abrir: "
+    },
+    "filterOn": {
+      "en": "Show photographs with: ",
+      "es": "Ver fotografías con: ",
+      "pt": "Ver fotografias com: "
+    },
+    "none": {
+      "en": "No photographs match this filter.",
+      "es": "Ninguna fotografía coincide con este filtro.",
+      "pt": "Nenhuma fotografia corresponde a este filtro."
+    },
+    "loading": {
+      "en": "Loading the archive",
+      "es": "Cargando el archivo",
+      "pt": "Carregando o arquivo"
+    },
+    "failed": {
+      "en": "The archive did not load. Reload the page to try again.",
+      "es": "El archivo no cargó. Recarga la página para intentarlo de nuevo.",
+      "pt": "O arquivo não carregou. Recarregue a página para tentar de novo."
+    },
+    "more": {
+      "en": "More",
+      "es": "Más",
+      "pt": "Mais"
+    },
+    "less": {
+      "en": "Less",
+      "es": "Menos",
+      "pt": "Menos"
+    },
+    "founded": {
+      "en": "Founded",
+      "es": "Fundada en",
+      "pt": "Fundada em"
+    },
+    "aka": {
+      "en": "Also",
+      "es": "También",
+      "pt": "Também"
+    },
+    "photoOf": {
+      "en": "Polaroid of ",
+      "es": "Polaroid de ",
+      "pt": "Polaroid de "
+    },
+    "polaroid": {
+      "en": "Polaroid",
+      "es": "Polaroid",
+      "pt": "Polaroid"
+    },
+    "circa": {
+      "en": "c.",
+      "es": "c.",
+      "pt": "c."
+    },
+    "undated": {
+      "en": "Undated",
+      "es": "Sin fecha",
+      "pt": "Sem data"
+    },
+    "privateHome": {
+      "en": "Private home",
+      "es": "Domicilio particular",
+      "pt": "Residência particular"
+    },
+    "via": {
+      "en": "through",
+      "es": "vía",
+      "pt": "via"
+    },
+    "editions": {
+      "en": "editions",
+      "es": "ediciones",
+      "pt": "edições"
+    },
+    "edition": {
+      "en": "edition",
+      "es": "edición",
+      "pt": "edição"
+    },
+    "kiki": {
+      "en": "Kiki",
+      "es": "Kiki",
+      "pt": "Kiki"
+    },
+    "main": {
+      "en": "Main",
+      "es": "Main",
+      "pt": "Main"
+    },
+    "free": {
+      "en": "007 (no house)",
+      "es": "007 (sin house)",
+      "pt": "007 (sem house)"
+    },
+    "at": {
+      "en": " at ",
+      "es": " en ",
+      "pt": " em "
+    },
+    "intro": {
+      "en": "Polaroids, colour and black and white, with who, where and when. Open the i on a print to read its record; every name, place and date in it filters the wall.",
+      "es": "Polaroids, en color y en blanco y negro, con quién, dónde y cuándo. Abre la i de una copia para leer su ficha; cada nombre, lugar y fecha filtra el muro.",
+      "pt": "Polaroids, em cor e em preto e branco, com quem, onde e quando. Abra o i de uma cópia para ler a ficha; cada nome, lugar e data filtra o mural."
+    },
+    "colourOnly": {
+      "en": "Colour",
+      "es": "Color",
+      "pt": "Cor"
+    },
+    "bwOnly": {
+      "en": "Black and white",
+      "es": "Blanco y negro",
+      "pt": "Preto e branco"
+    },
+    "whiteFrame": {
+      "en": "White frame",
+      "es": "Marco blanco",
+      "pt": "Moldura branca"
+    },
+    "colourFrame": {
+      "en": "Colour frame",
+      "es": "Marco de color",
+      "pt": "Moldura colorida"
+    },
+    "parent": {
+      "en": "Part of",
+      "es": "Parte de",
+      "pt": "Parte de"
+    },
+    "content": {
+      "en": "Content note",
+      "es": "Advertencia",
+      "pt": "Aviso"
+    }
+  },
+  "filters": {
+    "person": {
+      "en": "Person",
+      "es": "Persona",
+      "pt": "Pessoa"
+    },
+    "house": {
+      "en": "House",
+      "es": "House",
+      "pt": "House"
+    },
+    "org": {
+      "en": "Collective",
+      "es": "Colectivo",
+      "pt": "Coletivo"
+    },
+    "event": {
+      "en": "Event",
+      "es": "Evento",
+      "pt": "Evento"
+    },
+    "series": {
+      "en": "Series",
+      "es": "Serie",
+      "pt": "Série"
+    },
+    "space": {
+      "en": "Space",
+      "es": "Espacio",
+      "pt": "Espaço"
+    },
+    "hood": {
+      "en": "Neighborhood",
+      "es": "Barrio",
+      "pt": "Bairro"
+    },
+    "city": {
+      "en": "City",
+      "es": "Ciudad",
+      "pt": "Cidade"
+    },
+    "country": {
+      "en": "Country",
+      "es": "País",
+      "pt": "País"
+    },
+    "year": {
+      "en": "Year",
+      "es": "Año",
+      "pt": "Ano"
+    },
+    "date": {
+      "en": "Date",
+      "es": "Fecha",
+      "pt": "Data"
+    },
+    "medium": {
+      "en": "Medium",
+      "es": "Soporte",
+      "pt": "Suporte"
+    },
+    "camera": {
+      "en": "Camera",
+      "es": "Cámara",
+      "pt": "Câmera"
+    },
+    "stock": {
+      "en": "Film stock",
+      "es": "Película",
+      "pt": "Filme"
+    },
+    "frame": {
+      "en": "Frame",
+      "es": "Marco",
+      "pt": "Moldura"
+    },
+    "color": {
+      "en": "Colour",
+      "es": "Color",
+      "pt": "Cor"
+    },
+    "light": {
+      "en": "Lighting",
+      "es": "Iluminación",
+      "pt": "Iluminação"
+    },
+    "time": {
+      "en": "Time of night",
+      "es": "Momento",
+      "pt": "Momento"
+    },
+    "theme": {
+      "en": "Theme",
+      "es": "Tema",
+      "pt": "Tema"
+    },
+    "body": {
+      "en": "Body",
+      "es": "Cuerpo",
+      "pt": "Corpo"
+    },
+    "process": {
+      "en": "Process",
+      "es": "Proceso",
+      "pt": "Processo"
+    },
+    "role": {
+      "en": "Role",
+      "es": "Rol",
+      "pt": "Papel"
+    },
+    "etype": {
+      "en": "Event type",
+      "es": "Tipo de evento",
+      "pt": "Tipo de evento"
+    },
+    "stype": {
+      "en": "Space type",
+      "es": "Tipo de espacio",
+      "pt": "Tipo de espaço"
+    },
+    "sound": {
+      "en": "Sound",
+      "es": "Sonido",
+      "pt": "Som"
+    }
+  },
+  "values": {
+    "Instant Film": {
+      "es": "Película instantánea",
+      "pt": "Filme instantâneo"
+    },
+    "35mm Film": {
+      "es": "Película 35mm",
+      "pt": "Filme 35mm"
+    },
+    "Medium Format Film": {
+      "es": "Película de formato medio",
+      "pt": "Filme de médio formato"
+    },
+    "Classic White": {
+      "es": "Marco blanco clásico",
+      "pt": "Moldura branca clássica"
+    },
+    "Color Frame": {
+      "es": "Marco de color",
+      "pt": "Moldura colorida"
+    },
+    "Black Frame": {
+      "es": "Marco negro",
+      "pt": "Moldura preta"
+    },
+    "Gold Frame": {
+      "es": "Marco dorado",
+      "pt": "Moldura dourada"
+    },
+    "Full Color": {
+      "en": "Colour",
+      "es": "Color",
+      "pt": "Colorida"
+    },
+    "Black & White": {
+      "en": "Black and white",
+      "es": "Blanco y negro",
+      "pt": "Preto e branco"
+    },
+    "Duochrome/Tinted": {
+      "en": "Duochrome / tinted",
+      "es": "Duotono / virado",
+      "pt": "Duotom / tingida"
+    },
+    "Direct Flash": {
+      "es": "Flash directo",
+      "pt": "Flash direto"
+    },
+    "Bounce Flash": {
+      "es": "Flash rebotado",
+      "pt": "Flash rebatido"
+    },
+    "Ambient/Available Light": {
+      "es": "Luz ambiente",
+      "pt": "Luz ambiente"
+    },
+    "Stage Lighting": {
+      "es": "Luz de escenario",
+      "pt": "Luz de palco"
+    },
+    "Daylight": {
+      "es": "Luz de día",
+      "pt": "Luz do dia"
+    },
+    "Portrait": {
+      "es": "Vertical",
+      "pt": "Retrato"
+    },
+    "Landscape": {
+      "es": "Horizontal",
+      "pt": "Paisagem"
+    },
+    "Square": {
+      "es": "Cuadrada",
+      "pt": "Quadrada"
+    },
+    "All Rights Reserved": {
+      "es": "Todos los derechos reservados",
+      "pt": "Todos os direitos reservados"
+    },
+    "Box Speed": {
+      "es": "Sensibilidad nominal",
+      "pt": "Sensibilidade nominal"
+    },
+    "Push +1": {
+      "es": "Forzado +1",
+      "pt": "Puxado +1"
+    },
+    "Pull -1": {
+      "es": "Subexpuesto −1",
+      "pt": "Rebaixado −1"
+    },
+    "Safe": {
+      "es": "Apta para todo público",
+      "pt": "Livre para todos"
+    },
+    "Camp": {
+      "es": "Camp",
+      "pt": "Camp"
+    },
+    "Glamour": {
+      "es": "Glamour",
+      "pt": "Glamour"
+    },
+    "High Glamour": {
+      "es": "Alto glamour",
+      "pt": "Alto glamour"
+    },
+    "Makeup/Face Paint": {
+      "en": "Makeup / face paint",
+      "es": "Maquillaje / pintura facial",
+      "pt": "Maquiagem / pintura facial"
+    },
+    "Primary Subject": {
+      "es": "Sujeto principal",
+      "pt": "Sujeito principal"
+    },
+    "Secondary Subject": {
+      "es": "Sujeto secundario",
+      "pt": "Sujeito secundário"
+    },
+    "Background/Crowd": {
+      "en": "Background / crowd",
+      "es": "Fondo / público",
+      "pt": "Fundo / público"
+    },
+    "Performer": {
+      "es": "Performer",
+      "pt": "Performer"
+    },
+    "Peak Night": {
+      "es": "Plena noche",
+      "pt": "Auge da noite"
+    },
+    "Early Night": {
+      "es": "Inicio de la noche",
+      "pt": "Começo da noite"
+    },
+    "After Hours": {
+      "es": "After",
+      "pt": "After"
+    },
+    "Daytime": {
+      "es": "De día",
+      "pt": "De dia"
+    },
+    "Rave/Club Night": {
+      "en": "Rave / club night",
+      "es": "Rave / noche de club",
+      "pt": "Rave / noite de clube"
+    },
+    "Club Party": {
+      "es": "Fiesta de club",
+      "pt": "Festa de clube"
+    },
+    "Ball/Kiki Function": {
+      "en": "Ball / kiki function",
+      "es": "Ball / función kiki",
+      "pt": "Ball / função kiki"
+    },
+    "Club/Warehouse": {
+      "en": "Club / warehouse",
+      "es": "Club / galpón",
+      "pt": "Clube / galpão"
+    },
+    "Gallery/Museum": {
+      "en": "Gallery / museum",
+      "es": "Galería / museo",
+      "pt": "Galeria / museu"
+    },
+    "Public Street/Plaza": {
+      "en": "Street / plaza",
+      "es": "Calle / plaza",
+      "pt": "Rua / praça"
+    },
+    "Bar/Cafe": {
+      "en": "Bar / café",
+      "es": "Bar / café",
+      "pt": "Bar / café"
+    },
+    "Domestic/Apartment": {
+      "en": "Home",
+      "es": "Domicilio",
+      "pt": "Residência"
+    },
+    "Cruising Ground/Park": {
+      "en": "Cruising ground / park",
+      "es": "Zona de cruising / parque",
+      "pt": "Área de pegação / parque"
+    },
+    "Venue": {
+      "es": "Recinto",
+      "pt": "Casa de shows"
+    },
+    "Main Scene House": {
+      "en": "Main scene house",
+      "es": "House de la escena main",
+      "pt": "House da cena main"
+    },
+    "Kiki Scene House": {
+      "en": "Kiki scene house",
+      "es": "House de la escena kiki",
+      "pt": "House da cena kiki"
+    },
+    "Civil Society Organization": {
+      "en": "Civil society organization",
+      "es": "Organización de la sociedad civil",
+      "pt": "Organização da sociedade civil"
+    },
+    "Party/Rave Crew": {
+      "en": "Party / rave crew",
+      "es": "Colectivo de fiestas",
+      "pt": "Coletivo de festas"
+    },
+    "Art Collective": {
+      "es": "Colectivo de arte",
+      "pt": "Coletivo de arte"
+    },
+    "Member": {
+      "es": "Integrante",
+      "pt": "Integrante"
+    },
+    "Founder": {
+      "es": "Fundador/a",
+      "pt": "Fundador/a"
+    },
+    "Brazil": {
+      "es": "Brasil",
+      "pt": "Brasil"
+    },
+    "Chile": {
+      "es": "Chile",
+      "pt": "Chile"
+    },
+    "Mexico": {
+      "es": "México",
+      "pt": "México"
+    },
+    "Circa/Estimated": {
+      "en": "Approximate",
+      "es": "Aproximada",
+      "pt": "Aproximada"
+    },
+    "Exact": {
+      "es": "Exacta",
+      "pt": "Exata"
+    }
+  }
+}
