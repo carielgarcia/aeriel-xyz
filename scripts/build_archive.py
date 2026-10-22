@@ -26,7 +26,7 @@ What it does, in order:
    translations are created with the Anthropic API when --translate is set and
    ANTHROPIC_API_KEY is present; proper nouns (people, houses, events, series, venues,
    Æ000.X codes) are swapped for placeholder tokens first, so they can never be translated.
-7. Writes data/archive.json for the page.
+7. Writes data/archive.json for the page, then runs scripts/chroma.py (colour engine → data/chroma.json).
 
 Standard library only (Python 3.9+). --check validates and reports without writing anything.
 """
@@ -427,6 +427,9 @@ def main():
         with open(OUT_JSON, "w", encoding="utf-8") as f:
             json.dump(out, f, ensure_ascii=False, separators=(",", ":")); f.write("\n")
 
+    if not a.check:   # the colour engine reads data/archive.json, so it runs last
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import chroma; chroma.main()
     print(f"{'Checked' if a.check else 'Built'} {out['count']} photos · {len(out['people'])} people · {len(out['orgs'])} organizations · "
           f"{len(out['events'])} events · {len(out['spaces'])} spaces")
     for w in dict.fromkeys(warnings): print("  !", w)
