@@ -9,6 +9,13 @@
 <meta property="og:description" content="Polaroid and 35mm.">
 <meta property="og:url" content="https://aeriel.xyz/">
 <meta property="og:type" content="website">
+<meta property="og:image" content="https://aeriel.xyz/og-ae.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="ÆRIEL wide Æ mark">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://aeriel.xyz/og-ae.png">
 <meta property="og:locale" content="en_US">
 <meta property="og:locale:alternate" content="es_CL">
 <meta property="og:locale:alternate" content="pt_BR">
@@ -100,6 +107,12 @@ nav a.l:hover{border-color:var(--pink)}
 .blocks .y{grid-column:3;grid-row:4/6;background:var(--acid)}
 .blocks .b{grid-column:3;grid-row:3;background:var(--bubblegum)}
 .blocks .lift .ae-print{max-width:420px}
+/* cover print: a whole archive scan (frame included), rotated through the archive by js/archive.js */
+.blocks .lift .ae-print--scan{padding:0;background:transparent;aspect-ratio:1643/2000;width:100%;opacity:0;transition:opacity .6s ease}
+.blocks .lift .ae-print--scan.ready{opacity:1}
+.ae-print--scan img{position:absolute;inset:0;width:100%;height:100%;aspect-ratio:auto;object-fit:contain;border-radius:var(--radius-sm);opacity:0;transition:opacity 1.2s ease}
+.ae-print--scan img.on{opacity:1}
+@media (prefers-reduced-motion:reduce){.blocks .lift .ae-print--scan,.ae-print--scan img{transition:none}}
 
 .rule{display:grid;grid-template-columns:auto 1fr;gap:var(--space-8);align-items:center;padding-block:var(--space-8);border-block:1px solid var(--line-subtle)}
 .rule .ae-halftone{width:112px;height:112px;border-radius:50%}
@@ -289,7 +302,7 @@ footer a.net .mark{height:44px;width:auto;fill:currentColor}
 </div>
 <div class="blocks" aria-hidden="true">
 <div class="slab"></div><div class="b"></div><div class="c"></div><div class="y"></div>
-<div class="lift"><figure class="ae-print ae-print--gold"><img src="img/win-polaroid-gold-frame-harness.jpg" width="900" height="900" alt=""></figure></div>
+<div class="lift"><figure class="ae-print ae-print--scan" id="hero-print"></figure></div>
 </div>
 </header>
 

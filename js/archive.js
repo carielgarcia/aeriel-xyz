@@ -491,11 +491,55 @@
     renderBar();
   });
 
+  /* ---------- cover print: rotates through every photo in the archive ----------
+     Starts on a random print, then crossfades to the next one in a shuffled order every few seconds.
+     Reads the same data/archive.json as the wall, so a takedown in the Studio leaves the cover too.
+     Reduced motion: one random print per visit, no rotation. Pauses while the tab is hidden. */
+  function coverRotation(photos) {
+    var fig = document.getElementById('hero-print');
+    if (!fig || !photos.length) return;
+    var order = photos.slice(), i, j, t;
+    for (i = order.length - 1; i > 0; i--) { j = Math.floor(Math.random() * (i + 1)); t = order[i]; order[i] = order[j]; order[j] = t; }
+    var at = 0, cur = null, timer = 0, HOLD = 6000, FADE = 1300;
+    function img(p) {
+      var im = new Image();
+      im.decoding = 'async'; im.alt = '';
+      im.srcset = p.thumb.src + ' ' + p.thumb.w + 'w, ' + p.img.src + ' ' + p.img.w + 'w';
+      im.sizes = '(max-width:900px) 75vw, 420px';
+      im.src = p.img.src;
+      return im;
+    }
+    function show(p) {
+      var im = img(p);
+      var go = function () {
+        fig.appendChild(im);
+        fig.classList.add('ready');
+        void im.offsetWidth;
+        im.classList.add('on');
+        var old = cur; cur = im;
+        if (old) setTimeout(function () { old.remove(); }, still.matches ? 0 : FADE);
+        schedule();
+      };
+      (im.decode ? im.decode() : Promise.resolve()).then(go, go);
+    }
+    function next() { at = (at + 1) % order.length; show(order[at]); }
+    function schedule() {
+      clearTimeout(timer);
+      if (still.matches || order.length < 2 || document.hidden) return;
+      timer = setTimeout(next, HOLD);
+      img(order[(at + 1) % order.length]); /* preload the next print */
+    }
+    document.addEventListener('visibilitychange', function () { if (document.hidden) clearTimeout(timer); else schedule(); });
+    still.addEventListener('change', schedule);
+    show(order[0]);
+  }
+
   /* ---------- boot ---------- */
   var status = document.getElementById('ar-status');
   Promise.all(['data/archive.json', 'data/taxonomy.i18n.json'].map(function (u) { return fetch(u).then(function (r) { if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); }); }))
     .then(function (r) {
       D = r[0]; TX = r[1];
+      coverRotation(D.photos);
       var frag = document.createDocumentFragment();
       D.photos.forEach(function (p, i) { facets.set(p, buildFacets(p)); var t = makeTile(p, i); tiles.push(t); byCode[p.code] = t; frag.appendChild(t); });
       grid.replaceChildren(frag);
