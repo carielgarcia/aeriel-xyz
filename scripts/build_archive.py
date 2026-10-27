@@ -318,8 +318,15 @@ def main():
             ok = org_key(oid)
             if ok and ok not in seen: orgs.append({"org": ok, "role": role}); seen.add(ok)
         links = {s: v for s, v in (x.get("links") or {}).items() if s in ("instagram", "website") and v}
+        # Since Oct 2026 the export puts the shown alias (aka, already printed in the name) first in `aliases`;
+        # ship only the other aliases, once each, so the page never repeats a name.
+        skip = {(x.get("aka") or "").strip().lower(), (label or "").strip().lower(), (x.get("name") or "").strip().lower()}
+        others = []
+        for al in x.get("aliases") or []:
+            low = (al or "").strip().lower()
+            if low and low not in skip: others.append(al.strip()); skip.add(low)
         out["people"][k] = {k2: v for k2, v in {
-            "name": label, "aka": x.get("aka"), "aliases": x.get("aliases") or None,
+            "name": label, "aka": x.get("aka"), "aliases": others or None,
             "houses": houses or None, "free": free or None, "orgs": orgs or None, "links": links or None,
             "bio": T(x.get("bio"), f"person:{label}:bio")}.items() if v}
         return k
@@ -349,17 +356,29 @@ def main():
             return k
         return None
 
+    def series_key(sid, depth=0):
+        """A series and its parent chain (Type → parent series → series → edition → event)."""
+        s = series_src.get(sid)
+        if not s or depth > 10: return None
+        sk = K.get("series", s["id"], s["name"])
+        if sk not in out["series"]:
+            out["series"][sk] = None  # reserve (parent recursion)
+            out["series"][sk] = {k2: v for k2, v in {
+                "name": s["name"], "type": s.get("type"),
+                "events": s.get("events"),      # events in this series (child series not counted)
+                "editions": s.get("editions"),  # editions with a published event (before Oct 2026 the export put the event count here)
+                "parent": series_key(s.get("parentId"), depth + 1) if s.get("parentId") else None,
+            }.items() if v}
+        return sk
+
     def event_key(eid):
         e = events_src.get(eid)
         if not e: return None
         k = K.get("event", eid, e["title"])
         if k not in out["events"]:
-            sk = None
-            if e.get("seriesId") and e["seriesId"] in series_src:
-                s = series_src[e["seriesId"]]; sk = K.get("series", s["id"], s["name"])
-                out["series"][sk] = {"name": s["name"], "type": s.get("type"), "editions": s.get("editions")}
+            sk = series_key(e.get("seriesId")) if e.get("seriesId") else None
             out["events"][k] = {k2: v for k2, v in {
-                "title": e["title"], "date": e.get("date"), "type": e.get("type"), "series": sk,
+                "title": e["title"], "date": e.get("date"), "type": e.get("type"), "series": sk, "edition": e.get("edition"),
                 "space": space_key({"spaceId": e.get("spaceId")}) if e.get("spaceId") else None,
                 "sonic": e.get("sonicLandscape") or None, "categories": e.get("ballroomCategories") or None,
                 "organizers": [o for o in (org_key(x.get("orgId")) if isinstance(x, dict) else None for x in e.get("organizers", [])) if o] or None,

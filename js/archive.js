@@ -354,7 +354,9 @@
   function context(k, v) {
     var h = '';
     if (k === 'person' && D.people[v]) {
-      var pp = D.people[v], also = [pp.aka && pp.aka !== pp.name ? pp.aka : null].concat(pp.aliases || []).filter(Boolean);
+      var pp = D.people[v], shown = (pp.aka || '').toLowerCase(), named = (pp.name || '').toLowerCase();
+      /* the shown alias is already in the name; older builds also repeated it in aliases */
+      var also = (pp.aka && named.indexOf(shown) < 0 ? [pp.aka] : []).concat((pp.aliases || []).filter(function (a) { var l = (a || '').toLowerCase(); return l && l !== shown && l !== named; }));
       if (also.length) h += '<p class="ae-cap">' + esc(ui('aka')) + ': ' + esc(also.join(', ')) + '</p>';
       var hs = (pp.houses || []).map(function (x) { return tag('house', x.org, org(x.org).name) ; }).concat((pp.orgs || []).map(function (x) { return tag(org(x.org).isHouse ? 'house' : 'org', x.org, org(x.org).name); }));
       if (pp.free) hs.push('<span class="ar-plain">' + esc(ui('free')) + '</span>');
@@ -378,11 +380,13 @@
       var ev = [];
       if (e.space) ev.push(tag('space', e.space, spaceName(space(e.space))));
       if (e.series) ev.push(tag('series', e.series, D.series[e.series].name));
+      if (e.edition) ev.push('<span class="ar-plain">' + esc(ui('edition') + ' ' + e.edition) + '</span>');
       (e.sonic || []).forEach(function (s) { ev.push(etag('sound', s)); });
       if (ev.length) h += '<div class="ar-vals">' + ev.join('') + '</div>';
     } else if (k === 'series' && D.series[v]) {
       var s = D.series[v];
-      h += '<p class="ae-cap">' + esc([tv(s.type), s.editions ? s.editions + ' ' + ui(s.editions === 1 ? 'edition' : 'editions') : ''].filter(Boolean).join(' · ')) + '</p>';
+      h += '<p class="ae-cap">' + esc([tv(s.type), s.events ? s.events + ' ' + ui(s.events === 1 ? 'eventOne' : 'eventMany') : '', s.editions ? s.editions + ' ' + ui(s.editions === 1 ? 'edition' : 'editions') : ''].filter(Boolean).join(' · ')) + '</p>';
+      if (s.parent && D.series[s.parent]) h += '<div class="ar-vals"><span class="ar-plain">' + esc(ui('parent')) + '</span>' + tag('series', s.parent, D.series[s.parent].name) + '</div>';
     } else if (k === 'space' && D.spaces[v]) {
       var sp = D.spaces[v];
       h += '<p class="ae-cap">' + esc([tv(sp.type), sp.address, sp.hood, sp.city, tv(sp.country)].filter(Boolean).join(' · ')) + '</p>';

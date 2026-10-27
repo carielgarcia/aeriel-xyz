@@ -310,6 +310,16 @@
       "en": "Content note",
       "es": "Advertencia",
       "pt": "Aviso"
+    },
+    "eventOne": {
+      "en": "event",
+      "es": "evento",
+      "pt": "evento"
+    },
+    "eventMany": {
+      "en": "events",
+      "es": "eventos",
+      "pt": "eventos"
     }
   },
   "filters": {
