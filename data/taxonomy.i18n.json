@@ -695,6 +695,34 @@
     "Exact": {
       "es": "Exacta",
       "pt": "Exata"
+    },
+    "Natural Light": {
+      "es": "Luz natural",
+      "pt": "Luz natural"
+    },
+    "Daylight/Recovery": {
+      "es": "Luz de día/Recuperación",
+      "pt": "Luz do dia/Recuperação"
+    },
+    "Afterhours": {
+      "es": "Afterhours",
+      "pt": "Afterhours"
+    },
+    "Leather/Fetish": {
+      "es": "Leather/Fetiche",
+      "pt": "Leather/Fetiche"
+    },
+    "Dusk": {
+      "es": "Atardecer",
+      "pt": "Entardecer"
+    },
+    "Distressed/Altered": {
+      "es": "Desgastada/Intervenida",
+      "pt": "Desgastada/Alterada"
+    },
+    "Cyber/Futurist": {
+      "es": "Cyber/Futurista",
+      "pt": "Cyber/Futurista"
     }
   }
 }
