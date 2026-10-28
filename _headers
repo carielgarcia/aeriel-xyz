@@ -4,3 +4,6 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
   X-Frame-Options: DENY
   Cross-Origin-Opener-Policy: same-origin
+
+/js/*
+  Cache-Control: public, max-age=0, must-revalidate
