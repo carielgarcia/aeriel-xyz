@@ -320,6 +320,31 @@
       "en": "events",
       "es": "eventos",
       "pt": "eventos"
+    },
+    "colours": {
+      "en": "Colour",
+      "es": "Color",
+      "pt": "Cor"
+    },
+    "atmosphere": {
+      "en": "Atmosphere",
+      "es": "Atmósfera",
+      "pt": "Atmosfera"
+    },
+    "accent": {
+      "en": "Accent",
+      "es": "Acento",
+      "pt": "Acento"
+    },
+    "dominant": {
+      "en": "Dominant colours",
+      "es": "Colores dominantes",
+      "pt": "Cores dominantes"
+    },
+    "frameColor": {
+      "en": "Frame colour",
+      "es": "Color del marco",
+      "pt": "Cor da moldura"
     }
   },
   "filters": {
@@ -723,6 +748,250 @@
     "Cyber/Futurist": {
       "es": "Cyber/Futurista",
       "pt": "Cyber/Futurista"
+    }
+  },
+  "swatches": {
+    "1": {
+      "hex": "#A50E24",
+      "en": "Crimson / Blood Red",
+      "es": "Carmesí / Rojo sangre",
+      "pt": "Carmesim / Vermelho-sangue"
+    },
+    "2": {
+      "hex": "#E8402A",
+      "en": "Vermilion / Scarlet",
+      "es": "Bermellón / Escarlata",
+      "pt": "Vermelhão / Escarlate"
+    },
+    "3": {
+      "hex": "#B5542E",
+      "en": "Rust / Terracotta",
+      "es": "Óxido / Terracota",
+      "pt": "Ferrugem / Terracota"
+    },
+    "4": {
+      "hex": "#F2A900",
+      "en": "Amber / Gold",
+      "es": "Ámbar / Dorado",
+      "pt": "Âmbar / Dourado"
+    },
+    "5": {
+      "hex": "#D4E600",
+      "en": "Acid Yellow / Chartreuse",
+      "es": "Amarillo ácido / Chartreuse",
+      "pt": "Amarelo ácido / Chartreuse"
+    },
+    "6": {
+      "hex": "#6B7A2A",
+      "en": "Olive / Moss",
+      "es": "Oliva / Musgo",
+      "pt": "Oliva / Musgo"
+    },
+    "7": {
+      "hex": "#1E9E5A",
+      "en": "Emerald / Lush Green",
+      "es": "Esmeralda / Verde intenso",
+      "pt": "Esmeralda / Verde intenso"
+    },
+    "8": {
+      "hex": "#12C8C0",
+      "en": "Cyan / Electric Teal",
+      "es": "Cian / Turquesa eléctrico",
+      "pt": "Ciano / Turquesa elétrico"
+    },
+    "9": {
+      "hex": "#4BA3E3",
+      "en": "Cerulean / Sky Blue",
+      "es": "Cerúleo / Celeste",
+      "pt": "Cerúleo / Azul-celeste"
+    },
+    "10": {
+      "hex": "#1F4FD8",
+      "en": "Cobalt / Ultramarine",
+      "es": "Cobalto / Ultramar",
+      "pt": "Cobalto / Ultramarino"
+    },
+    "11": {
+      "hex": "#231F6B",
+      "en": "Indigo / Midnight Blue",
+      "es": "Índigo / Azul medianoche",
+      "pt": "Índigo / Azul-meia-noite"
+    },
+    "12": {
+      "hex": "#7A3BE0",
+      "en": "Violet / Ultraviolet",
+      "es": "Violeta / Ultravioleta",
+      "pt": "Violeta / Ultravioleta"
+    },
+    "13": {
+      "hex": "#D0209A",
+      "en": "Magenta / Club Fuchsia",
+      "es": "Magenta / Fucsia de club",
+      "pt": "Magenta / Fúcsia de clube"
+    },
+    "14": {
+      "hex": "#FF3F8E",
+      "en": "Hot Pink / Neon Rose",
+      "es": "Rosa intenso / Rosa neón",
+      "pt": "Rosa-choque / Rosa neon"
+    },
+    "15": {
+      "hex": "#D9A3A8",
+      "en": "Blush / Dusty Pink",
+      "es": "Rubor / Rosa empolvado",
+      "pt": "Blush / Rosa empoeirado"
+    },
+    "16": {
+      "hex": "#F0B79A",
+      "en": "Peach / Warm Flesh",
+      "es": "Durazno / Piel cálida",
+      "pt": "Pêssego / Pele quente"
+    },
+    "17": {
+      "hex": "#A87A2A",
+      "en": "Bronze / Ochre",
+      "es": "Bronce / Ocre",
+      "pt": "Bronze / Ocre"
+    },
+    "18": {
+      "hex": "#5B1230",
+      "en": "Deep Burgundy / Wine",
+      "es": "Burdeo profundo / Vino",
+      "pt": "Bordô profundo / Vinho"
+    },
+    "19": {
+      "hex": "#0B0B0C",
+      "en": "Obsidian / Pitch Black",
+      "es": "Obsidiana / Negro absoluto",
+      "pt": "Obsidiana / Preto absoluto"
+    },
+    "20": {
+      "hex": "#3B3B40",
+      "en": "Charcoal / Shadow Grey",
+      "es": "Carbón / Gris sombra",
+      "pt": "Carvão / Cinza-sombra"
+    },
+    "21": {
+      "hex": "#A9A9AE",
+      "en": "Silver / Neutral Grey",
+      "es": "Plata / Gris neutro",
+      "pt": "Prata / Cinza neutro"
+    },
+    "22": {
+      "hex": "#E4DCCB",
+      "en": "Bone / Warm Cream",
+      "es": "Hueso / Crema cálida",
+      "pt": "Osso / Creme quente"
+    },
+    "23": {
+      "hex": "#F8F8F6",
+      "en": "Pure White / High Key",
+      "es": "Blanco puro / Clave alta",
+      "pt": "Branco puro / Clave alta"
+    },
+    "24": {
+      "hex": "#7A5C3E",
+      "en": "Sepia / Warm Monochrome",
+      "es": "Sepia / Monocromo cálido",
+      "pt": "Sépia / Monocromático quente"
+    }
+  },
+  "colorNames": {
+    "black": {
+      "hex": "#0A0A0A",
+      "en": "Black",
+      "es": "Negro",
+      "pt": "Preto"
+    },
+    "charcoal": {
+      "hex": "#3A3A3C",
+      "en": "Charcoal",
+      "es": "Carbón",
+      "pt": "Carvão"
+    },
+    "grey": {
+      "hex": "#808085",
+      "en": "Grey",
+      "es": "Gris",
+      "pt": "Cinza"
+    },
+    "silver": {
+      "hex": "#BDBDC2",
+      "en": "Silver",
+      "es": "Plata",
+      "pt": "Prata"
+    },
+    "white": {
+      "hex": "#F4F4F4",
+      "en": "White",
+      "es": "Blanco",
+      "pt": "Branco"
+    },
+    "beige": {
+      "hex": "#D9C2A3",
+      "en": "Beige",
+      "es": "Beige",
+      "pt": "Bege"
+    },
+    "brown": {
+      "hex": "#7A4B2A",
+      "en": "Brown",
+      "es": "Café",
+      "pt": "Marrom"
+    },
+    "red": {
+      "hex": "#D32F2F",
+      "en": "Red",
+      "es": "Rojo",
+      "pt": "Vermelho"
+    },
+    "orange": {
+      "hex": "#F57C00",
+      "en": "Orange",
+      "es": "Naranja",
+      "pt": "Laranja"
+    },
+    "yellow": {
+      "hex": "#FBC02D",
+      "en": "Yellow",
+      "es": "Amarillo",
+      "pt": "Amarelo"
+    },
+    "green": {
+      "hex": "#388E3C",
+      "en": "Green",
+      "es": "Verde",
+      "pt": "Verde"
+    },
+    "teal": {
+      "hex": "#00897B",
+      "en": "Teal",
+      "es": "Verde azulado",
+      "pt": "Verde-azulado"
+    },
+    "blue": {
+      "hex": "#1976D2",
+      "en": "Blue",
+      "es": "Azul",
+      "pt": "Azul"
+    },
+    "purple": {
+      "hex": "#7B1FA2",
+      "en": "Purple",
+      "es": "Morado",
+      "pt": "Roxo"
+    },
+    "magenta": {
+      "hex": "#C2185B",
+      "en": "Magenta",
+      "es": "Magenta",
+      "pt": "Magenta"
+    },
+    "pink": {
+      "hex": "#F48FB1",
+      "en": "Pink",
+      "es": "Rosado",
+      "pt": "Rosa"
     }
   }
 }

@@ -427,6 +427,12 @@ def main():
             "caption": T(p.get("caption"), f"{code}:caption"),
             "note": T(p.get("photographerIntent"), f"{code}:photographer-note"),
             "dominant": p.get("dominantColors") or None, "border": border, "palette": palette or None,
+            # the rest of the Studio's colour profile: named colours with their share of the picture, the atmosphere
+            # (the field) and accent (focal pops) colours, and the curatorial swatches (1–24) they fall under
+            "named": [[c["name"], round(c.get("share") or 0, 3)] for c in p.get("colors") or [] if (c.get("share") or 0) >= 0.01] or None,
+            "atm": [[c["hex"], round(c.get("weight") or 0, 4)] for c in p.get("atmosphereColors") or [] if c.get("hex")] or None,
+            "acc": [[c["hex"], round(c.get("weight") or 0, 4)] for c in p.get("accentColors") or [] if c.get("hex")] or None,
+            "swAtm": p.get("swatch24Atmosphere") or None, "swAcc": p.get("swatch24Accent") or None,
         }
         out["photos"].append({k: v for k, v in rec.items() if v not in (None, [], "")})
 

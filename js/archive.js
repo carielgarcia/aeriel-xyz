@@ -196,13 +196,38 @@
     if (p.warnings) f += field(ui('content'), '<span class="ar-plain">' + esc(p.warnings.map(tv).join(', ')) + '</span>');
     h += '<div class="ar-fields">' + f + '</div>';
 
-    if (p.palette && p.palette.length) {
-      h += '<div class="ar-f ar-f--wide"><p class="label">' + esc(ui('palette')) + '</p><div class="ar-pal" role="img" aria-label="' + esc(ui('palette')) + '">' +
-        p.palette.map(function (c) { return '<span style="background:' + esc(c[0]) + ';flex-grow:' + (c[1] == null ? 1 : Math.max(c[1], 0.5)) + '" title="' + esc(c[0]) + '"></span>'; }).join('') + '</div></div>';
-    }
+    h += colourBlock(p);
     var note = tr(p.note); if (note) h += '<div class="ar-f ar-f--wide ar-note"><p class="label">' + esc(ui('note')) + '</p>' + md(note) + '</div>';
     h += '<p class="ae-cap ar-rights">© ' + esc(p.credit || 'ÆRIEL') + ' · ' + esc(tv(p.license)) + '</p>';
     return h;
+  }
+  /* The Studio's colour profile: named colours with their share, atmosphere and accent colours with the curatorial
+     swatches they fall under, the 128-colour strip, the dominant colours and the frame border. */
+  function colourBlock(p) {
+    var HEX = /^#[0-9a-f]{6}$/i, l = lang();
+    function sw(hex, title) { return HEX.test(hex || '') ? '<span class="ar-sw" style="background:' + hex + '" title="' + esc(title || hex) + '"></span>' : ''; }
+    function swNames(ids) {
+      var seen = {};
+      return (ids || []).map(function (i) { var s = (TX.swatches || {})[String(i)]; return s ? (s[l] || s.en) : null; })
+        .filter(function (n) { if (!n || seen[n]) return false; seen[n] = 1; return true; }).join(' · ');
+    }
+    function row(label, cols, ids) {
+      if (!cols || !cols.length) return '';
+      return '<div class="ar-crow"><span class="ar-clab">' + esc(ui(label)) + '</span><span class="ar-sws">' +
+        cols.map(function (c) { return sw(c[0], c[0] + ' · ' + Math.round(c[1] * 1000) / 10 + '%'); }).join('') + '</span>' +
+        (swNames(ids) ? '<span class="ar-cnames">' + esc(swNames(ids)) + '</span>' : '') + '</div>';
+    }
+    var h = '';
+    if (p.named && p.named.length) h += '<div class="ar-chips">' + p.named.map(function (c) {
+      var n = (TX.colorNames || {})[c[0]] || {};
+      return '<span class="ar-cchip"><i style="background:' + (HEX.test(n.hex || '') ? n.hex : '#888') + '"></i>' + esc(n[l] || n.en || c[0]) + ' ' + Math.round(c[1] * 100) + '%</span>';
+    }).join('') + '</div>';
+    if ((p.atm && p.atm.length) || (p.acc && p.acc.length)) h += '<div class="ar-cbox">' + row('atmosphere', p.atm, p.swAtm) + row('accent', p.acc, p.swAcc) + '</div>';
+    if (p.palette && p.palette.length) h += '<p class="ar-sub">' + esc(ui('palette')) + '</p><div class="ar-pal" role="img" aria-label="' + esc(ui('palette')) + '">' +
+      p.palette.map(function (c) { return '<span style="background:' + esc(c[0]) + ';flex-grow:' + (c[1] == null ? 1 : Math.max(c[1], 0.5)) + '" title="' + esc(c[0]) + '"></span>'; }).join('') + '</div>';
+    if (p.dominant && p.dominant.length) h += '<p class="ar-sub">' + esc(ui('dominant')) + '</p><div class="ar-dom">' + p.dominant.map(function (c) { return sw(c); }).join('') + '</div>';
+    if (HEX.test(p.border || '')) h += '<p class="ar-sub ar-border">' + sw(p.border) + esc(ui('frameColor')) + ' ' + esc(p.border.toUpperCase()) + '</p>';
+    return h ? '<div class="ar-f ar-f--wide ar-colour"><p class="label">' + esc(ui('colours')) + '</p>' + h + '</div>' : '';
   }
   function onDrawerClick(ev) {
     var b = ev.target.closest('[data-k]');
