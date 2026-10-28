@@ -143,6 +143,41 @@
     return '<button type="button" class="' + (cls || 'ar-tag') + '" data-k="' + esc(k) + '" data-v="' + esc(v) + '" aria-label="' + esc(ui('filterOn') + text) + '">' + esc(text) + '</button>';
   }
   function etag(k, v) { return v == null || v === '' ? '' : tag(k, slug(v), tv(v)); }
+  /* Custom fields published with a record: { "Field": ["short value" | {src,en,es,pt}] }. Long texts arrive translated. */
+  function attrVal(v) { return typeof v === 'string' ? v : tr(v); }
+  function attrsHTML(attrs) {
+    return Object.keys(attrs || {}).map(function (k) {
+      var vals = (attrs[k] || []).map(attrVal).filter(Boolean);
+      if (!vals.length) return '';
+      var long = vals.some(function (v) { return v.length > 60; });
+      return '<div class="ar-f ar-f--wide"><p class="label">' + esc(k) + '</p>' + (long ? '<div class="ar-cap">' + vals.map(md).join('') + '</div>' :
+        '<div class="ar-vals"><span class="ar-plain">' + esc(vals.join(', ')) + '</span></div>') + '</div>';
+    }).join('');
+  }
+  /* Every profile and website a person has, grouped by platform. */
+  var PLATFORM = { instagram: 'Instagram', tiktok: 'TikTok', x: 'X', twitter: 'X', youtube: 'YouTube', soundcloud: 'SoundCloud', bandcamp: 'Bandcamp',
+    spotify: 'Spotify', facebook: 'Facebook', threads: 'Threads', bluesky: 'Bluesky', mixcloud: 'Mixcloud', vimeo: 'Vimeo', linkedin: 'LinkedIn', ra: 'Resident Advisor' };
+  var ORDER = ['instagram', 'tiktok', 'x', 'twitter', 'threads', 'bluesky', 'youtube', 'soundcloud', 'mixcloud', 'bandcamp', 'spotify', 'website'];
+  function handle(platform, url) {
+    try { var u = new URL(url); } catch (e) { return url; }
+    var path = u.pathname.replace(/\/+$/, ''), last = decodeURIComponent(path.split('/').pop() || '');
+    if (platform === 'website' || !last) return u.hostname.replace(/^www\./, '') + (platform === 'website' && path ? path : '');
+    return /^(instagram|tiktok|x|twitter|threads)$/.test(platform) ? '@' + last.replace(/^@/, '') : last;
+  }
+  function linksHTML(links) {
+    var keys = Object.keys(links || {}).sort(function (a, b) {
+      var i = ORDER.indexOf(a), j = ORDER.indexOf(b); return (i < 0 ? 99 : i) - (j < 0 ? 99 : j) || a.localeCompare(b);
+    });
+    var out = [];
+    keys.forEach(function (k) {
+      (links[k] || []).forEach(function (url) {
+        if (!/^https:\/\//i.test(url)) return;
+        var name = k === 'website' ? ui('website') : (PLATFORM[k] || k.charAt(0).toUpperCase() + k.slice(1));
+        out.push('<a class="clink ar-ext" href="' + esc(url) + '" target="_blank" rel="noopener">' + esc(name) + ' ' + esc(handle(k, url)) + ' ↗</a>');
+      });
+    });
+    return out.length ? '<div class="ar-links">' + out.join('') + '</div>' : '';
+  }
   function field(label, html, wide) { return html ? '<div class="ar-f' + (wide ? ' ar-f--wide' : '') + '"><p class="label">' + esc(label) + '</p><div class="ar-vals">' + html + '</div></div>' : ''; }
 
   function drawerHTML(p) {
@@ -152,7 +187,8 @@
     if (p.people) {
       h += '<div class="ar-who">' + p.people.map(function (x) {
         return '<span class="ar-person">' + tag('person', x.p, person(x.p).name, 'ar-name') +
-          (x.role ? tag('role', slug(x.role), tv(x.role), 'ar-tag ar-tag--quiet') : '') + '</span>';
+          (x.role ? tag('role', slug(x.role), tv(x.role), 'ar-tag ar-tag--quiet') : '') +
+          (x.persona || x.look ? '<span class="ar-sub">' + esc([x.persona ? ui('as') + ' ' + x.persona : '', x.look ? ui('look') + ': ' + x.look : ''].filter(Boolean).join(' · ')) + '</span>' : '') + '</span>';
       }).join('') + '</div>';
     }
     var line = [];
@@ -193,11 +229,18 @@
     f += field(ui('themes'), (p.themes || []).map(function (v) { return etag('theme', v); }).join(''));
     f += field(ui('body'), (p.body || []).map(function (v) { return etag('body', v); }).join(''));
     f += field(ui('process'), etag('process', p.process));
+    f += field(ui('filmProcess'), p.filmProcess ? '<span class="ar-plain">' + esc(tv(p.filmProcess)) + '</span>' : '');
+    f += field(ui('roll'), p.roll ? '<span class="ar-plain">' + esc(p.roll) + '</span>' : '');
+    f += field(ui('frameNo'), p.frameNo ? '<span class="ar-plain">' + esc(p.frameNo) + '</span>' : '');
+    f += field(ui('alter'), (p.alter || []).map(function (v) { return '<span class="ar-plain">' + esc(tv(v)) + '</span>'; }).join(''));
+    f += field(ui('sound'), p.sound && /^https:\/\//i.test(p.sound) ? '<a class="clink ar-ext" href="' + esc(p.sound) + '" target="_blank" rel="noopener">' + esc(handle('website', p.sound)) + ' ↗</a>' : '');
     if (p.warnings) f += field(ui('content'), '<span class="ar-plain">' + esc(p.warnings.map(tv).join(', ')) + '</span>');
     h += '<div class="ar-fields">' + f + '</div>';
 
     h += colourBlock(p);
     var note = tr(p.note); if (note) h += '<div class="ar-f ar-f--wide ar-note"><p class="label">' + esc(ui('note')) + '</p>' + md(note) + '</div>';
+    var intent = tr(p.intent); if (intent) h += '<div class="ar-f ar-f--wide ar-note"><p class="label">' + esc(ui('intent')) + '</p>' + md(intent) + '</div>';
+    h += attrsHTML(p.attrs);
     h += '<p class="ae-cap ar-rights">© ' + esc(p.credit || 'ÆRIEL') + ' · ' + esc(tv(p.license)) + '</p>';
     return h;
   }
@@ -383,20 +426,25 @@
       /* the shown alias is already in the name; older builds also repeated it in aliases */
       var also = (pp.aka && named.indexOf(shown) < 0 ? [pp.aka] : []).concat((pp.aliases || []).filter(function (a) { var l = (a || '').toLowerCase(); return l && l !== shown && l !== named; }));
       if (also.length) h += '<p class="ae-cap">' + esc(ui('aka')) + ': ' + esc(also.join(', ')) + '</p>';
-      var hs = (pp.houses || []).map(function (x) { return tag('house', x.org, org(x.org).name) ; }).concat((pp.orgs || []).map(function (x) { return tag(org(x.org).isHouse ? 'house' : 'org', x.org, org(x.org).name); }));
+      if (pp.pronouns) h += '<p class="ae-cap">' + esc(ui('pronouns')) + ': ' + esc(pp.pronouns.map(function (x) { return ui({ male: 'pronMale', female: 'pronFemale', neutral: 'pronNeutral' }[x] || x); }).join(' / ')) + '</p>';
+      var hs = (pp.houses || []).map(function (x) { return tag('house', x.org, org(x.org).name) + (x.titles && x.titles.length ? '<span class="ar-plain">' + esc(ui(x.scene) + ' · ' + x.titles.join(', ')) + '</span>' : ''); }).concat((pp.orgs || []).map(function (x) { return tag(org(x.org).isHouse ? 'house' : 'org', x.org, org(x.org).name); }));
       if (pp.free) hs.push('<span class="ar-plain">' + esc(ui('free')) + '</span>');
       if (hs.length) h += '<div class="ar-vals">' + hs.join('') + '</div>';
-      var ig = pp.links && pp.links.instagram && pp.links.instagram[0];
-      if (ig && /^https:\/\//i.test(ig)) h += '<p><a class="clink ar-ext" href="' + esc(ig) + '" target="_blank" rel="noopener">Instagram @' + esc(ig.replace(/\/+$/, '').split('/').pop()) + ' ↗</a></p>';
+      h += linksHTML(pp.links);
       var bio = tr(pp.bio);
       if (bio) h += bioBlock(bio);
+      h += attrsHTML(pp.attrs);
     } else if ((k === 'house' || k === 'org') && D.orgs[v]) {
       var o = D.orgs[v], bits = [tv(o.type)];
       if (o.founded) bits.push(ui('founded') + ' ' + o.founded + (o.dissolved ? '–' + o.dissolved : ''));
+      if (o.international) bits.push(ui('international'));
+      if (o.chapter) bits.push(ui('chapter') + ' ' + o.chapter);
       h += '<p class="ae-cap">' + esc(bits.filter(Boolean).join(' · ')) + '</p>';
       if (o.parent) h += '<div class="ar-vals"><span class="ar-plain">' + esc(ui('parent')) + '</span>' + tag(D.orgs[o.parent] && D.orgs[o.parent].isHouse ? 'house' : 'org', o.parent, org(o.parent).name) + '</div>';
       var hist = tr(o.history), eth = tr(o.ethos);
+      if (o.scenes && o.scenes.length) h += '<div class="ar-vals"><span class="ar-plain">' + esc(ui('scenes')) + '</span>' + o.scenes.map(function (x) { return '<span class="ar-plain">' + esc(tv(x)) + '</span>'; }).join('') + '</div>';
       if (eth) h += bioBlock(eth); if (hist) h += bioBlock(hist);
+      h += attrsHTML(o.attrs);
     } else if (k === 'event' && D.events[v]) {
       var e = D.events[v], parts = [];
       if (e.date) { var dd = D.photos.filter(function (p) { return p.event === v && p.date === e.date; })[0]; parts.push(dd ? tr(dd.dateText) : e.date); }
@@ -408,13 +456,20 @@
       if (e.edition) ev.push('<span class="ar-plain">' + esc(ui('edition') + ' ' + e.edition) + '</span>');
       (e.sonic || []).forEach(function (s) { ev.push(etag('sound', s)); });
       if (ev.length) h += '<div class="ar-vals">' + ev.join('') + '</div>';
+      if (e.categories) h += '<div class="ar-vals"><span class="ar-plain">' + esc(ui('categories')) + '</span>' + e.categories.map(function (c) { return '<span class="ar-plain">' + esc(tv(c)) + '</span>'; }).join('') + '</div>';
+      if (e.organizers) h += '<div class="ar-vals"><span class="ar-plain">' + esc(ui('organizers')) + '</span>' + e.organizers.map(function (o) { return tag(D.orgs[o] && D.orgs[o].isHouse ? 'house' : 'org', o, org(o).name); }).join('') + '</div>';
+      if (e.crew) h += '<div class="ar-vals"><span class="ar-plain">' + esc(ui('crew')) + '</span>' + e.crew.filter(function (c) { return c.p && D.people[c.p]; }).map(function (c) {
+        return '<span class="ar-pair">' + tag('person', c.p, person(c.p).name) + (c.role ? '<span class="ar-sub">' + esc(tv(c.role)) + '</span>' : '') + '</span>'; }).join('') + '</div>';
+      h += attrsHTML(e.attrs);
     } else if (k === 'series' && D.series[v]) {
       var s = D.series[v];
       h += '<p class="ae-cap">' + esc([tv(s.type), s.events ? s.events + ' ' + ui(s.events === 1 ? 'eventOne' : 'eventMany') : '', s.editions ? s.editions + ' ' + ui(s.editions === 1 ? 'edition' : 'editions') : ''].filter(Boolean).join(' · ')) + '</p>';
       if (s.parent && D.series[s.parent]) h += '<div class="ar-vals"><span class="ar-plain">' + esc(ui('parent')) + '</span>' + tag('series', s.parent, D.series[s.parent].name) + '</div>';
     } else if (k === 'space' && D.spaces[v]) {
       var sp = D.spaces[v];
-      h += '<p class="ae-cap">' + esc([tv(sp.type), sp.address, sp.hood, sp.city, tv(sp.country)].filter(Boolean).join(' · ')) + '</p>';
+      h += '<p class="ae-cap">' + esc([tv(sp.type), sp.address, sp.hood, sp.city, tv(sp.country), sp.status ? tv(sp.status) : null].filter(Boolean).join(' · ')) + '</p>';
+      if (sp.formerNames) h += '<p class="ae-cap">' + esc(ui('formerNames') + ': ' + sp.formerNames.join(', ')) + '</p>';
+      h += attrsHTML(sp.attrs);
     }
     return h;
   }

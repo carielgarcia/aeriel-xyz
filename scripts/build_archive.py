@@ -236,6 +236,31 @@ def main():
     if not db: warn("no --sqlite: consent re-check, organizations and 128-colour palettes are skipped")
     tax = json.load(open(TAXONOMY, encoding="utf-8"))
     T = Translator(a.translate)
+
+    # Fields that never reach the site, whatever the export carries: identity, sexuality, health and private contact data.
+    SENSITIVE = re.compile(r"gender|g[eé]nero|identi|sexual|orienta|pronoun|pronombre|birth|nacimiento|nascimento|\bage\b|\bedad\b|"
+                           r"\bidade\b|address|direcci|domicilio|endere|phone|tel[eé]fono|telefone|whats|e-?mail|correo|\brut\b|"
+                           r"\bdni\b|\bcpf\b|passport|pasaporte|passaporte|health|salud|sa[uú]de|medic|religi|immigra|migra|legal name|nombre legal|"
+                           r"deadname|nombre muerto|private|privad|sensib|sensitiv", re.I)
+
+    def public_attrs(attrs, where):
+        """Custom fields marked "publish with the record", minus anything that looks sensitive. Long texts are translated."""
+        out = {}
+        for k, vals in (attrs or {}).items():
+            if not k or SENSITIVE.search(k): continue
+            vals = [v.strip() for v in (vals or []) if isinstance(v, str) and v.strip()]
+            if vals: out[k] = [T(v, f"{where}:{k}") if len(v) > 60 else v for v in vals]
+        return out or None
+
+    def public_links(links):
+        """Every social profile and website, https only; contact channels (email, phone, WhatsApp) never ship."""
+        out = {}
+        for platform, urls in (links or {}).items():
+            if not platform or SENSITIVE.search(platform): continue
+            keep = [u.strip() for u in (urls or []) if isinstance(u, str) and re.match(r"^https?://", u.strip(), re.I)]
+            keep = ["https://" + u.split("://", 1)[1] for u in keep]
+            if keep: out[platform.lower()] = list(dict.fromkeys(keep))
+        return out or None
     K = Keys()
 
     people_src = {p["id"]: p for p in src["people"]}
@@ -292,6 +317,8 @@ def main():
                 "scenes": json.loads(row["associated_scenes_json"]) if row and row["associated_scenes_json"] else (o or {}).get("scenes"),
                 "history": T((o or {}).get("history") or (row or {}).get("history"), f"org:{name}:history"),
                 "ethos": T((o or {}).get("manifesto") or (row or {}).get("manifesto_or_ethos"), f"org:{name}:ethos"),
+                "short": (o or {}).get("shortName"), "international": bool((o or {}).get("isInternational")) or None,
+                "chapter": (o or {}).get("chapterPlace"), "attrs": public_attrs((o or {}).get("attributes"), f"org:{name}"),
             }.items() if v not in (None, [], "")}
         return k
 
@@ -317,7 +344,7 @@ def main():
         for oid, role in members.get(pid, []):
             ok = org_key(oid)
             if ok and ok not in seen: orgs.append({"org": ok, "role": role}); seen.add(ok)
-        links = {s: v for s, v in (x.get("links") or {}).items() if s in ("instagram", "website") and v}
+        links = public_links(x.get("links"))
         # Since Oct 2026 the export puts the shown alias (aka, already printed in the name) first in `aliases`;
         # ship only the other aliases, once each, so the page never repeats a name.
         skip = {(x.get("aka") or "").strip().lower(), (label or "").strip().lower(), (x.get("name") or "").strip().lower()}
@@ -327,7 +354,9 @@ def main():
             if low and low not in skip: others.append(al.strip()); skip.add(low)
         out["people"][k] = {k2: v for k2, v in {
             "name": label, "aka": x.get("aka"), "aliases": others or None,
-            "houses": houses or None, "free": free or None, "orgs": orgs or None, "links": links or None,
+            "houses": houses or None, "free": free or None, "orgs": orgs or None, "links": links,
+            "pronouns": [v for v in x.get("pronouns") or [] if v in ("male", "female", "neutral")] or None,
+            "attrs": public_attrs(x.get("attributes"), f"person:{label}"),
             "bio": T(x.get("bio"), f"person:{label}:bio")}.items() if v}
         return k
 
@@ -347,6 +376,7 @@ def main():
                     "name": None if private else s["name"], "private": private or None, "type": s.get("type"), "address": addr,
                     "hood": hood, "city": CITY_ALIASES.get(s.get("city"), s.get("city")), "country": s.get("country"),
                     "formerNames": s.get("formerNames") or None, "status": s.get("status") if s.get("status") != "Active" else None,
+                    "attrs": None if private else public_attrs(s.get("attributes"), f"space:{label}"),
                 }.items() if v}
             return k
         if p.get("venue"):
@@ -382,6 +412,9 @@ def main():
                 "space": space_key({"spaceId": e.get("spaceId")}) if e.get("spaceId") else None,
                 "sonic": e.get("sonicLandscape") or None, "categories": e.get("ballroomCategories") or None,
                 "organizers": [o for o in (org_key(x.get("orgId")) if isinstance(x, dict) else None for x in e.get("organizers", [])) if o] or None,
+                "crew": [{"p": person_key(x["personId"]), "role": x.get("role")} for x in e.get("organizers", [])
+                         if isinstance(x, dict) and x.get("personId") and x["personId"] in people_src] or None,
+                "attrs": public_attrs(e.get("attributes"), f"event:{e['title']}"),
             }.items() if v}
         return k
 
@@ -399,7 +432,8 @@ def main():
             for v in p.get(f) or []:
                 if v not in known_values: warn(f"taxonomy: no translation for {f} value {v!r}")
         sk = space_key(p); sp = out["spaces"].get(sk, {}) if sk else {}
-        people = [{"p": person_key(x["personId"]), "role": x.get("role")} for x in p.get("people", []) if not p.get("peopleWithheld")]
+        people = [{k2: v for k2, v in {"p": person_key(x["personId"]), "role": x.get("role"), "persona": x.get("persona"),
+                   "look": x.get("lookCredit")}.items() if v} for x in p.get("people", []) if not p.get("peopleWithheld")]
         orgs = [{"org": org_key(x.get("orgId")), "note": T(x.get("contextNote"), f"{code}:org-note")} for x in p.get("organizations", []) if isinstance(x, dict)]
         palette, border = p.get("palette128") or [], p.get("frameBorderColor")
         if db and db["photos"].get(code):
@@ -412,7 +446,7 @@ def main():
         city = CITY_ALIASES.get(p.get("city"), p.get("city")) or sp.get("city")
         rec = {
             "code": code, "img": img["images"], "thumb": img["thumbs"], "ar": round(p.get("aspectRatio") or img["images"]["w"] / img["images"]["h"], 4),
-            "people": [x for x in people if x["p"]] or None,
+            "people": [x for x in people if x.get("p")] or None,
             "orgs": [{k2: v for k2, v in o.items() if v} for o in orgs if o["org"]] or None,
             "event": event_key(p.get("eventId")), "space": sk,
             "hood": sp.get("hood"), "city": city, "country": p.get("country") or sp.get("country"),
@@ -426,6 +460,11 @@ def main():
             "license": p.get("license"), "credit": p.get("creditLine"),
             "caption": T(p.get("caption"), f"{code}:caption"),
             "note": T(p.get("photographerIntent"), f"{code}:photographer-note"),
+            "intent": T(p.get("artisticIntent"), f"{code}:artistic-intent"),
+            "filmProcess": p.get("filmProcess"), "roll": p.get("rollOrPackId"), "frameNo": p.get("frameNumber"),
+            "alter": p.get("physicalAlterations") or None,
+            "sound": p.get("soundPairing") if re.match(r"^https://", p.get("soundPairing") or "") else None,
+            "attrs": public_attrs(p.get("attributes"), code),
             "dominant": p.get("dominantColors") or None, "border": border, "palette": palette or None,
             # the rest of the Studio's colour profile: named colours with their share of the picture, the atmosphere
             # (the field) and accent (focal pops) colours, and the curatorial swatches (1–24) they fall under

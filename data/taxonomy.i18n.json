@@ -345,6 +345,116 @@
       "en": "Frame colour",
       "es": "Color del marco",
       "pt": "Cor da moldura"
+    },
+    "links": {
+      "en": "Links",
+      "es": "Enlaces",
+      "pt": "Links"
+    },
+    "website": {
+      "en": "Website",
+      "es": "Sitio web",
+      "pt": "Site"
+    },
+    "pronouns": {
+      "en": "Pronouns",
+      "es": "Pronombres",
+      "pt": "Pronomes"
+    },
+    "pronMale": {
+      "en": "he",
+      "es": "él",
+      "pt": "ele"
+    },
+    "pronFemale": {
+      "en": "she",
+      "es": "ella",
+      "pt": "ela"
+    },
+    "pronNeutral": {
+      "en": "they",
+      "es": "elle",
+      "pt": "elu"
+    },
+    "formerNames": {
+      "en": "Formerly",
+      "es": "Antes",
+      "pt": "Antes"
+    },
+    "status": {
+      "en": "Status",
+      "es": "Estado",
+      "pt": "Situação"
+    },
+    "chapter": {
+      "en": "Chapter",
+      "es": "Capítulo",
+      "pt": "Capítulo"
+    },
+    "international": {
+      "en": "International",
+      "es": "Internacional",
+      "pt": "Internacional"
+    },
+    "scenes": {
+      "en": "Scenes",
+      "es": "Escenas",
+      "pt": "Cenas"
+    },
+    "categories": {
+      "en": "Categories",
+      "es": "Categorías",
+      "pt": "Categorias"
+    },
+    "organizers": {
+      "en": "Organised by",
+      "es": "Organizado por",
+      "pt": "Organizado por"
+    },
+    "crew": {
+      "en": "Lineup & crew",
+      "es": "Line-up y equipo",
+      "pt": "Line-up e equipe"
+    },
+    "as": {
+      "en": "as",
+      "es": "como",
+      "pt": "como"
+    },
+    "look": {
+      "en": "Look",
+      "es": "Look",
+      "pt": "Look"
+    },
+    "filmProcess": {
+      "en": "Film process",
+      "es": "Proceso de película",
+      "pt": "Processo do filme"
+    },
+    "roll": {
+      "en": "Roll / pack",
+      "es": "Rollo / pack",
+      "pt": "Rolo / pack"
+    },
+    "frameNo": {
+      "en": "Frame no.",
+      "es": "Fotograma n.º",
+      "pt": "Fotograma n.º"
+    },
+    "alter": {
+      "en": "Physical alterations",
+      "es": "Intervenciones físicas",
+      "pt": "Intervenções físicas"
+    },
+    "sound": {
+      "en": "Sound pairing",
+      "es": "Sonido asociado",
+      "pt": "Som associado"
+    },
+    "intent": {
+      "en": "Artistic intent",
+      "es": "Intención artística",
+      "pt": "Intenção artística"
     }
   },
   "filters": {
@@ -748,6 +858,18 @@
     "Cyber/Futurist": {
       "es": "Cyber/Futurista",
       "pt": "Cyber/Futurista"
+    },
+    "Techno/Rave": {
+      "es": "Techno/Rave",
+      "pt": "Techno/Rave"
+    },
+    "Ballroom": {
+      "es": "Ballroom",
+      "pt": "Ballroom"
+    },
+    "Performance Art": {
+      "es": "Arte de performance",
+      "pt": "Arte da performance"
     }
   },
   "swatches": {
