@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="en" data-theme="night">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Side Quests — The night has side quests</title>
+  <meta name="description" content="Side Quests is a dare card game for bars, clubs and raves. Draw a card. Find the person. Hand it over.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="canonical" href="https://aeriel.xyz/sidequests/">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%2307050d'/%3E%3Cpath d='M50 12 Q50 50 88 50 Q50 50 50 88 Q50 50 12 50 Q50 50 50 12Z' fill='%23f2b94b'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&family=Playfair+Display:wght@800;900&family=Space+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/sidequests/assets/css/styles.css">
+  <script src="/sidequests/assets/js/theme.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Shared graphics: the four-point star, card ornament, hood-gradient linework -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="hood" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" style="stop-color:var(--magenta)"/>
+        <stop offset="0.5" style="stop-color:var(--violet)"/>
+        <stop offset="1" style="stop-color:var(--cobalt)"/>
+      </linearGradient>
+      <symbol id="star4" viewBox="0 0 100 100">
+        <path d="M50 0 Q50 50 100 50 Q50 50 50 100 Q50 50 0 50 Q50 50 50 0Z" fill="currentColor"/>
+      </symbol>
+      <symbol id="orn-corner" viewBox="0 0 100 100">
+        <path d="M6 6 C46 6 70 22 70 48 C70 66 50 72 42 60 C36 51 44 42 54 46" fill="none" stroke="var(--violet)" stroke-width="2" stroke-linecap="round"/>
+        <path d="M6 6 C6 46 22 70 48 70 C66 70 72 50 60 42 C51 36 42 44 46 54" fill="none" stroke="var(--magenta)" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="80" cy="14" r="3" fill="var(--cobalt)"/>
+        <circle cx="91" cy="25" r="2" fill="var(--teal)"/>
+        <circle cx="14" cy="80" r="3" fill="var(--cobalt)"/>
+        <circle cx="25" cy="91" r="2" fill="var(--teal)"/>
+        <circle cx="62" cy="10" r="1.6" fill="var(--magenta)"/>
+        <circle cx="10" cy="62" r="1.6" fill="var(--magenta)"/>
+        <use href="#star4" x="22" y="22" width="16" height="16" style="color:var(--gold)"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <div class="mock-banner serial">Draft mockup · Nothing here is for sale · Skip is always allowed</div>
+
+  <header class="site-header">
+    <div class="wrap bar">
+      <a class="wordmark" href="#top" aria-label="Side Quests, home">
+        <svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg>
+        Side Quests
+      </a>
+      <nav class="nav" id="nav" aria-label="Main">
+        <a href="#draw">Draw</a>
+        <a href="#how">How to play</a>
+        <a href="#editions">Editions</a>
+        <a href="#shop">Shop</a>
+        <a href="#archive">Archive</a>
+        <a href="#venues">Venues</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <div class="bar__tools">
+        <button class="btn btn--ghost btn--sm" id="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to the Dawn theme">
+          <span id="theme-label">Dawn</span>
+        </button>
+        <button class="btn btn--ghost btn--sm" id="cart-open" type="button" aria-label="Open cart, 0 items">
+          Cart <span class="cart-count" id="cart-count">0</span>
+        </button>
+        <button class="btn btn--ghost btn--sm nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- ================= HERO ================= -->
+    <section class="hero" id="top">
+      <div class="wrap hero__grid">
+        <div>
+          <p class="eyebrow label"><svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg>Edition 01 · The First Night · 120 cards</p>
+          <h1 class="t-xl">The night has side quests.</h1>
+          <p class="lede">A card game for people who go out. Draw a card. It sends you to find a certain kind of person, or dares you to ask someone for something small and strange. You do it. You hand over the card. The night gets a plot.</p>
+          <div class="hero__cta">
+            <a class="btn btn--primary" href="#draw">Draw a card</a>
+            <a class="btn btn--ghost" href="#shop">Shop the deck</a>
+          </div>
+          <ul class="facts label">
+            <li><svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg>120 cards per deck</li>
+            <li><svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg>No app. No battery.</li>
+            <li><svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg>Skip is always allowed</li>
+          </ul>
+        </div>
+        <div>
+          <div class="hero__card" id="hero-card-slot"></div>
+          <p class="hero__hint label">Tap the card to read the dare</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TICKER ================= -->
+    <div class="ticker" aria-label="A few quests from the deck">
+      <div class="ticker__track" id="ticker-track">
+        <div class="ticker__group" id="ticker-group">
+          <span>Find someone who once ran from an angry goose</span>
+          <svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg>
+          <span>Learn the best dance move in the room</span>
+          <svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg>
+          <span>Start a slow clap for the DJ</span>
+          <svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg>
+          <span>Ask the coat check for advice</span>
+          <svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg>
+          <span>Collect a high five from every corner</span>
+          <svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg>
+          <span>Bring someone a glass of water</span>
+          <svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg>
+          <span>Invent a handshake. Use it once</span>
+          <svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg>
+          <span>Skip is always allowed</span>
+          <svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= DRAW ================= -->
+    <section class="section" id="draw" aria-labelledby="draw-title">
+      <div class="wrap">
+        <div class="section__head">
+          <p class="eyebrow label"><svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg>Try it now</p>
+          <h2 class="t-lg" id="draw-title">Draw a card</h2>
+          <p class="lede">No deck required. Press the button, receive a quest, decide who you are going to be about it.</p>
+        </div>
+        <div class="draw">
+          <div class="deck" id="draw-slot"></div>
+          <div class="draw__panel">
+            <div class="status" id="draw-status" role="status" aria-live="polite">
+              <svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg>
+              <span>The deck is face down. Nothing has been asked of you yet.</span>
+            </div>
+            <div class="draw__actions">
+              <button class="btn btn--primary" id="draw-btn" type="button">Draw a card</button>
+              <button class="btn btn--ghost" id="complete-btn" type="button" disabled>Quest complete</button>
+              <button class="btn btn--ghost" id="skip-btn" type="button" disabled>Skip</button>
+            </div>
+            <div class="xp">
+              <div class="xp__row">
+                <span class="label" id="xp-level">Level 1 · Bystander</span>
+                <span class="label muted" id="xp-text">0 / 100 XP</span>
+              </div>
+              <div class="xpbar xpbar--hood" id="xp-bar" role="progressbar" aria-labelledby="xp-level" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="xp-fill" style="width:0%"></span></div>
+              <p class="body-sm muted" style="margin:0">Your XP resets when you refresh the page. Reputation does not.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= HOW TO PLAY ================= -->
+    <section class="section" id="how" aria-labelledby="how-title">
+      <div class="wrap">
+        <div class="section__head">
+          <p class="eyebrow label"><svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg>How to play</p>
+          <h2 class="t-lg" id="how-title">Three steps. None of them involve sitting down.</h2>
+        </div>
+        <ol class="steps">
+          <li class="step panel">
+            <span class="label"><svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg>Step 01 / 03</span>
+            <h3 class="t-md">Draw.</h3>
+            <p>Take the top card and read it. Out loud, if the music allows. The card tells you what the night needs from you.</p>
+          </li>
+          <li class="step panel">
+            <span class="label"><svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg>Step 02 / 03</span>
+            <h3 class="t-md">Find the person.</h3>
+            <p>A card might name a type of person, a small task or a dare for a friend. Locate them. They are in the room. They are always in the room.</p>
+          </li>
+          <li class="step panel">
+            <span class="label"><svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg>Step 03 / 03</span>
+            <h3 class="t-md">Hand it over.</h3>
+            <p>Complete the quest, earn the XP, then give the card to someone else. Cards are expendable. That is the point. Run out and buy another deck.</p>
+          </li>
+        </ol>
+
+        <div class="rules">
+          <blockquote class="pull">
+            <p>Every quest is small, silly and optional.</p>
+            <footer class="label"><svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg>Rules of the room</footer>
+          </blockquote>
+          <ul>
+            <li><svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg><p style="margin:0"><strong>Be kind.</strong> <span>Nobody is the punchline. The quest is the punchline.</span></p></li>
+            <li><svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg><p style="margin:0"><strong>Ask, never push.</strong> <span>A stranger can say no. A no ends the quest and counts as a good night.</span></p></li>
+            <li><svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg><p style="margin:0"><strong>Nothing unsafe.</strong> <span>No drugs. No drinking requirements. Nothing that needs a yes you did not ask for.</span></p></li>
+            <li><svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg><p style="margin:0"><strong>Skip is always allowed.</strong> <span>Draw again. The deck has 119 other opinions.</span></p></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= RARITY ================= -->
+    <section class="section" id="odds" aria-labelledby="odds-title">
+      <div class="wrap">
+        <div class="section__head">
+          <p class="eyebrow label"><svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg>The odds</p>
+          <h2 class="t-lg" id="odds-title">Five tiers of trouble</h2>
+          <p class="lede">The rarer the card, the bigger the quest and the bigger the XP. Most players will meet one Legendary in their lifetime. They will not shut up about it.</p>
+        </div>
+        <ul class="rlist" id="rarity-list"></ul>
+      </div>
+    </section>
+
+    <!-- ================= EDITIONS ================= -->
+    <section class="section" id="editions" aria-labelledby="editions-title">
+      <div class="wrap">
+        <div class="section__head">
+          <p class="eyebrow label"><svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg>Editions</p>
+          <h2 class="t-lg" id="editions-title">Every edition is a different night.</h2>
+          <p class="lede">Decks are expandable. Cards are expendable. Collect the sets, spend the cards, and keep the one you are too proud to give away.</p>
+        </div>
+        <div class="grid-4" id="editions-grid"></div>
+      </div>
+    </section>
+
+    <!-- ================= SHOP ================= -->
+    <section class="section" id="shop" aria-labelledby="shop-title">
+      <div class="wrap">
+        <div class="section__head">
+          <p class="eyebrow label"><svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg>The shop</p>
+          <h2 class="t-lg" id="shop-title">Stock up on trouble</h2>
+          <p class="lede">Mockup shop. Nothing ships. Nobody is charged. The cart works so you can see how it feels to want things.</p>
+        </div>
+        <div class="grid-3" id="shop-grid"></div>
+      </div>
+    </section>
+
+    <!-- ================= ARCHIVE ================= -->
+    <section class="section" id="archive" aria-labelledby="archive-title">
+      <div class="wrap">
+        <div class="section__head">
+          <p class="eyebrow label"><svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg>The archive</p>
+          <h2 class="t-lg" id="archive-title">Every card, face up</h2>
+          <p class="lede">A look at the first deck. Filter by rarity. Pick a card up to hold it above the table.</p>
+        </div>
+        <div class="chips" id="chips" role="group" aria-label="Filter cards by rarity"></div>
+        <ul class="archive" id="archive-grid"></ul>
+
+        <div class="section__head" style="margin-top:var(--space-8)">
+          <p class="eyebrow label"><svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg>Field reports</p>
+          <h3 class="t-md">Players, caught mid-quest</h3>
+          <p class="body-sm muted" style="margin-top:var(--space-3)">Photo placeholders. Real field reports arrive when real players do.</p>
+        </div>
+        <ul class="reports" id="reports">
+          <li class="report">
+            <div class="art"><svg class="orn orn--tl" viewBox="0 0 100 100" aria-hidden="true"><use href="#orn-corner"/></svg><svg class="orn orn--br" style="transform:scale(-1,-1)" viewBox="0 0 100 100" aria-hidden="true"><use href="#orn-corner"/></svg><span class="label">Photo placeholder</span></div>
+            <h4>Report 014 · Coat check · 1:42 a.m.</h4>
+            <p>Quest: Coat Check Poet. Advice received: go home earlier. Advice not taken.</p>
+          </li>
+          <li class="report">
+            <div class="art"><svg class="orn orn--tr" viewBox="0 0 100 100" aria-hidden="true"><use href="#orn-corner"/></svg><svg class="orn orn--bl" viewBox="0 0 100 100" aria-hidden="true"><use href="#orn-corner"/></svg><span class="label">Photo placeholder</span></div>
+            <h4>Report 021 · Dance floor · 2:10 a.m.</h4>
+            <p>Quest: Dance Thief. One move stolen. Two people taught. Chain of custody unclear.</p>
+          </li>
+          <li class="report">
+            <div class="art"><svg class="orn orn--tl" viewBox="0 0 100 100" aria-hidden="true"><use href="#orn-corner"/></svg><svg class="orn orn--br" viewBox="0 0 100 100" aria-hidden="true"><use href="#orn-corner"/></svg><span class="label">Photo placeholder</span></div>
+            <h4>Report 033 · Bar · 12:15 a.m.</h4>
+            <p>Quest: Tote Bag Oracle. Guess: a plant. Result: a plant.</p>
+          </li>
+          <li class="report">
+            <div class="art"><svg class="orn orn--tr" viewBox="0 0 100 100" aria-hidden="true"><use href="#orn-corner"/></svg><svg class="orn orn--bl" viewBox="0 0 100 100" aria-hidden="true"><use href="#orn-corner"/></svg><span class="label">Photo placeholder</span></div>
+            <h4>Report 047 · The queue · 11:30 p.m.</h4>
+            <p>Quest: Question Mark. Fourteen questions. Nobody won. Everybody was tired.</p>
+          </li>
+          <li class="report">
+            <div class="art"><svg class="orn orn--tl" viewBox="0 0 100 100" aria-hidden="true"><use href="#orn-corner"/></svg><svg class="orn orn--br" viewBox="0 0 100 100" aria-hidden="true"><use href="#orn-corner"/></svg><span class="label">Photo placeholder</span></div>
+            <h4>Report 052 · Rooftop · 5:40 a.m.</h4>
+            <p>Quest: The Elder. A story about a ferry. It ran long. It was worth it.</p>
+          </li>
+          <li class="report">
+            <div class="art"><svg class="orn orn--tr" viewBox="0 0 100 100" aria-hidden="true"><use href="#orn-corner"/></svg><svg class="orn orn--bl" viewBox="0 0 100 100" aria-hidden="true"><use href="#orn-corner"/></svg><span class="label">Photo placeholder</span></div>
+            <h4>Report 066 · Warehouse · 3:05 a.m.</h4>
+            <p>Quest: Secret Handshake. Performed twice. Retired immediately.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ================= REVIEWS ================= -->
+    <section class="section section--tight" aria-labelledby="reviews-title">
+      <div class="wrap">
+        <div class="section__head">
+          <p class="eyebrow label"><svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg>Early reviews</p>
+          <h2 class="t-lg" id="reviews-title">The critics have spoken</h2>
+          <p class="body-sm muted" style="margin-top:var(--space-3)">All fictional. Please do not quote us.</p>
+        </div>
+        <div class="quotes">
+          <blockquote class="pull"><p>“This game is a MUST-BUY.”</p><footer class="label"><svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg>My college debt collector</footer></blockquote>
+          <blockquote class="pull"><p>“Eleven out of ten quests. I only did three.”</p><footer class="label"><svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg>A man at the coat check</footer></blockquote>
+          <blockquote class="pull"><p>“Honk.”</p><footer class="label"><svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg>An angry goose</footer></blockquote>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= VENUES ================= -->
+    <section class="section" id="venues" aria-labelledby="venues-title">
+      <div class="wrap venues">
+        <div>
+          <p class="eyebrow label"><svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg>For venues</p>
+          <h2 class="t-lg" id="venues-title">Put a deck on every table.</h2>
+          <p class="lede">Bars, clubs and raves already have music, lighting and strangers. You are one deck away from a plot. The Venue Pack brings six decks, a table tent and a sign that says “Ask about our side quests.” Your guests start talking to each other. Your staff do not have to do anything.</p>
+          <ul>
+            <li><svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg><span><strong>Safe by design.</strong> No drugs, no drinking requirements, no pressure.</span></li>
+            <li><svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg><span><strong>Cards walk off.</strong> That is the point. Reorder whenever the night eats your stack.</span></li>
+            <li><svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg><span><strong>A deck with your name on it.</strong> Custom editions: your venue on the box, your quests in the deck.</span></li>
+          </ul>
+        </div>
+        <form class="panel form" id="venue-form" novalidate>
+          <h3 class="t-md">Request a venue pack</h3>
+          <div class="field"><label class="label" for="v-name">Your name</label><input id="v-name" name="name" autocomplete="name" required></div>
+          <div class="field"><label class="label" for="v-venue">Venue</label><input id="v-venue" name="venue" required></div>
+          <div class="field"><label class="label" for="v-city">City</label><input id="v-city" name="city" autocomplete="address-level2"></div>
+          <div class="field"><label class="label" for="v-email">Email</label><input id="v-email" name="email" type="email" autocomplete="email" required></div>
+          <button class="btn btn--primary" type="submit">Request a pack</button>
+          <p class="form__msg body-sm" id="venue-msg" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <!-- ================= FAQ ================= -->
+    <section class="section" id="faq" aria-labelledby="faq-title">
+      <div class="wrap">
+        <div class="section__head">
+          <p class="eyebrow label"><svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg>Questions</p>
+          <h2 class="t-lg" id="faq-title">Questions, answered quickly</h2>
+        </div>
+        <div class="faq">
+          <details>
+            <summary>Is this safe?<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
+            <p>Every quest is small, silly and optional. Nothing involves drugs, nothing requires a drink, and nothing needs a stranger to say yes before it can be completed. Skip is always allowed.</p>
+          </details>
+          <details>
+            <summary>Do I have to talk to strangers?<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
+            <p>Some cards say so. Skip them. Draw again. You can also hand any card to a friend, who will pretend they did not see it.</p>
+          </details>
+          <details>
+            <summary>Where do I play?<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
+            <p>Bars, clubs, raves, festivals, house parties, coat check lines, rooftops and the long walk to the metro. It also works at home, though the cards will be disappointed.</p>
+          </details>
+          <details>
+            <summary>What does “expendable” mean?<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
+            <p>You are meant to give cards away. Hand one to a stranger, a bartender or a friend and the quest goes with it. Run out and buy another deck. New editions add new quests to the pile.</p>
+          </details>
+          <details>
+            <summary>How do rarities work?<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
+            <p>Each deck has five tiers: Common, Uncommon, Rare, Epic and Legendary. The rarer the card, the bigger the quest and the bigger the XP. A tier is always printed as a word on the card, never as colour alone.</p>
+          </details>
+          <details>
+            <summary>Can I design a card?<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
+            <p>Maybe. Submissions open when this is a real store. Until then, keep your best dare to yourself and test it on someone you trust.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer__grid">
+        <div>
+          <a class="wordmark" href="#top"><svg class="star" viewBox="0 0 100 100" aria-hidden="true"><use href="#star4"/></svg>Side Quests</a>
+          <p class="muted" style="margin:var(--space-4) 0 0;max-width:36ch">A card game for people who go out. Draw a card. Find the person. Hand it over.</p>
+        </div>
+        <div>
+          <h2 class="label">Explore</h2>
+          <ul>
+            <li><a href="#draw">Draw a card</a></li>
+            <li><a href="#editions">Editions</a></li>
+            <li><a href="#shop">Shop</a></li>
+            <li><a href="#archive">Archive</a></li>
+            <li><a href="#venues">For venues</a></li>
+          </ul>
+        </div>
+        <form class="newsletter" id="news-form" novalidate>
+          <h2 class="label">Join the guest list</h2>
+          <p class="body-sm muted" style="margin:0">New editions, new quests, no spam. We would not know how.</p>
+          <div class="row">
+            <div class="field"><label class="sr-only" for="n-email">Email</label><input id="n-email" name="email" type="email" placeholder="you@somewhere.late" autocomplete="email" required></div>
+            <button class="btn btn--ghost" type="submit">Join</button>
+          </div>
+          <p class="form__msg body-sm" id="news-msg" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+      <div class="footer__legal serial">
+        <span>© 2026 Side Quest Cards</span>
+        <span>Draft mockup · No real store · Skip is always allowed</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Cart drawer -->
+  <dialog class="drawer" id="cart-dialog" aria-labelledby="cart-title">
+    <div class="dlg">
+      <div class="dlg__head">
+        <h2 class="t-md" id="cart-title">Your cart</h2>
+        <button class="btn btn--ghost btn--icon" id="cart-close" type="button" aria-label="Close cart"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+      <ul class="cart-list" id="cart-items"></ul>
+      <div style="display:grid;gap:var(--space-3)">
+        <div class="cart-total"><span class="label">Subtotal</span><span class="price" id="cart-subtotal">$0</span></div>
+        <p class="body-sm muted" style="margin:0">Shipping: free, because nothing ships.</p>
+        <button class="btn btn--primary" id="cart-checkout" type="button" disabled>Checkout</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Card viewer -->
+  <dialog class="viewer" id="card-dialog" aria-labelledby="viewer-title">
+    <div class="dlg">
+      <div class="dlg__head">
+        <h2 class="t-md" id="viewer-title">Card</h2>
+        <button class="btn btn--ghost btn--icon" id="card-close" type="button" aria-label="Close card viewer"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+      <div id="card-dialog-slot"></div>
+      <p class="viewer__meta label" id="card-dialog-meta"></p>
+      <div class="viewer__actions">
+        <button class="btn btn--ghost" id="card-dialog-flip" type="button">Flip card</button>
+        <button class="btn btn--primary" id="card-dialog-add" type="button">Add the deck</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Mock checkout -->
+  <dialog class="mock" id="mock-dialog" aria-labelledby="mock-title">
+    <div class="dlg">
+      <h2 class="t-md" id="mock-title">Nothing was bought.</h2>
+      <p style="margin:0">Side Quests is a draft site. There is no store, no payment and no warehouse. Your wallet is exactly as full as you left it. Go outside. There is a quest waiting.</p>
+      <button class="btn btn--primary" id="mock-close" type="button">Back to the draft</button>
+    </div>
+  </dialog>
+
+  <div class="sr-only" id="live" role="status" aria-live="polite"></div>
+
+  <script src="/sidequests/assets/js/app.js" defer></script>
+</body>
+</html>
