@@ -7,3 +7,13 @@
 
 /js/*
   Cache-Control: public, max-age=0, must-revalidate
+
+/machiavell/*
+  X-Robots-Tag: noindex, nofollow
+  Referrer-Policy: no-referrer
+
+/machiavell/js/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/machiavell/css/*
+  Cache-Control: public, max-age=0, must-revalidate
