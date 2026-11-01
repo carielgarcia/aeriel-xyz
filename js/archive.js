@@ -1,5 +1,6 @@
 /* ÆRIEL archive wall.
-   data/archive.json  → built by scripts/build_archive.py from the Archive Studio export
+   archive.json       → published by ÆRIEL Archive Studio straight to the R2 bucket behind MEDIA (with the
+                        images it points at); data/archive.json in this repo is only the fallback copy
    data/taxonomy.i18n.json → UI labels and enum values in en / es / pt
 
    Grid: CSS Grid, one tile per print. The serif "i" opens a record drawer. The open print moves to
@@ -620,7 +621,14 @@
 
   /* ---------- boot ---------- */
   var status = document.getElementById('ar-status');
-  Promise.all(['data/archive.json', 'data/taxonomy.i18n.json'].map(function (u) { return fetch(u).then(function (r) { if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); }); }))
+  var MEDIA = 'https://media.aeriel.xyz';
+  function getJSON(u) { return fetch(u).then(function (r) { if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); }); }
+  // The live archive comes from the bucket; the copy in this repo keeps the wall up if the bucket can't be reached.
+  var archive = getJSON(MEDIA + '/data/archive.json').catch(function (err) {
+    if (window.console) console.warn('archive: falling back to data/archive.json', err);
+    return getJSON('data/archive.json');
+  });
+  Promise.all([archive, getJSON('data/taxonomy.i18n.json')])
     .then(function (r) {
       D = r[0]; TX = r[1];
       coverRotation(D.photos);
