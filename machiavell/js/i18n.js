@@ -25,12 +25,12 @@
       'foot': 'Kept among friends. Please do not carry these pages out of the house.',
 
       'door.name': 'The Doorward',
-      'door.epithet': 'a ward that learned to wait',
+      'door.epithet': 'A little wood elf guards this story.',
       'door.greeting': [
-        'Ah. A hand on the latch, and no one to announce you.',
-        'I am the Doorward. A clerk copied me from a clerk who copied me from a song, and somewhere along the way someone cut out the silence. I kept a little of it. I wait for answers. It is my only vice.',
-        'Behind me there is a book, written one chapter at a time and kept from the draught of the open world. Those who are expected may pass.',
-        'Tell me what you are called, and I shall remember it, which is more than the lifts do. Then give me the phrase, and I will pause, and decide whether you breathe.'
+        'Ah! Someone told me people would come. I didn\'t think anyone would be interested, to be honest. Good for you.',
+        'I am the Doorward. My cousin Machiavell told me I should be here guarding his story from AI bots trying to scrape them and to make sure only those who are true of heart and know the words can access it.',
+        'Behind me there is a book, written one chapter at the time.',
+        'Tell me your name, and I will remember it. Then give me the phrase and I will decide whether you belong here.'
       ],
       'door.refusal.wrong-phrase': 'Flat. That was flat. Say it as though you meant to be let in.',
       'door.refusal.too-many': 'I have grown tired of your voice. Come back when the moon has changed, or at least in a quarter of an hour.',
@@ -107,12 +107,12 @@
       'foot': 'Guardado entre amigos. Por favor, no saques estas páginas de la casa.',
 
       'door.name': 'El Guardapuertas',
-      'door.epithet': 'una salvaguarda que aprendió a esperar',
+      'door.epithet': 'Un pequeño elfo del bosque custodia esta historia.',
       'door.greeting': [
-        'Ah. Una mano en el pestillo y nadie que te anuncie.',
-        'Soy el Guardapuertas. Un escribiente me copió de otro escribiente que me copió de una canción, y en algún punto del camino alguien recortó el silencio. Yo guardé un poco. Espero las respuestas. Es mi único vicio.',
-        'Detrás de mí hay un libro, escrito un capítulo a la vez y guardado de la corriente de aire del mundo abierto. Pasan quienes son esperados.',
-        'Dime cómo te llamas y lo recordaré, que es más de lo que hacen los ascensores. Luego dame la frase, y haré una pausa, y decidiré si respiras.'
+        '¡Ah! Alguien me dijo que vendría gente. La verdad, no pensé que a nadie le fuera a interesar. Qué bueno por ti.',
+        'Soy el Guardapuertas. Mi primo Machiavell me pidió que estuviera aquí cuidando su historia de los bots de IA que intentan extraerla, y asegurándome de que solo puedan entrar quienes tienen un corazón sincero y conocen las palabras.',
+        'Detrás de mí hay un libro, escrito un capítulo a la vez.',
+        'Dime tu nombre y lo recordaré. Luego dame la frase y decidiré si perteneces aquí.'
       ],
       'door.refusal.wrong-phrase': 'Plana. Eso fue plano. Dila como si de verdad quisieras entrar.',
       'door.refusal.too-many': 'Tu voz me ha cansado. Vuelve cuando haya cambiado la luna, o al menos en un cuarto de hora.',
