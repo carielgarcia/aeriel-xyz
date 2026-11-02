@@ -220,8 +220,9 @@
           h('div', { 'class': 'num', 'aria-hidden': 'true', text: roman(n) }),
           h('div', {}, [
             h('span', { 'class': 'label', text: t('chapter.label', { r: roman(n) }) }),
-            h('h2', { 'class': 'heading', text: t('library.sealed') }),
+            h('h2', { 'class': 'heading', text: (res.data.sealedTitles && res.data.sealedTitles[n]) || t('library.sealed') }),
             h('p', { 'class': 'epi', text: t('library.sealedNote') }),
+            h('div', { 'class': 'meta', text: t('library.sealed') + ' · ' + t('library.tba') }),
             w
           ])
         ]));
