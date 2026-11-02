@@ -46,11 +46,14 @@ like the chapters, never in this repository). If the table or a row is missing, 
 # once, on the live database (safe to repeat: every statement is IF NOT EXISTS):
 npx wrangler d1 execute machiavell --remote --file=scripts/machiavell/schema.sql
 # per chapter (the English chapter must already exist; it is released as usual, the Spanish text opens with it):
-node scripts/machiavell/chapter.mjs add-translation 1 es "El Título" ~/book/capitulo-1.txt "Epígrafe opcional" > /tmp/t.sql
+node scripts/machiavell/chapter.mjs add-translation 1 es "El Título" ~/book/capitulo-1.txt "Epígrafe opcional" [map.json] > /tmp/t.sql
 npx wrangler d1 execute machiavell --remote --file=/tmp/t.sql
 ```
-Side notes attach to a paragraph's position and are shared between both languages, so keep the Spanish text in the same blocks as
-the English (the tool prints the block count to compare). Release and sealing are decided by the English chapter.
+Side notes attach to the original's paragraph numbers and are shared between both languages. If the Spanish splits a paragraph
+that the English keeps whole (or the reverse), pass a map as the last argument: a JSON list with one number per Spanish block,
+the English block it belongs to (e.g. `[0,0,1,2]` when English block 0 became two Spanish blocks). The note then sits on the
+first piece. Without a map the blocks are matched by position, so the counts must agree (the tool prints the Spanish count).
+`*text*` in a chapter is set in italics. Release and sealing are decided by the English chapter.
 
 ## Local testing
 

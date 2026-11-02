@@ -20,6 +20,17 @@
     (kids || []).forEach(function (c) { if (c == null) return; n.appendChild(typeof c === 'string' ? document.createTextNode(c) : c); });
     return n;
   }
+  /* *text* is set in italics. Built from nodes, never from HTML. */
+  function rich(text) {
+    var out = [], re = /\*([^*\n]+)\*/g, last = 0, m;
+    while ((m = re.exec(text))) {
+      if (m.index > last) out.push(text.slice(last, m.index));
+      out.push(h('em', { text: m[1] }));
+      last = re.lastIndex;
+    }
+    if (last < text.length) out.push(text.slice(last));
+    return out;
+  }
   function clear(n) { while (n.firstChild) n.removeChild(n.firstChild); return n; }
   function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
   function roman(n) {
@@ -310,11 +321,12 @@
         prevKind = 'break'; return;
       }
       var body;
-      if (b.t === 'letter') body = h('div', { 'class': 'letter' }, [h('p', { text: b.text })]);
-      else body = h('p', { 'class': 'narr' + (prevKind !== 'p' ? ' flush' : '') + (prevKind === 'start' ? ' first' : ''), id: 'p-' + b.i, text: b.text });
+      if (b.t === 'letter') body = h('div', { 'class': 'letter' }, [h('p', {}, rich(b.text))]);
+      else body = h('p', { 'class': 'narr' + (prevKind !== 'p' ? ' flush' : '') + (prevKind === 'start' ? ' first' : ''), id: 'p-' + b.i }, rich(b.text));
       var note = h('div', { 'class': 'note' });
       var row = h('div', { 'class': 'row' }, [body, note]);
-      rows[b.i] = { el: row, note: note, open: false };
+      /* notes follow the original's paragraph numbers; a paragraph a translation has split carries the note on its first piece */
+      if (!b.cont) { var anchor = b.a === undefined ? b.i : b.a; rows[anchor] = { el: row, note: note, open: false }; }
       text.appendChild(row);
       prevKind = b.t === 'letter' ? 'letter' : 'p';
     });
