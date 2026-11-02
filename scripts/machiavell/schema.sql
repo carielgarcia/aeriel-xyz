@@ -15,8 +15,10 @@ CREATE TABLE IF NOT EXISTS chapter_translations (
   title    TEXT NOT NULL,
   epigraph TEXT,
   body     TEXT NOT NULL,
+  map      TEXT,                -- optional JSON list: for each block of this text, the original's block it belongs to
   PRIMARY KEY (n, lang)
 );
+-- Databases created before `map` existed:  ALTER TABLE chapter_translations ADD COLUMN map TEXT;
 CREATE TABLE IF NOT EXISTS comments (
   id         INTEGER PRIMARY KEY AUTOINCREMENT,
   chapter    INTEGER NOT NULL,

@@ -98,12 +98,20 @@ async function readJson(request) {
      ***            a scene break
      > text         a letter (italic, inset)
    Anything else is a paragraph. Indices count every block, so notes stay put. */
-function blocks(body) {
+function blocks(body, map) {
   return String(body).split(/\n\s*\n/).map((b) => b.trim()).filter(Boolean).map((b, i) => {
     if (/^(\*\s*){3,}$/.test(b)) return { i, t: 'break' };
-    if (b.startsWith('> ')) return { i, t: 'letter', text: b.replace(/^>\s?/gm, '').replace(/\n/g, ' ') };
-    return { i, t: 'p', text: b.replace(/\n/g, ' ') };
+    const o = b.startsWith('> ')
+      ? { i, t: 'letter', text: b.replace(/^>\s?/gm, '').replace(/\n/g, ' ') }
+      : { i, t: 'p', text: b.replace(/\n/g, ' ') };
+    /* A translation may split a paragraph that the original keeps whole. Notes belong to the original's
+       numbering: `a` is the original paragraph this block belongs to, and `cont` marks the later pieces. */
+    if (map && Number.isInteger(map[i])) { o.a = map[i]; if (i > 0 && map[i - 1] === map[i]) o.cont = true; }
+    return o;
   });
+}
+function parseMap(m) {
+  try { const a = JSON.parse(m); return Array.isArray(a) ? a : null; } catch (e) { return null; }
 }
 
 /* ?lang=es asks for the Spanish text where a chapter has it. Anything else, or a chapter with no translation
@@ -168,13 +176,17 @@ async function getChapter(env, n, lang) {
   let x = null;
   if (lang) {
     try {
-      x = await env.DB.prepare('SELECT title, epigraph, body FROM chapter_translations WHERE n = ? AND lang = ?').bind(n, lang).first();
-    } catch (e) { /* no translations table yet */ }
+      x = await env.DB.prepare('SELECT title, epigraph, body, map FROM chapter_translations WHERE n = ? AND lang = ?').bind(n, lang).first();
+    } catch (e) {
+      try { /* a database from before the `map` column */
+        x = await env.DB.prepare('SELECT title, epigraph, body FROM chapter_translations WHERE n = ? AND lang = ?').bind(n, lang).first();
+      } catch (e2) { /* no translations table yet */ }
+    }
   }
   return json({
     n: r.n, title: x ? x.title : r.title, epigraph: x ? x.epigraph : r.epigraph, released: r.released_at,
     lang: x ? lang : ORIGINAL_LANG,
-    blocks: blocks(x ? x.body : r.body),
+    blocks: x ? blocks(x.body, parseMap(x.map)) : blocks(r.body),
     prev: at > 0 ? ns[at - 1] : null,
     next: at < ns.length - 1 ? ns[at + 1] : null,
   });
