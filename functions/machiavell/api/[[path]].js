@@ -145,7 +145,8 @@ async function enter(request, env, url) {
 async function listChapters(env, lang) {
   const now = new Date().toISOString();
   const rows = (await env.DB.prepare('SELECT n, title, epigraph, released_at FROM chapters WHERE released_at IS NOT NULL AND released_at <= ? ORDER BY n').bind(now).all()).results;
-  const sealed = (await env.DB.prepare('SELECT n FROM chapters WHERE released_at IS NULL OR released_at > ? ORDER BY n').bind(now).all()).results.map((r) => r.n);
+  const sealedRows = (await env.DB.prepare('SELECT n, title FROM chapters WHERE released_at IS NULL OR released_at > ? ORDER BY n').bind(now).all()).results;
+  const sealed = sealedRows.map((r) => r.n);
   const counts = {};
   (await env.DB.prepare('SELECT chapter, COUNT(*) AS c FROM comments GROUP BY chapter').all()).results.forEach((r) => (counts[r.chapter] = r.c));
   const tr = {};
@@ -154,6 +155,9 @@ async function listChapters(env, lang) {
       (await env.DB.prepare('SELECT n, title, epigraph FROM chapter_translations WHERE lang = ?').bind(lang).all()).results.forEach((r) => (tr[r.n] = r));
     } catch (e) { /* no translations table yet: everything is served in the original */ }
   }
+  /* A sealed chapter shows its name (never its text). */
+  const sealedTitles = {};
+  sealedRows.forEach((r) => (sealedTitles[r.n] = tr[r.n] ? tr[r.n].title : r.title));
   return json({
     chapters: rows.map((r) => {
       const x = tr[r.n];
@@ -162,7 +166,7 @@ async function listChapters(env, lang) {
         released: r.released_at, remarks: counts[r.n] || 0, lang: x ? lang : ORIGINAL_LANG,
       };
     }),
-    sealed,
+    sealed, sealedTitles,
   });
 }
 
