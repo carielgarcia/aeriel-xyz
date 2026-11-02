@@ -7,6 +7,7 @@
   var me = null;
   var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   var BEAT = 400; /* the system's one permitted pause: a breathing ward waits one beat before it answers */
+  var t = MVI18n.t;
 
   /* ---------- tiny helpers ---------- */
   function h(tag, attrs, kids) {
@@ -31,7 +32,7 @@
     if (isNaN(d)) return '';
     var o = { day: 'numeric', month: 'short', year: 'numeric' };
     if (withTime) { o.hour = '2-digit'; o.minute = '2-digit'; }
-    return d.toLocaleString(undefined, o);
+    return d.toLocaleString(MVI18n.locale(), o);
   }
   function api(path, opts) {
     opts = opts || {};
@@ -41,7 +42,8 @@
       return r.json().catch(function () { return {}; }).then(function (d) { return { ok: r.ok, status: r.status, data: d }; });
     }, function () { return { ok: false, status: 0, data: { error: 'network' } }; });
   }
-  function setTitle(t) { document.title = t ? t + ' · Machiavell' : 'Machiavell'; }
+  var titleText = '';
+  function setTitle(x) { titleText = x || ''; document.title = titleText ? titleText + ' · Machiavell' : 'Machiavell'; }
   function plate(cls, kids) {
     var p = h('section', { 'class': 'plate ' + (cls || '') }, kids);
     MVOrn.corners(p);
@@ -54,6 +56,29 @@
     drawBar();
   }
 
+  /* ---------- language ---------- */
+  function langSwitch() {
+    var box = h('div', { 'class': 'langsw', role: 'group', 'aria-label': t('lang.label') });
+    MVI18n.supported.forEach(function (code) {
+      var on = code === MVI18n.lang();
+      box.appendChild(h('button', {
+        'class': 'langbtn' + (on ? ' on' : ''), type: 'button', lang: code, 'aria-pressed': String(on),
+        title: t('lang.' + code), 'aria-label': t('lang.' + code), text: code.toUpperCase(),
+        on: { click: function () { MVI18n.set(code); } }
+      }));
+    });
+    return box;
+  }
+  /* a language change redraws whatever is on screen; a half-typed name and phrase survive the redraw */
+  var kept = { name: '', phrase: '' };
+  MVI18n.onChange(function () {
+    var n = document.getElementById('f-name'), p = document.getElementById('f-phrase');
+    if (n) kept.name = n.value;
+    if (p) kept.phrase = p.value;
+    drawFoot();
+    route();
+  });
+
   /* ---------- chrome ---------- */
   function drawBar() {
     var night = document.documentElement.getAttribute('data-theme') === 'lamplit';
@@ -61,16 +86,17 @@
     $bar.appendChild(h('a', { 'class': 'wordmark', href: '#/' }, [MVOrn.star(16), 'Machiavell']));
     var right = h('div', { 'class': 'bar-right' });
     if (me) {
-      right.appendChild(h('span', { 'class': 'who' }, ['Signed as ', h('b', { text: me.name })]));
-      right.appendChild(h('button', { 'class': 'linkbtn', type: 'button', on: { click: leave } }, ['Leave']));
+      right.appendChild(h('span', { 'class': 'who' }, [t('bar.signedAs'), h('b', { text: me.name })]));
+      right.appendChild(h('button', { 'class': 'linkbtn', type: 'button', on: { click: leave } }, [t('bar.leave')]));
     }
-    right.appendChild(h('button', { 'class': 'linkbtn', type: 'button', 'aria-pressed': String(night), on: { click: toggleTheme } }, [night ? 'Lamplit' : 'Ledger']));
+    right.appendChild(h('button', { 'class': 'linkbtn', type: 'button', 'aria-label': t('bar.themeLabel'), 'aria-pressed': String(night), on: { click: toggleTheme } }, [night ? t('bar.lamplit') : t('bar.ledger')]));
+    right.appendChild(langSwitch());
     $bar.appendChild(right);
   }
   function drawFoot() {
     clear($foot);
     $foot.appendChild(MVOrn.flourish(320));
-    $foot.appendChild(h('p', { text: 'Kept among friends. Please do not carry these pages out of the house.' }));
+    $foot.appendChild(h('p', { text: t('foot') }));
   }
   function leave() {
     api('leave', { method: 'POST', body: {} }).then(function () { me = null; location.hash = '#/'; route(); });
@@ -80,8 +106,8 @@
   function doorwardHead(epithet) {
     return h('div', { 'class': 'doorhead' }, [
       MVOrn.star(16),
-      h('h2', { 'class': 'heading', text: 'The Doorward' }),
-      h('span', { 'class': 'epithet', text: epithet || 'a ward that learned to wait' }),
+      h('h2', { 'class': 'heading', text: t('door.name') }),
+      h('span', { 'class': 'epithet', text: epithet || t('door.epithet') }),
       h('span', { 'class': 'chips', 'aria-hidden': 'true' }, [
         h('i', { style: 'background:var(--brand)' }), h('i', { style: 'background:var(--turquoise)' }), h('i', { style: 'background:var(--violet)' })
       ])
@@ -100,20 +126,6 @@
     });
   }
 
-  var GREETING = [
-    'Ah. A hand on the latch, and no one to announce you.',
-    'I am the Doorward. A clerk copied me from a clerk who copied me from a song, and somewhere along the way someone cut out the silence. I kept a little of it. I wait for answers. It is my only vice.',
-    'Behind me there is a book, written one chapter at a time and kept from the draught of the open world. Those who are expected may pass.',
-    'Tell me what you are called, and I shall remember it, which is more than the lifts do. Then give me the phrase, and I will pause, and decide whether you breathe.'
-  ];
-  var REFUSALS = {
-    'wrong-phrase': 'Flat. That was flat. Say it as though you meant to be let in.',
-    'too-many': 'I have grown tired of your voice. Come back when the moon has changed, or at least in a quarter of an hour.',
-    'bad-name': 'A name, if you please: letters and numbers, two to thirty-two of them, and nothing a clerk would have to strike out.',
-    'not-configured': 'The latch has not yet been written. The keeper of this house has some work to do.',
-    'network': 'The wind took that. Try again.'
-  };
-
   function renderWelcome() {
     setTitle('');
     var box = h('div', { 'class': 'speechbox', 'aria-live': 'polite' });
@@ -121,10 +133,10 @@
     var ward = MVOrn.ward(240, false);
     var name = h('input', { id: 'f-name', name: 'name', type: 'text', autocomplete: 'nickname', maxlength: '32', required: true, spellcheck: 'false' });
     var phrase = h('input', { id: 'f-phrase', name: 'phrase', type: 'password', autocomplete: 'off', required: true, spellcheck: 'false' });
-    var btn = h('button', { 'class': 'btn', type: 'submit', text: 'Present the phrase' });
+    var btn = h('button', { 'class': 'btn', type: 'submit', text: t('door.submit') });
     var form = h('form', { 'class': 'enter', novalidate: true }, [
-      h('div', { 'class': 'field' }, [h('label', { 'class': 'label', 'for': 'f-name', text: 'What are you called?' }), name, h('span', { 'class': 'hint', text: 'This name will sign every note you leave.' })]),
-      h('div', { 'class': 'field' }, [h('label', { 'class': 'label', 'for': 'f-phrase', text: 'The phrase' }), phrase]),
+      h('div', { 'class': 'field' }, [h('label', { 'class': 'label', 'for': 'f-name', text: t('door.nameLabel') }), name, h('span', { 'class': 'hint', text: t('door.nameHint') })]),
+      h('div', { 'class': 'field' }, [h('label', { 'class': 'label', 'for': 'f-phrase', text: t('door.phraseLabel') }), phrase]),
       h('div', {}, [btn, ward, status])
     ]);
     form.addEventListener('submit', function (e) {
@@ -137,22 +149,24 @@
         if (res.ok) {
           me = { name: res.data.name };
           status.className = 'status good';
-          status.textContent = 'There. A breath, and it was answered. Welcome, ' + me.name + '. Mind the stairs; they are written to forget the careless.';
+          status.textContent = t('door.welcome', { n: me.name });
           return wait(reduce ? 0 : 1400).then(function () { location.hash = '#/'; route(); });
         }
         ward.setBreathing(false);
         status.className = 'status bad';
-        status.textContent = REFUSALS[res.data.error] || REFUSALS[res.status === 0 ? 'network' : 'wrong-phrase'];
+        var known = { 'wrong-phrase': 1, 'too-many': 1, 'bad-name': 1, 'not-configured': 1, network: 1 };
+        status.textContent = t('door.refusal.' + (known[res.data.error] ? res.data.error : (res.status === 0 ? 'network' : 'wrong-phrase')));
         if (res.data.error === 'wrong-phrase') phrase.select();
       });
     });
-    speak(box, GREETING);
+    name.value = kept.name; phrase.value = kept.phrase; kept.name = ''; kept.phrase = '';
+    speak(box, t('door.greeting'));
 
     clear($main).appendChild(h('div', {}, [
       h('div', { 'class': 'hero' }, [
-        h('span', { 'class': 'label', text: 'A book, in chapters' }),
+        h('span', { 'class': 'label', text: t('hero.label') }),
         h('h1', { 'class': 'title', text: 'Machiavell' }),
-        h('p', { 'class': 'tagline', text: 'Is this ward flat, or does it still breathe?' }),
+        h('p', { 'class': 'tagline', text: t('hero.tagline') }),
         MVOrn.flourish(420, { big: true })
       ]),
       plate('door lift glow', [doorwardHead(), box, form])
@@ -161,35 +175,31 @@
   }
 
   /* ---------- library ---------- */
-  var WELCOME_BACK = [
-    'You again, {n}. I kept your name warm.',
-    'Back through the door, {n}. The chapters are where you left them, give or take a chapter.',
-    'Ah, {n}. Mind the draught. Read well, and leave your notes.'
-  ];
   function renderLibrary() {
-    setTitle('The chapters');
+    setTitle(t('library.title'));
     var shelf = h('div', { 'class': 'shelf' });
-    var line = WELCOME_BACK[Math.floor(Math.random() * WELCOME_BACK.length)].replace('{n}', me.name);
+    var lines = t('library.welcomeBack', { n: me.name });
+    var line = lines[Math.floor(Math.random() * lines.length)];
     clear($main).appendChild(h('div', {}, [
       h('div', { 'class': 'hero' }, [
-        h('span', { 'class': 'label', text: 'The reading room' }),
-        h('h1', { 'class': 'chapter', text: 'The Chapters' }),
+        h('span', { 'class': 'label', text: t('library.label') }),
+        h('h1', { 'class': 'chapter', text: t('library.heading') }),
         MVOrn.flourish(360)
       ]),
-      h('p', { 'class': 'lede', text: '“' + line + '” — the Doorward' }),
+      h('p', { 'class': 'lede', text: t('library.quote', { line: line }) }),
       shelf
     ]));
-    api('chapters').then(function (res) {
+    api('chapters?lang=' + MVI18n.lang()).then(function (res) {
       if (res.status === 401) { me = null; return route(); }
-      if (!res.ok) { shelf.appendChild(h('p', { 'class': 'lede', text: 'The shelves would not open. Try again in a moment.' })); return; }
+      if (!res.ok) { shelf.appendChild(h('p', { 'class': 'lede', text: t('library.error') })); return; }
       res.data.chapters.forEach(function (c) {
         shelf.appendChild(h('a', { 'class': 'vol', href: '#/chapter/' + c.n }, [
           h('div', { 'class': 'num', 'aria-hidden': 'true', text: roman(c.n) }),
           h('div', {}, [
-            h('span', { 'class': 'label', text: 'Chapter ' + roman(c.n) }),
-            h('h2', { 'class': 'heading', text: c.title }),
-            c.epigraph ? h('p', { 'class': 'epi', text: c.epigraph }) : null,
-            h('div', { 'class': 'meta', text: 'Released ' + when(c.released) + ' · ' + c.remarks + (c.remarks === 1 ? ' remark' : ' remarks') })
+            h('span', { 'class': 'label', text: t('chapter.label', { r: roman(c.n) }) }),
+            h('h2', { 'class': 'heading', text: c.title, lang: c.lang || null }),
+            c.epigraph ? h('p', { 'class': 'epi', text: c.epigraph, lang: c.lang || null }) : null,
+            h('div', { 'class': 'meta', text: t('library.released', { d: when(c.released) }) + ' · ' + t(c.remarks === 1 ? 'library.remark.one' : 'library.remark.many', { c: c.remarks }) + (c.lang && c.lang !== MVI18n.lang() ? ' · ' + t('library.original') : '') })
           ])
         ]));
       });
@@ -198,14 +208,14 @@
         shelf.appendChild(h('div', { 'class': 'vol sealed' }, [
           h('div', { 'class': 'num', 'aria-hidden': 'true', text: roman(n) }),
           h('div', {}, [
-            h('span', { 'class': 'label', text: 'Chapter ' + roman(n) }),
-            h('h2', { 'class': 'heading', text: 'Sealed' }),
-            h('p', { 'class': 'epi', text: 'The Doorward has not yet been told to open this one.' }),
+            h('span', { 'class': 'label', text: t('chapter.label', { r: roman(n) }) }),
+            h('h2', { 'class': 'heading', text: t('library.sealed') }),
+            h('p', { 'class': 'epi', text: t('library.sealedNote') }),
             w
           ])
         ]));
       });
-      if (!res.data.chapters.length && !res.data.sealed.length) shelf.appendChild(h('p', { 'class': 'lede', text: 'The shelves are bare, for now.' }));
+      if (!res.data.chapters.length && !res.data.sealed.length) shelf.appendChild(h('p', { 'class': 'lede', text: t('library.empty') }));
     });
   }
 
@@ -227,7 +237,7 @@
   function composer(para, placeholder, onDone) {
     var ta = h('textarea', { rows: '3', maxlength: '1500', required: true, 'aria-label': placeholder, placeholder: placeholder });
     var st = h('p', { 'class': 'status', role: 'status' });
-    var btn = h('button', { 'class': 'btn small', type: 'submit', text: 'Leave it, as ' + me.name });
+    var btn = h('button', { 'class': 'btn small', type: 'submit', text: t('notes.leave', { n: me.name }) });
     var form = h('form', {}, [h('div', { 'class': 'field' }, [ta]), h('div', {}, [btn, st])]);
     form.addEventListener('submit', function (e) {
       e.preventDefault();
@@ -237,7 +247,7 @@
       api('comments/' + cur.n, { method: 'POST', body: { para: para, text: text } }).then(function (res) {
         btn.disabled = false;
         if (res.status === 401) { me = null; return route(); }
-        if (!res.ok) { st.className = 'status bad'; st.textContent = 'That did not stick. Try once more.'; return; }
+        if (!res.ok) { st.className = 'status bad'; st.textContent = t('notes.failed'); return; }
         cur.comments.push(res.data.comment);
         ta.value = '';
         onDone();
@@ -247,14 +257,14 @@
   }
 
   function renderChapter(n) {
-    clear($main).appendChild(h('p', { 'class': 'lede', text: 'The Doorward is fetching the pages…' }));
-    Promise.all([api('chapters/' + n), api('comments/' + n)]).then(function (r) {
+    clear($main).appendChild(h('p', { 'class': 'lede', text: t('chapter.fetching') }));
+    Promise.all([api('chapters/' + n + '?lang=' + MVI18n.lang()), api('comments/' + n)]).then(function (r) {
       var ch = r[0], cm = r[1];
       if (ch.status === 401 || cm.status === 401) { me = null; return route(); }
       if (!ch.ok) {
-        setTitle('Sealed');
+        setTitle(t('library.sealed'));
         var w = MVOrn.ward(240, false);
-        return clear($main).appendChild(plate('door', [doorwardHead(), h('p', { 'class': 'speech', text: 'That door is sealed. I was not told to open it, and I am nothing if not obedient.' }), w, h('p', {}, [h('a', { href: '#/', text: 'Back to the chapters' })])]));
+        return clear($main).appendChild(plate('door', [doorwardHead(), h('p', { 'class': 'speech', text: t('chapter.sealedLine') }), w, h('p', {}, [h('a', { href: '#/', text: t('chapter.back') })])]));
       }
       cur = { n: n, comments: cm.ok ? cm.data.comments : [] };
       drawChapter(ch.data);
@@ -262,8 +272,8 @@
   }
 
   function drawChapter(c) {
-    setTitle('Chapter ' + roman(c.n) + ': ' + c.title);
-    var text = h('div', { 'class': 'text' });
+    setTitle(t('chapter.titled', { r: roman(c.n), t: c.title }));
+    var text = h('div', { 'class': 'text', lang: c.lang || null });
     var rows = {}, openRow = null;
 
     function mine(para) { return cur.comments.filter(function (x) { return x.para === para; }); }
@@ -274,15 +284,15 @@
       clear(box);
       var btn = h('button', {
         'class': 'sealbtn' + (list.length ? ' has' : ''), type: 'button', 'aria-expanded': String(wasOpen),
-        'aria-label': (list.length ? list.length + (list.length === 1 ? ' side note' : ' side notes') : 'Add a side note') + ' on this paragraph',
+        'aria-label': t('notes.onParagraph', { what: list.length ? t(list.length === 1 ? 'notes.count.one' : 'notes.count.many', { c: list.length }) : t('notes.add') }),
         on: { click: function () { toggle(i); } }
       }, [h('span', { 'class': 'pip', 'aria-hidden': 'true', text: list.length ? String(list.length) : '+' }), h('span', { 'class': 'tease', text: noteLabel(list) })]);
       box.appendChild(btn);
       if (wasOpen) {
         var pane = h('div', { 'class': 'pane' });
         if (list.length) list.forEach(function (x) { pane.appendChild(sayEl(x)); });
-        else pane.appendChild(h('p', { 'class': 'none', text: 'No one has written in this margin yet.' }));
-        pane.appendChild(composer(i, 'Write a side note…', function () { drawNote(i); drawRemarks(); }));
+        else pane.appendChild(h('p', { 'class': 'none', text: t('notes.none') }));
+        pane.appendChild(composer(i, t('notes.placeholder'), function () { drawNote(i); drawRemarks(); }));
         box.appendChild(pane);
       }
     }
@@ -314,27 +324,29 @@
     function drawRemarks() {
       clear(remarks);
       var list = mine(null);
-      remarks.appendChild(h('h2', { 'class': 'heading', id: 'rem-h', text: 'Remarks on the chapter' }));
+      remarks.appendChild(h('h2', { 'class': 'heading', id: 'rem-h', text: t('remarks.heading') }));
       remarks.appendChild(MVOrn.flourish(240));
       if (list.length) list.forEach(function (x) { remarks.appendChild(sayEl(x)); });
-      else remarks.appendChild(h('p', { 'class': 'lede', text: 'No remarks yet. Be the first to speak.' }));
-      remarks.appendChild(composer(null, 'Write a remark on the whole chapter…', function () { drawRemarks(); }));
+      else remarks.appendChild(h('p', { 'class': 'lede', text: t('remarks.none') }));
+      remarks.appendChild(composer(null, t('remarks.placeholder'), function () { drawRemarks(); }));
     }
     drawRemarks();
 
-    var pager = h('nav', { 'class': 'pager', 'aria-label': 'Chapters' }, [
-      c.prev ? h('a', { href: '#/chapter/' + c.prev, text: '← Chapter ' + roman(c.prev) }) : h('span'),
-      c.next ? h('a', { href: '#/chapter/' + c.next, text: 'Chapter ' + roman(c.next) + ' →' }) : h('span')
+    var pager = h('nav', { 'class': 'pager', 'aria-label': t('chapter.pagerLabel') }, [
+      c.prev ? h('a', { href: '#/chapter/' + c.prev, text: t('chapter.prev', { r: roman(c.prev) }) }) : h('span'),
+      c.next ? h('a', { href: '#/chapter/' + c.next, text: t('chapter.next', { r: roman(c.next) }) }) : h('span')
     ]);
+    var original = c.lang && c.lang !== MVI18n.lang();
 
     clear($main).appendChild(h('article', {}, [
-      h('div', { 'class': 'crumbs' }, [h('a', { href: '#/', text: '← The chapters' }), h('span', { 'class': 'label', text: 'Released ' + when(c.released) })]),
+      h('div', { 'class': 'crumbs' }, [h('a', { href: '#/', text: t('chapter.crumb') }), h('span', { 'class': 'label', text: t('library.released', { d: when(c.released) }) })]),
       h('header', { 'class': 'chead' }, [
-        h('span', { 'class': 'label', text: 'Chapter ' + roman(c.n) }),
-        h('h1', { 'class': 'chapter', text: c.title }),
-        c.epigraph ? h('p', { 'class': 'epigraph', text: c.epigraph }) : null,
+        h('span', { 'class': 'label', text: t('chapter.label', { r: roman(c.n) }) }),
+        h('h1', { 'class': 'chapter', text: c.title, lang: c.lang || null }),
+        c.epigraph ? h('p', { 'class': 'epigraph', text: c.epigraph, lang: c.lang || null }) : null,
         h('div', { style: 'margin-top:24px' }, [MVOrn.flourish(360, { big: true })])
       ]),
+      original ? h('p', { 'class': 'lede', role: 'note', text: t('chapter.untranslated') }) : null,
       text,
       h('div', { style: 'margin-top:40px' }, [MVOrn.flourish(360)]),
       remarks,
@@ -377,6 +389,7 @@
     api('me').then(function (res) { me = res.ok ? { name: res.data.name } : null; booted = true; go(); });
   }
   window.addEventListener('hashchange', route);
+  MVI18n.apply();
   MVOrn.mount();
   drawFoot();
   route();

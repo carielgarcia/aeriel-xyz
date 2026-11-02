@@ -2,7 +2,7 @@
    One catch-all Pages Function for /machiavell/api/*.
 
    Bindings (set in the Cloudflare dashboard, see scripts/machiavell/README.md):
-     DB              D1 database (tables: chapters, comments, attempts)
+     DB              D1 database (tables: chapters, chapter_translations, comments, attempts)
      PASSPHRASE      the shared passphrase (secret)
      SESSION_SECRET  long random string used to sign the session cookie (secret)
 
@@ -14,6 +14,8 @@ const ATTEMPT_WINDOW_MS = 15 * 60 * 1000;
 const ATTEMPT_LIMIT = 8;
 const MAX_COMMENT = 1500;
 const NAME_RE = /^[\p{L}\p{N}][\p{L}\p{N} .'’-]{1,31}$/u;
+const ORIGINAL_LANG = 'en';           /* the language chapters are written in (table `chapters`) */
+const TRANSLATIONS = ['es'];          /* languages that may have a row in `chapter_translations` */
 
 const enc = new TextEncoder();
 const dec = new TextDecoder();
@@ -104,6 +106,13 @@ function blocks(body) {
   });
 }
 
+/* ?lang=es asks for the Spanish text where a chapter has it. Anything else, or a chapter with no translation
+   (or a database that has no translations table yet), gets the original. */
+function wantedLang(url) {
+  const l = String(url.searchParams.get('lang') || '').toLowerCase().slice(0, 2);
+  return TRANSLATIONS.includes(l) ? l : null;
+}
+
 /* ---------- handlers ---------- */
 async function enter(request, env, url) {
   const data = await readJson(request);
@@ -125,28 +134,47 @@ async function enter(request, env, url) {
   return json({ name }, 200, { 'set-cookie': await makeCookie(env, name, url.protocol === 'https:') });
 }
 
-async function listChapters(env) {
+async function listChapters(env, lang) {
   const now = new Date().toISOString();
   const rows = (await env.DB.prepare('SELECT n, title, epigraph, released_at FROM chapters WHERE released_at IS NOT NULL AND released_at <= ? ORDER BY n').bind(now).all()).results;
   const sealed = (await env.DB.prepare('SELECT n FROM chapters WHERE released_at IS NULL OR released_at > ? ORDER BY n').bind(now).all()).results.map((r) => r.n);
   const counts = {};
   (await env.DB.prepare('SELECT chapter, COUNT(*) AS c FROM comments GROUP BY chapter').all()).results.forEach((r) => (counts[r.chapter] = r.c));
+  const tr = {};
+  if (lang) {
+    try {
+      (await env.DB.prepare('SELECT n, title, epigraph FROM chapter_translations WHERE lang = ?').bind(lang).all()).results.forEach((r) => (tr[r.n] = r));
+    } catch (e) { /* no translations table yet: everything is served in the original */ }
+  }
   return json({
-    chapters: rows.map((r) => ({ n: r.n, title: r.title, epigraph: r.epigraph, released: r.released_at, remarks: counts[r.n] || 0 })),
+    chapters: rows.map((r) => {
+      const x = tr[r.n];
+      return {
+        n: r.n, title: x ? x.title : r.title, epigraph: x ? x.epigraph : r.epigraph,
+        released: r.released_at, remarks: counts[r.n] || 0, lang: x ? lang : ORIGINAL_LANG,
+      };
+    }),
     sealed,
   });
 }
 
-async function getChapter(env, n) {
+async function getChapter(env, n, lang) {
   const now = new Date().toISOString();
   const r = await env.DB.prepare('SELECT n, title, epigraph, body, released_at FROM chapters WHERE n = ? AND released_at IS NOT NULL AND released_at <= ?').bind(n, now).first();
   if (!r) return fail(404, 'sealed');
   const nb = await env.DB.prepare('SELECT n FROM chapters WHERE released_at IS NOT NULL AND released_at <= ? ORDER BY n').bind(now).all();
   const ns = nb.results.map((x) => x.n);
   const at = ns.indexOf(n);
+  let x = null;
+  if (lang) {
+    try {
+      x = await env.DB.prepare('SELECT title, epigraph, body FROM chapter_translations WHERE n = ? AND lang = ?').bind(n, lang).first();
+    } catch (e) { /* no translations table yet */ }
+  }
   return json({
-    n: r.n, title: r.title, epigraph: r.epigraph, released: r.released_at,
-    blocks: blocks(r.body),
+    n: r.n, title: x ? x.title : r.title, epigraph: x ? x.epigraph : r.epigraph, released: r.released_at,
+    lang: x ? lang : ORIGINAL_LANG,
+    blocks: blocks(x ? x.body : r.body),
     prev: at > 0 ? ns[at - 1] : null,
     next: at < ns.length - 1 ? ns[at + 1] : null,
   });
@@ -195,9 +223,9 @@ export async function onRequest({ request, env, params }) {
   if (route === 'me' && method === 'GET') return session ? json({ name: session.name }) : fail(401, 'no-session');
   if (!session) return fail(401, 'no-session');
 
-  if (route === 'chapters' && method === 'GET') return listChapters(env);
+  if (route === 'chapters' && method === 'GET') return listChapters(env, wantedLang(url));
   let m;
-  if ((m = route.match(/^chapters\/(\d{1,4})$/)) && method === 'GET') return getChapter(env, Number(m[1]));
+  if ((m = route.match(/^chapters\/(\d{1,4})$/)) && method === 'GET') return getChapter(env, Number(m[1]), wantedLang(url));
   if ((m = route.match(/^comments\/(\d{1,4})$/))) {
     if (method === 'GET') return listComments(env, Number(m[1]));
     if (method === 'POST') return addComment(request, env, Number(m[1]), session);
