@@ -51,7 +51,7 @@ a:hover{color:var(--violet)}
 .mini-star .o-star{fill:currentColor}
 
 /* stage: ornamented columns either side of the page */
-.stage{display:grid;grid-template-columns:var(--col) minmax(0,1fr) var(--col);min-height:100vh}
+.stage{display:grid;grid-template-columns:minmax(var(--col),1fr) minmax(0,1020px) minmax(var(--col),1fr);min-height:100vh}
 .col{position:relative;overflow:hidden}
 .col-svg{position:absolute;inset:0;width:100%;height:100%}
 .col-l .col-svg{left:0}

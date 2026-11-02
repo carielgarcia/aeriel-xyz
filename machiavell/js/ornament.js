@@ -69,6 +69,17 @@
     g.appendChild(leaf(e[0], e[1], Math.atan2(e[1] - e2[1], e[0] - e2[0]), 12));
     return g;
   }
+  /* a bare branch for a small creature to sit on: a gently bowed stem, leaves hanging only below it */
+  function branch(x, y, len) {
+    var g = el('g', {}), pts = [], i, t;
+    for (i = 0; i <= 20; i++) { t = i / 20; pts.push([x + len * t, y - Math.sin(t * PI) * len * 0.06]); }
+    g.appendChild(poly(pts, 'o-leaf'));
+    [0.12, 0.34, 0.8].forEach(function (u, k) {
+      var q = pts[Math.round(u * 20)];
+      g.appendChild(leaf(q[0], q[1], PI / 2 + (k % 2 ? 0.55 : -0.5), 12 - k));
+    });
+    return g;
+  }
   /* an oak leaf: a stalk, then a blade whose edge swells into lobes */
   function oakLeaf(x, y, ang, len) {
     var g = el('g', {}), stalk = len * 0.18, top = [], bot = [], i, t, hw;
@@ -114,12 +125,57 @@
   /* ARCANE ------------------------------------------------------------------------------- */
   /* Elder Futhark, each in a box 8 wide and 13 high; drawn as strokes so no font is needed */
   var RUNES = [
-    'M1 0V13M1 4L7 0M1 8L7 4', 'M1 13V0L7 4V13', 'M1 0V13M1 3L7 6.5L1 10', 'M1 0V13M1 2L7 5M1 6L7 9',
-    'M1 0V13M1 1L7 4L1 7.5L7 13', 'M7 2L2 6.5L7 11', 'M1 1L7 12M7 1L1 12', 'M1 0V13M1 1L7 4L1 7',
-    'M1 0V13M7 0V13M1 4L7 9', 'M4 0V13', 'M4 0V13M0.5 4L4 0L7.5 4', 'M1 0V13M1 0L6 3L1 6.5L6 10L1 13',
-    'M1 0V13M7 0V13M1 0L4 4L7 0', 'M1 1V12M7 1V12M1 1L7 12M7 1L1 12', 'M4 0L8 4L4 8L0 4Z M4 8L1 13M4 8L7 13'
+    'M1 0V13M1 4L7 0M1 8L7 4',            /* fehu */
+    'M1 13V0L7 4V13',                      /* uruz */
+    'M1 0V13M1 3L7 6.5L1 10',              /* thurisaz */
+    'M1 0V13M1 2L7 5M1 6L7 9',             /* ansuz */
+    'M1 0V13M1 1L7 4L1 7.5L7 13',          /* raido */
+    'M7 2L2 6.5L7 11',                     /* kenaz */
+    'M1 1L7 12M7 1L1 12',                  /* gebo */
+    'M1 0V13M1 1L7 4L1 7',                 /* wunjo */
+    'M1 0V13M7 0V13M1 4L7 9',              /* hagalaz */
+    'M4 0V13M0.5 4L7.5 9',                 /* nauthiz */
+    'M4 0V13',                             /* isa */
+    'M1 1L4 4.5L1 8M7 5L4 8.5L7 12',       /* jera */
+    'M4 0V13M4 0L1 3M4 13L7 10',           /* eihwaz */
+    'M1 0V13M1 0L7 3L1 6.5M1 13L7 10L1 6.5', /* perthro */
+    'M4 0V13M4 5L0.5 0M4 5L7.5 0',         /* algiz */
+    'M6 0L2 4L6 9L2 13',                   /* sowilo */
+    'M4 0V13M0.5 4L4 0L7.5 4',             /* tiwaz */
+    'M1 0V13M1 0L6 3L1 6.5L6 10L1 13',     /* berkano */
+    'M1 0V13M7 0V13M1 0L4 4L7 0',          /* ehwaz */
+    'M1 1V12M7 1V12M1 1L7 12M7 1L1 12',    /* mannaz */
+    'M3 13V0M3 0L7 4',                     /* laguz */
+    'M4 0L8 4L4 8L0 4Z',                   /* ingwaz */
+    'M1 1V12L7 1V12Z',                     /* dagaz */
+    'M4 0L8 4L4 8L0 4Z M4 8L1 13M4 8L7 13' /* othala */
   ];
-  function rune(cx, cy, k) { return el('path', { d: RUNES[k % RUNES.length], 'class': 'o-arcane thin', fill: 'none', transform: 'translate(' + (cx - 4) + ' ' + (cy - 6.5) + ')' }); }
+  function glyph(cx, cy, k, sc) {
+    return el('path', { d: RUNES[k % RUNES.length], 'class': 'o-arcane thin', fill: 'none',
+      transform: 'translate(' + f(cx) + ' ' + f(cy) + ') scale(' + (sc || 1) + ') translate(-4 -6.5)' });
+  }
+  function rune(cx, cy, k) { return glyph(cx, cy, k, 1); }
+  /* a bindrune: two runes cut over one stem, read as a single mark */
+  function bindrune(cx, cy, a, b, sc) {
+    var g = el('g', {});
+    g.appendChild(glyph(cx, cy, a, sc)); g.appendChild(glyph(cx, cy, b, sc));
+    return g;
+  }
+  /* a vertical cartouche: two wires, bindrunes between them, a diamond at each end, dots down the outside */
+  function runeColumn(x, y, n, seed) {
+    var g = el('g', {}), i, step = 19, h = n * step + 8, k;
+    g.appendChild(poly([[x - 10, y], [x - 10, y + h]], 'o-rule thin')); g.appendChild(poly([[x + 10, y], [x + 10, y + h]], 'o-rule thin'));
+    g.appendChild(diamond(x, y - 1, 3.2, 'o-arcane thin')); g.appendChild(diamond(x, y + h + 1, 3.2, 'o-arcane thin'));
+    for (i = 0; i < n; i++) {
+      k = seed + i * 5;
+      g.appendChild(i % 2 ? rune(x, y + 4 + step * (i + 0.5), k) : bindrune(x, y + 4 + step * (i + 0.5), k, k + 7));
+      if (i < n - 1) {
+        g.appendChild(el('circle', { cx: x - 10, cy: y + 4 + step * (i + 1), r: 1.1, 'class': 'o-arcane-fill' }));
+        g.appendChild(el('circle', { cx: x + 10, cy: y + 4 + step * (i + 1), r: 1.1, 'class': 'o-arcane-fill' }));
+      }
+    }
+    return g;
+  }
   /* a crescent moon, tips up, centre (cx,cy), radius r */
   function moon(cx, cy, r) {
     return path('M' + cx + ' ' + (cy - r) + ' A' + r + ' ' + r + ' 0 1 0 ' + cx + ' ' + (cy + r) + ' A' + (r * 1.4) + ' ' + (r * 1.4) + ' 0 0 1 ' + cx + ' ' + (cy - r) + 'Z', 'o-arcane');
@@ -180,6 +236,36 @@
     return g;
   }
 
+  /* a baby dragon, facing right, feet at (x,y). pose 'perch' sits with its tail curled and small wings folded up;
+     pose 'fly' has its wings open and its feet tucked. dir -1 mirrors it. A big head, a short neck, a ✦ for an eye. */
+  function babyDragon(x, y, s, dir, pose) {
+    var g = el('g', { transform: 'translate(' + x + ' ' + y + ') scale(' + (dir * s) + ' ' + s + ')' });
+    function D(d, cls) { g.appendChild(path(d, cls || 'o-dragon')); }
+    /* back, neck and skull; jaw; belly */
+    D('M-16 -6 C-14 -16 -2 -20 6 -16 C10 -14 12 -12 12 -10');
+    D('M12 -10 C14 -18 22 -20 27 -16 C30 -14 30 -11 27 -9 C24 -8 20 -9 17 -8');
+    D('M27 -9 C24 -6 19 -6 16 -7', 'o-dragon thin');
+    D('M16 -7 C15 -2 10 2 3 3 C-4 4 -12 2 -16 -2');
+    /* curled tail */
+    D('M-16 -6 C-24 -7 -31 -2 -30 4 C-29 9 -22 10 -21 5 C-20 2 -23 0 -25 2');
+    D('M-16 -2 C-20 -1 -24 2 -24 4', 'o-dragon thin');
+    /* horn, brow, spines */
+    D('M17 -17 C15 -22 12 -24 9 -25', 'o-dragon thin');
+    D('M16 -14 Q21 -17 25 -14', 'o-dragon thin');
+    [[-10, -13], [-4, -17], [2, -18]].forEach(function (q) { g.appendChild(poly([[q[0] - 2.2, q[1] + 0.5], [q[0], q[1] - 3.4], [q[0] + 2.2, q[1] + 0.5]], 'o-dragon thin')); });
+    g.appendChild(star(21.5, -13.2, 2.4));
+    g.appendChild(circ(27.3, -12, 0.6, 'o-dragon thin'));
+    if (pose === 'fly') {
+      g.appendChild(wing(-6, -12, -1, 0.62)); g.appendChild(wing(-4, -13, 1, 0.5));
+      D('M-6 1 L-7 5 M2 3 L2 7', 'o-dragon thin');
+    } else {
+      D('M-4 -15 L-6 -28 Q-9 -24 -11 -27 Q-13 -22 -16 -24 L-13 -14');
+      D('M-4 -15 L-11 -27', 'o-dragon thin');
+      D('M-8 1.5 L-9 8 L-4 8 M2 3 L1 9 L6 9', 'o-dragon thin');
+    }
+    return g;
+  }
+
   /* ---------- the side column: one tall tile, repeated down the page ----------
      A wyrm weaves down the column and passes through arcane rings; at the crossings it spreads its wings, from its
      curves grow oak, acorns and a fern, a moon and stars keep the other side, and runes run along the outer wires.
@@ -210,12 +296,16 @@
 
   function sideTile(ground) {
     var g = el('g', {}), y, k;
-    /* the rune band: two wires, and an inscription between them */
+    /* the rune band: two wires, ticks along them, and an inscription of runes and bindrunes between them */
     g.appendChild(line(20, 0, 20, TH, 'o-rule')); g.appendChild(line(36, 0, 36, TH, 'o-rule'));
     var runes = el('g', { 'class': 'o-runes' });
     for (y = 10, k = 0; y < TH; y += 20, k++) {
-      if (k % 4 === 3) runes.appendChild(diamond(28, y, 3.2, 'o-arcane thin'));
-      else runes.appendChild(rune(28, y, (k * 7 + (k >> 2) * 3) % RUNES.length));
+      var m = k % 8;
+      if (m === 3) { runes.appendChild(diamond(28, y, 3.4, 'o-arcane thin')); runes.appendChild(el('circle', { cx: 28, cy: y, r: 1, 'class': 'o-arcane-fill' })); }
+      else if (m === 7) { runes.appendChild(circ(28, y, 4.6, 'o-arcane thin')); runes.appendChild(line(28, y - 4.6, 28, y + 4.6, 'o-arcane thin')); runes.appendChild(line(23.4, y, 32.6, y, 'o-arcane thin')); }
+      else if (m === 1 || m === 5) runes.appendChild(bindrune(28, y, (k * 5 + 2) % 24, (k * 7 + 9) % 24));
+      else runes.appendChild(rune(28, y, (k * 7 + (k >> 2) * 3) % 24));
+      if (k % 2 === 0) { runes.appendChild(line(17.5, y + 10, 20, y + 10, 'o-rule thin')); runes.appendChild(line(36, y + 10, 38.5, y + 10, 'o-rule thin')); }
     }
     g.appendChild(runes);
     /* a vine climbs the inner wire, a pair of leaves at every second rune */
@@ -226,25 +316,45 @@
       g.appendChild(leaf(39, y, -PI / 2 + 0.55, 10)); g.appendChild(leaf(39, y + 20, PI / 2 - 0.55, 10));
     }
     if (ground) return g;
-    /* four crossings of the wyrm's weave: arcane rings and wings, then four crests: moon, oak, sprig, moon */
+    /* two crossings of the wyrm's weave: arcane rings, and wings at the other two */
     g.appendChild(sigil(bx(40), 40, 26, 'tri'));
     g.appendChild(sigil(bx(360), 360, 26, 'star'));
     [200, 520].forEach(function (cy) { g.appendChild(wing(bx(cy) - HW + 1, cy - 6, -1, 1.05)); g.appendChild(wing(bx(cy) + HW - 1, cy - 6, 1, 1.05)); });
-    /* crest 1 (right, y 120): the left side holds a moon and stars */
-    g.appendChild(moon(60, 108, 13));
-    g.appendChild(constellation([[50, 138], [62, 150], [76, 142], [78, 124]], [5.5, 4, 5, 4]));
-    g.appendChild(star(78, 86, 4));
-    /* crest 2 (left, y 280): the right side holds an oak leaf and acorns */
-    g.appendChild(oakLeaf(70, 262, -0.45, 38)); g.appendChild(acorn(86, 290, 1, 8)); g.appendChild(acorn(100, 298, 0.9, -10));
-    g.appendChild(leaf(70, 296, 0.35, 16));
-    /* crest 3 (right, y 440): the left side holds a fern and a sprig */
-    g.appendChild(sprig(82, 424, PI + 0.4, 28, 3)); g.appendChild(acorn(64, 444, 1, -6));
-    g.appendChild(frond(80, 474, PI + 0.15, 34));
-    /* crest 4 (left, y 600): the right side holds a moon and stars */
-    g.appendChild(moon(92, 584, 13));
-    g.appendChild(constellation([[100, 610], [90, 622], [78, 614], [76, 598]], [5, 4, 5.5, 4]));
-    g.appendChild(star(100, 560, 4));
     g.appendChild(wyrm());
+    return g;
+  }
+
+  /* ---------- the fringe: the same height, repeated outward to fill what the screen has to spare ----------
+     Two 104-wide strips alternate. Everything that is not the wyrm lives out here, clear of its body, so nothing is
+     ever drawn behind it. Strip A is mostly growing things, strip B mostly arcane; each has a baby dragon or two. */
+  var FW = 104;
+  function fringeTile() {
+    var g = el('g', {});
+    /* strip A, x 0..104 */
+    g.appendChild(runeColumn(86, 24, 6, 1));
+    g.appendChild(oakLeaf(18, 72, 0.25, 38)); g.appendChild(acorn(44, 104, 1, 8)); g.appendChild(acorn(60, 112, 0.9, -10)); g.appendChild(leaf(24, 112, 0.5, 16));
+    g.appendChild(branch(8, 256, 90));
+    g.appendChild(babyDragon(56, 252, 1, 1, 'perch'));
+    g.appendChild(frond(22, 350, -0.25, 62)); g.appendChild(acorn(70, 330, 1, -8));
+    g.appendChild(moon(36, 440, 14));
+    g.appendChild(constellation([[16, 486], [34, 502], [56, 492], [72, 470], [90, 482]], [5, 4, 5.5, 4, 5]));
+    g.appendChild(star(78, 428, 4));
+    g.appendChild(sigil(52, 566, 28, 'star'));
+    g.appendChild(oakLeaf(58, 614, 0.15, 30));
+    /* strip B, x 104..208 */
+    var X = 104;
+    function T(node) { var w = el('g', { transform: 'translate(' + X + ' 0)' }, [node]); return w; }
+    g.appendChild(T(sigil(48, 68, 30, 'tri')));
+    g.appendChild(T(runeColumn(18, 128, 5, 4)));
+    g.appendChild(T(babyDragon(64, 188, 1, 1, 'fly')));
+    g.appendChild(T(sprig(30, 262, 0.05, 66, 4))); g.appendChild(T(acorn(50, 286, 1, 6)));
+    g.appendChild(T(oakLeaf(56, 334, -0.4, 36))); g.appendChild(T(acorn(34, 372, 1, -8))); g.appendChild(T(acorn(20, 380, 0.85, 10)));
+    g.appendChild(T(moon(56, 440, 13)));
+    g.appendChild(T(constellation([[16, 480], [32, 494], [50, 486], [66, 468]], [4.5, 5.5, 4, 5])));
+    g.appendChild(T(star(24, 430, 4)));
+    g.appendChild(T(sigil(52, 570, 24, 'tri')));
+    g.appendChild(T(runeColumn(88, 440, 5, 11)));
+    g.appendChild(T(acorn(30, 612, 1, 6))); g.appendChild(T(acorn(46, 620, 0.9, -8)));
     return g;
   }
 
@@ -286,6 +396,7 @@
     var svg = el('svg', { 'class': 'col-svg', width: '100%', height: '100%', 'aria-hidden': 'true', focusable: 'false' });
     var defs = el('defs', {}, [
       el('pattern', { id: 'o-tile-' + side, x: 0, y: HEAD_H, width: TW, height: TH, patternUnits: 'userSpaceOnUse' }, [sideTile(false)]),
+      el('pattern', { id: 'o-fringe-' + side, x: TW, y: HEAD_H, width: FW * 2, height: TH, patternUnits: 'userSpaceOnUse' }, [fringeTile()]),
       el('pattern', { id: 'o-ground-' + side, x: 0, y: HEAD_H, width: TW, height: TH, patternUnits: 'userSpaceOnUse' }, [sideTile(true)]),
       el('pattern', { id: 'o-check-' + side, x: 0, y: 0, width: 16, height: 16, patternUnits: 'userSpaceOnUse' }, [
         el('rect', { x: 0, y: 0, width: 8, height: 8, 'class': 'o-dark' }), el('rect', { x: 8, y: 8, width: 8, height: 8, 'class': 'o-dark' }),
@@ -296,6 +407,8 @@
     svg.appendChild(el('rect', { x: 0, y: 0, width: 16, height: '100%', fill: 'url(#o-check-' + side + ')' }));
     svg.appendChild(el('rect', { x: 0, y: 0, width: TW, height: HEAD_H, fill: 'url(#o-ground-' + side + ')' }));
     svg.appendChild(el('rect', { x: 0, y: HEAD_H, width: TW, height: '100%', fill: 'url(#o-tile-' + side + ')' }));
+    var fr = el('rect', { 'class': 'col-fringe', x: TW, y: HEAD_H, width: 0, height: '100%', fill: 'url(#o-fringe-' + side + ')' });
+    svg.appendChild(fr);
     svg.appendChild(head());
     return svg;
   }
@@ -356,8 +469,17 @@
   function mount() {
     var host = el('svg', { width: 0, height: 0, style: 'position:absolute', 'aria-hidden': 'true', focusable: 'false' }, [el('defs', {}, [cornerSymbol()])]);
     document.body.insertBefore(host, document.body.firstChild);
-    document.getElementById('col-l').appendChild(column('l'));
-    document.getElementById('col-r').appendChild(column('r'));
+    var cols = ['l', 'r'].map(function (sd) { var c = document.getElementById('col-' + sd); c.appendChild(column(sd)); return c; });
+    /* the wider the screen, the more strips; whole strips only, so nothing is ever cut in half */
+    function fit() {
+      cols.forEach(function (c) {
+        var w = c.clientWidth, n = Math.max(0, Math.floor((w - TW + 6) / FW));
+        var r = c.querySelector('.col-fringe'); if (r) r.setAttribute('width', n * FW);
+      });
+    }
+    fit();
+    if (window.ResizeObserver) { var ro = new ResizeObserver(fit); cols.forEach(function (c) { ro.observe(c); }); }
+    else window.addEventListener('resize', fit);
   }
 
   window.MVOrn = { mount: mount, flourish: flourish, corners: corners, ward: ward, star: function (s) {
