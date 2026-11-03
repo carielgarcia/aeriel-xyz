@@ -497,9 +497,9 @@
       "pt": "Cena main"
     },
     "freeAgent": {
-      "en": "007 · no house",
-      "es": "007 · sin house",
-      "pt": "007 · sem house"
+      "en": "007",
+      "es": "007",
+      "pt": "007"
     },
     "members": {
       "en": "Members",
@@ -550,6 +550,21 @@
       "en": "Copied",
       "es": "Copiado",
       "pt": "Copiado"
+    },
+    "seeProfile": {
+      "en": "Bio and photos",
+      "es": "Bio y fotos",
+      "pt": "Bio e fotos"
+    },
+    "back": {
+      "en": "Back",
+      "es": "Volver",
+      "pt": "Voltar"
+    },
+    "allPhotos": {
+      "en": "All photographs",
+      "es": "Todas las fotografías",
+      "pt": "Todas as fotografias"
     }
   },
   "filters": {
