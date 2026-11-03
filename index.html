@@ -35,12 +35,12 @@
 --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-6:24px;--space-8:32px;--space-12:48px;--space-16:64px;
 --radius-none:0;
 /* the two doors: in Night the Æ sits on dark and the star on light; Paper swaps them */
---door-ae:var(--film-border);--on-door-ae:#ffffff;--door-star:var(--cream);--on-door-star:var(--on-cream);--door-line:var(--line-subtle);
+--door-ae:var(--film-border);--on-door-ae:#ffffff;--door-star:var(--cream);--on-door-star:var(--on-cream);
 color-scheme:dark}
 @media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--surface-100:#f8f1dc;--surface-200:#ffffff;--surface-300:#ece3c6;--line:#1a1a1a;--line-subtle:#d9cfae;--ink:#1a1a1a;--ink-muted:#4a4a4a;--pink-text:#c4123f;--focus:#1a1a1a;
---door-ae:#ffffff;--on-door-ae:#1a1a1a;--door-star:#1a1a1a;--on-door-star:#ffffff;--door-line:#1a1a1a;color-scheme:light}}
+--door-ae:#ffffff;--on-door-ae:#1a1a1a;--door-star:#1a1a1a;--on-door-star:#ffffff;color-scheme:light}}
 :root[data-theme="light"]{--surface-100:#f8f1dc;--surface-200:#ffffff;--surface-300:#ece3c6;--line:#1a1a1a;--line-subtle:#d9cfae;--ink:#1a1a1a;--ink-muted:#4a4a4a;--pink-text:#c4123f;--focus:#1a1a1a;
---door-ae:#ffffff;--on-door-ae:#1a1a1a;--door-star:#1a1a1a;--on-door-star:#ffffff;--door-line:#1a1a1a;color-scheme:light}
+--door-ae:#ffffff;--on-door-ae:#1a1a1a;--door-star:#1a1a1a;--on-door-star:#ffffff;color-scheme:light}
 *{box-sizing:border-box}
 body{margin:0;background:var(--surface-100);color:var(--ink);font:400 16px/24px var(--font-sans);padding-left:max(var(--space-4),env(safe-area-inset-left,0px));padding-right:max(var(--space-4),env(safe-area-inset-right,0px))}
 @media (min-width:1100px){body{padding-inline:var(--space-16)}}
@@ -71,21 +71,18 @@ header{padding-block:var(--space-16) var(--space-12)}
 .doors{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-8);padding-bottom:var(--space-16)}
 @media (max-width:760px){.doors{grid-template-columns:1fr;gap:var(--space-12)}}
 .door{display:flex;flex-direction:column;gap:var(--space-4);min-width:0}
-.door a{display:grid;place-items:center;aspect-ratio:4/3;text-decoration:none;border:2px solid var(--door-line);border-radius:var(--radius-none);transition:background-color 120ms linear,color 120ms linear,border-color 120ms linear}
+.door a{display:grid;place-items:center;aspect-ratio:4/3;text-decoration:none;border:2px solid var(--ink);border-radius:var(--radius-none);transition:background-color 120ms linear,color 120ms linear,border-color 120ms linear}
 .door--ae a{background:var(--door-ae);color:var(--on-door-ae)}
 .door--star a{background:var(--door-star);color:var(--on-door-star)}
-.door--ae a:hover{background:var(--pink);color:var(--on-pink);border-color:var(--pink)}
-.door--star a:hover{background:var(--acid);color:var(--on-acid);border-color:var(--acid)}
+.door a:hover{background:var(--pink);color:var(--on-pink);border-color:var(--pink)}
 .door svg{display:block;fill:currentColor}
 .door--ae svg{width:68%;height:auto}
 .door--star svg{width:44%;height:auto}
-.door .label{color:var(--ink-muted)}
 .door p:not(.label){margin:0;font:400 17px/26px var(--font-sans);max-width:52ch}
 
 /* footer */
 footer{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:var(--space-6);padding-block:var(--space-8) var(--space-12);border-top:1px solid var(--line-subtle)}
 .socials{display:flex;flex-direction:column;gap:var(--space-2)}
-.socials .label{color:var(--ink-muted)}
 .clink{color:var(--ink);font:800 18px/1.2 var(--font-sans);letter-spacing:-.01em;text-decoration:none;border-bottom:2px solid transparent;align-self:flex-start;transition:border-color 120ms linear}
 .clink:hover{border-color:var(--pink)}
 .net{color:var(--ink-muted)}
@@ -113,27 +110,24 @@ footer{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:fle
 </header>
 
 <div class="doors">
-<section class="door door--ae" aria-labelledby="d-ae">
+<section class="door door--ae">
 <a href="/archive/" data-aria-en="Analog archive" data-aria-es="Archivo analógico" data-aria-pt="Arquivo analógico" aria-label="Analog archive">
 <svg viewBox="-10 -688 1219 688" aria-hidden="true" focusable="false"><path transform="scale(1,-1)" d="M-10 0 391 688H1201V517H718L747 428H1134V266H799L829 171H1209V0H634L607 91H291L243 0ZM381 262H557L522 387Q519 397 516.0 409.5Q513 422 510.0 435.5Q507 449 504.5 462.5Q502 476 500 486H492Q489 478 484.0 466.0Q479 454 472.5 441.0Q466 428 459.5 414.0Q453 400 446 387Z"/></svg>
 </a>
-<p class="label" id="d-ae"><span lang="en">Analog archive · Alpha</span><span lang="es">Archivo analógico · Alfa</span><span lang="pt">Arquivo analógico · Alfa</span></p>
 <p><span lang="en">Under the Æ symbol, you will find the Alpha version of an archive of queer people, artists, and life experiences, captured in analog film.</span><span lang="es">Bajo el símbolo Æ encontrarás la versión alfa de un archivo de personas queer, artistas y experiencias de vida, registradas en película analógica.</span><span lang="pt">Sob o símbolo Æ você vai encontrar a versão alfa de um arquivo de pessoas queer, artistas e experiências de vida, registradas em filme analógico.</span></p>
 </section>
 
-<section class="door door--star" aria-labelledby="d-star">
+<section class="door door--star">
 <a href="/machiavell/" data-aria-en="Machiavell, password needed" data-aria-es="Machiavell, se necesita contraseña" data-aria-pt="Machiavell, precisa de senha" aria-label="Machiavell, password needed">
 <svg viewBox="0 0 100 100" aria-hidden="true" focusable="false"><path d="M50 0 Q50 50 100 50 Q50 50 50 100 Q50 50 0 50 Q50 50 50 0Z"/></svg>
 </a>
-<p class="label" id="d-star"><span lang="en">Machiavell · Password needed</span><span lang="es">Machiavell · Con contraseña</span><span lang="pt">Machiavell · Com senha</span></p>
-<p><span lang="en">Under the star you will find a book I wrote by accident, released a single chapter at the time. You will need a password for that. I can share it with you if you text me in my socials.</span><span lang="es">Bajo la estrella encontrarás un libro que escribí por accidente, publicado de a un capítulo. Para eso necesitas una contraseña. Te la puedo compartir si me escribes por mis redes.</span><span lang="pt">Sob a estrela você vai encontrar um livro que escrevi sem querer, lançado um capítulo de cada vez. Para isso você vai precisar de uma senha. Posso te passar se você me mandar uma mensagem nas minhas redes.</span></p>
+<p><span lang="en">Under the star you will find a book I wrote by accident, released one chapter at a time. You will need a password for that. I can share it with you if you text me on my socials.</span><span lang="es">Bajo la estrella encontrarás un libro que escribí por accidente, publicado un capítulo a la vez. Para eso necesitas una contraseña. Te la puedo compartir si me escribes por mis redes.</span><span lang="pt">Sob a estrela você vai encontrar um livro que escrevi sem querer, lançado um capítulo de cada vez. Para isso você vai precisar de uma senha. Posso te passar se você me mandar uma mensagem nas minhas redes.</span></p>
 </section>
 </div>
 </main>
 
 <footer>
 <div class="socials">
-<p class="label"><span lang="en">Socials</span><span lang="es">Redes</span><span lang="pt">Redes</span></p>
 <a class="clink" href="https://www.instagram.com/aeriel.io/" rel="me noopener" target="_blank">Instagram @aeriel.io ↗</a>
 </div>
 <a class="net" href="https://aeriel.net" title="aeriel.net" data-aria-en="aeriel.net, music and club culture" data-aria-es="aeriel.net, música y cultura de club" data-aria-pt="aeriel.net, música e cultura de clube" aria-label="aeriel.net, music and club culture"><svg viewBox="216 332 552 416" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M761 742 L484 742 L483 652 L357 652 L316 742 L223 742 L222 739 L414 338 L757 338 L756 412 L570 413 L570 498 L746 499 L745 568 L570 568 L570 666 L761 666 Z M484 585 L484 413 L464 412 L386 585 Z"/></svg></a>
