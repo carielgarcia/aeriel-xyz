@@ -123,7 +123,7 @@
       '<button class="ar-open" type="button"><img class="ar-img" src="' + esc(p.thumb.src) + '" srcset="' + esc(p.thumb.src) + ' ' + p.thumb.w + 'w, ' + esc(p.img.src) + ' ' + p.img.w + 'w" ' +
       'sizes="(min-width:1100px) 25vw, (min-width:720px) 33vw, (min-width:400px) 50vw, 100vw" width="' + p.thumb.w + '" height="' + p.thumb.h + '" alt="" loading="' + (i < 8 ? 'eager' : 'lazy') + '" decoding="async"></button>' +
       '<button class="ar-i" type="button" aria-expanded="false" aria-controls="ar-d-' + p.code + '"><span aria-hidden="true">i</span></button>' +
-      '</div></div>' +
+      '</div><p class="ar-tcap"></p></div>' +
       '<div class="ar-drawer" id="ar-d-' + p.code + '" role="region" tabindex="-1" hidden></div>';
     t._p = p;
     t.querySelector('.ar-i').addEventListener('click', function () { toggle(t); });
@@ -131,8 +131,14 @@
     t.querySelector('.ar-drawer').addEventListener('click', onDrawerClick);
     return t;
   }
+  /* Under each print: who is in it, and the event or year. */
+  function tileCaption(p) {
+    var n = names(p), e = p.event && D.events[p.event];
+    return (n.length ? '<b>' + esc(listJoin(n)) + '</b>' : '') + '<span>' + esc(e ? e.title : (p.year || '')) + '</span>';
+  }
   function labelTile(t) {
     var a = alt(t._p);
+    t.querySelector('.ar-tcap').innerHTML = tileCaption(t._p);
     t.querySelector('.ar-img').alt = a;
     t.querySelector('.ar-open').setAttribute('aria-label', ui('open') + a);
     t.querySelector('.ar-i').setAttribute('aria-label', (t === openTile ? ui('closeInfo') : ui('info')) + ' · ' + t._p.code);
@@ -174,75 +180,106 @@
       (links[k] || []).forEach(function (url) {
         if (!/^https:\/\//i.test(url)) return;
         var name = k === 'website' ? ui('website') : (PLATFORM[k] || k.charAt(0).toUpperCase() + k.slice(1));
-        out.push('<a class="clink ar-ext" href="' + esc(url) + '" target="_blank" rel="noopener">' + esc(name) + ' ' + esc(handle(k, url)) + ' ↗</a>');
+        out.push('<a class="ar-out" href="' + esc(url) + '" target="_blank" rel="noopener">' + esc(name) + ' ' + esc(handle(k, url)) + ' ↗</a>');
       });
     });
     return out.length ? '<div class="ar-links">' + out.join('') + '</div>' : '';
   }
   function field(label, html, wide) { return html ? '<div class="ar-f' + (wide ? ' ar-f--wide' : '') + '"><p class="label">' + esc(label) + '</p><div class="ar-vals">' + html + '</div></div>' : ''; }
 
+  /* Links that open a person, house, event or space: bold names, not boxed tags. */
+  function ent(k, v, text, cls) {
+    return '<button type="button" class="ar-ent' + (cls ? ' ' + cls : '') + '" data-k="' + esc(k) + '" data-v="' + esc(v) + '" aria-label="' + esc(ui('filterOn') + text) + '">' + esc(text) + '</button>';
+  }
+  function houseKind(k) { return D.orgs[k] && D.orgs[k].isHouse ? 'house' : 'org'; }
+  function sceneName(s) { return ui(s === 'kiki' ? 'sceneKiki' : s === 'main' ? 'sceneMain' : s) || s; }
+  /* Ballroom titles are part of a person's name in the scene: they get their own badges, never small print. */
+  function titlesHTML(titles, small) {
+    return titles && titles.length ? '<span class="ar-titles' + (small ? ' ar-titles--s' : '') + '">' + titles.map(function (t) { return '<span class="ar-title">' + esc(t) + '</span>'; }).join('') + '</span>' : '';
+  }
+  /* One row per house (house, scene, titles), then one row per scene where the person walks 007, then collectives. */
+  function ballroomRows(pp, small) {
+    var rows = [];
+    (pp.houses || []).forEach(function (x) {
+      rows.push('<div class="ar-hrow">' + ent('house', x.org, org(x.org).name, 'ar-ent--house') +
+        (x.scene ? '<span class="ar-scene">' + esc(sceneName(x.scene)) + '</span>' : '') + titlesHTML(x.titles, small) + '</div>');
+    });
+    (pp.free || []).forEach(function (s) {
+      rows.push('<div class="ar-hrow ar-hrow--free"><span class="ar-free">' + esc(ui('freeAgent')) + '</span><span class="ar-scene">' + esc(sceneName(s)) + '</span></div>');
+    });
+    (pp.orgs || []).forEach(function (x) {
+      rows.push('<div class="ar-hrow">' + ent(houseKind(x.org), x.org, org(x.org).name, 'ar-ent--house') +
+        (x.role ? '<span class="ar-scene">' + esc(tv(x.role)) + '</span>' : '') + '</div>');
+    });
+    return rows.join('');
+  }
+  function fact(label, html) { return html ? '<div class="ar-fact"><dt>' + esc(label) + '</dt><dd>' + html + '</dd></div>' : ''; }
+  function plain(v) { return v == null || v === '' ? '' : '<span>' + esc(tv(v)) + '</span>'; }
+
+  /* The record reads top to bottom as: who, the caption, the photographer's words, where and when, the scene,
+     then film and colour folded away. Every name, place and value still filters the wall. */
   function drawerHTML(p) {
-    var h = '', e = p.event ? D.events[p.event] : null, s = p.space ? space(p.space) : null, po = photoOrgs(p);
-    // head: catalog line, people, date + place
-    h += '<p class="label ar-code">' + esc(p.code) + ' · ' + esc(tv(p.medium)) + '</p>';
+    var h = '', e = p.event ? D.events[p.event] : null, s = p.space ? space(p.space) : null;
+    h += '<div class="ar-dhead"><p class="ar-code">' + esc(p.code) + '</p>' +
+      '<a class="ar-plink" href="?photo=' + encodeURIComponent(p.code) + '" data-copy="' + esc(p.code) + '">' + esc(ui('photoLink')) + '</a></div>';
     if (p.people) {
       h += '<div class="ar-who">' + p.people.map(function (x) {
-        return '<span class="ar-person">' + tag('person', x.p, person(x.p).name, 'ar-name') +
-          (x.role ? tag('role', slug(x.role), tv(x.role), 'ar-tag ar-tag--quiet') : '') +
-          (x.persona || x.look ? '<span class="ar-sub">' + esc([x.persona ? ui('as') + ' ' + x.persona : '', x.look ? ui('look') + ': ' + x.look : ''].filter(Boolean).join(' · ')) + '</span>' : '') + '</span>';
+        var pp = person(x.p), sub = [];
+        if (x.persona) sub.push(ui('as') + ' ' + x.persona);
+        if (x.look) sub.push(ui('look') + ': ' + x.look);
+        return '<div class="ar-person"><div class="ar-pname">' + ent('person', x.p, pp.name, 'ar-ent--name') +
+          (x.role && p.people.length > 1 ? tag('role', slug(x.role), tv(x.role)) : '') + '</div>' +
+          (sub.length ? '<p class="ar-sub">' + esc(sub.join(' · ')) + '</p>' : '') +
+          '<div class="ar-ball ar-ball--s">' + ballroomRows(pp, true) + '</div></div>';
       }).join('') + '</div>';
     }
-    var line = [];
-    if (p.date && p.precision === 'Exact') line.push(tag('date', p.date, tr(p.dateText), 'ar-link'));
-    else if (p.dateText) line.push('<span>' + esc(tr(p.dateText)) + '</span>');
-    if (s) line.push(tag('space', p.space, spaceName(s), 'ar-link'));
-    if (p.city) line.push(tag('city', slug(p.city), tv(p.city), 'ar-link'));
-    if (line.length) h += '<p class="ar-line">' + line.join('<span aria-hidden="true"> · </span>') + '</p>';
     var cap = tr(p.caption); if (cap) h += '<div class="ar-cap">' + md(cap) + '</div>';
+    var note = tr(p.note); if (note) h += '<div class="ar-note"><p class="label">' + esc(ui('note')) + '</p>' + md(note) + '</div>';
+    var intent = tr(p.intent); if (intent) h += '<div class="ar-note"><p class="label">' + esc(ui('intent')) + '</p>' + md(intent) + '</div>';
 
-    // relational fields
+    // where and when: one line, every part a link
+    var line = [];
+    if (p.date && p.precision === 'Exact') line.push(ent('date', p.date, tr(p.dateText)));
+    else if (p.dateText) line.push('<span>' + esc(tr(p.dateText)) + '</span>');
+    if (e) line.push(ent('event', p.event, e.title));
+    if (s) line.push(ent('space', p.space, spaceName(s)));
+    if (p.hood) line.push(ent('hood', slug(p.hood), tv(p.hood)));
+    if (p.city && p.city !== p.hood) line.push(ent('city', slug(p.city), tv(p.city)));
+    if (p.country) line.push(ent('country', slug(p.country), tv(p.country)));
+    if (line.length) h += '<div class="ar-f"><p class="label">' + esc(ui('whereWhen')) + '</p><p class="ar-line">' + line.join('<span class="ar-dot" aria-hidden="true">·</span>') + '</p></div>';
+
+    // the scene: event kind, sound, series, collectives named on the photo, themes
+    var chips = [];
+    if (e) { chips.push(etag('etype', e.type)); (e.sonic || []).forEach(function (v) { chips.push(etag('sound', v)); }); }
+    if (s && s.type) chips.push(etag('stype', s.type));
     var f = '';
-    var hs = {}; po.houses.forEach(function (x) { (hs[x.org] = hs[x.org] || []).push(x); });
-    f += field(ui('houses'), Object.keys(hs).map(function (k) {
-      var bits = []; hs[k].forEach(function (x) { if (x.scene) bits.push(ui(x.scene) + (x.titles && x.titles.length ? ' · ' + x.titles.join(', ') : '')); else if (x.role) bits.push(tv(x.role)); });
-      return '<span class="ar-pair">' + tag('house', k, org(k).name) + (bits.length ? '<span class="ar-sub">' + esc(bits.join(' / ')) + '</span>' : '') + '</span>';
-    }).join(''));
-    var os = {}; po.others.forEach(function (x) { os[x.org] = x; });
-    f += field(ui('collectives'), Object.keys(os).map(function (k) {
-      var x = os[k]; return '<span class="ar-pair">' + tag('org', k, org(k).name) + (x.role ? '<span class="ar-sub">' + esc(tv(x.role)) + '</span>' : '') + '</span>';
-    }).join(''));
-    if (e) {
-      f += field(ui('event'), tag('event', p.event, e.title) + etag('etype', e.type) + (e.sonic || []).map(function (v) { return etag('sound', v); }).join(''));
-      if (e.series) f += field(ui('series'), tag('series', e.series, D.series[e.series].name));
-    }
-    if (s) f += field(ui('space'), tag('space', p.space, spaceName(s)) + (s.type ? etag('stype', s.type) : ''));
-    f += field(ui('neighborhood'), etag('hood', p.hood));
-    f += field(ui('city'), etag('city', p.city) + etag('country', p.country));
-    f += field(ui('date'), (p.date && p.precision === 'Exact' ? tag('date', p.date, tr(p.dateText)) : (p.dateText ? '<span class="ar-plain">' + esc(tr(p.dateText)) + '</span>' : '')) +
-      (p.year ? tag('year', String(p.year), String(p.year)) : ''));
-    f += field(ui('medium'), etag('medium', p.medium));
-    f += field(ui('camera'), etag('camera', p.camera));
-    f += field(ui('filmStock'), etag('stock', p.stock));
-    f += field(ui('frame'), etag('frame', p.frame));
-    f += field(ui('color'), etag('color', p.color));
-    f += field(ui('lighting'), etag('light', p.light));
-    f += field(ui('time'), etag('time', p.time));
+    if (e && e.series) f += field(ui('series'), ent('series', e.series, D.series[e.series].name));
+    f += field(ui('collectives'), (p.orgs || []).map(function (o) { return ent(houseKind(o.org), o.org, org(o.org).name) + (o.note ? '<span class="ar-sub">' + esc(o.note) + '</span>' : ''); }).join(''));
+    f += field(ui('scene'), chips.join(''));
     f += field(ui('themes'), (p.themes || []).map(function (v) { return etag('theme', v); }).join(''));
     f += field(ui('body'), (p.body || []).map(function (v) { return etag('body', v); }).join(''));
-    f += field(ui('process'), etag('process', p.process));
-    f += field(ui('filmProcess'), p.filmProcess ? '<span class="ar-plain">' + esc(tv(p.filmProcess)) + '</span>' : '');
-    f += field(ui('roll'), p.roll ? '<span class="ar-plain">' + esc(p.roll) + '</span>' : '');
-    f += field(ui('frameNo'), p.frameNo ? '<span class="ar-plain">' + esc(p.frameNo) + '</span>' : '');
-    f += field(ui('alter'), (p.alter || []).map(function (v) { return '<span class="ar-plain">' + esc(tv(v)) + '</span>'; }).join(''));
-    f += field(ui('sound'), p.sound && /^https:\/\//i.test(p.sound) ? '<a class="clink ar-ext" href="' + esc(p.sound) + '" target="_blank" rel="noopener">' + esc(handle('website', p.sound)) + ' ↗</a>' : '');
     if (p.warnings) f += field(ui('content'), '<span class="ar-plain">' + esc(p.warnings.map(tv).join(', ')) + '</span>');
-    h += '<div class="ar-fields">' + f + '</div>';
-
-    h += colourBlock(p);
-    var note = tr(p.note); if (note) h += '<div class="ar-f ar-f--wide ar-note"><p class="label">' + esc(ui('note')) + '</p>' + md(note) + '</div>';
-    var intent = tr(p.intent); if (intent) h += '<div class="ar-f ar-f--wide ar-note"><p class="label">' + esc(ui('intent')) + '</p>' + md(intent) + '</div>';
+    if (f) h += '<div class="ar-fields">' + f + '</div>';
     h += attrsHTML(p.attrs);
-    h += '<p class="ae-cap ar-rights">© ' + esc(p.credit || 'ÆRIEL') + ' · ' + esc(tv(p.license)) + '</p>';
+
+    // film and colour: everything about the object, folded
+    var d = '';
+    d += fact(ui('medium'), etag('medium', p.medium));
+    d += fact(ui('camera'), etag('camera', p.camera));
+    d += fact(ui('filmStock'), etag('stock', p.stock));
+    d += fact(ui('frame'), etag('frame', p.frame));
+    d += fact(ui('color'), etag('color', p.color));
+    d += fact(ui('lighting'), etag('light', p.light));
+    d += fact(ui('time'), etag('time', p.time));
+    d += fact(ui('process'), etag('process', p.process));
+    d += fact(ui('filmProcess'), plain(p.filmProcess));
+    d += fact(ui('roll'), p.roll ? '<span>' + esc(p.roll) + '</span>' : '');
+    d += fact(ui('frameNo'), p.frameNo ? '<span>' + esc(p.frameNo) + '</span>' : '');
+    d += fact(ui('alter'), (p.alter || []).map(function (v) { return '<span>' + esc(tv(v)) + '</span>'; }).join(', '));
+    d += fact(ui('sound'), p.sound && /^https:\/\//i.test(p.sound) ? '<a class="ar-out" href="' + esc(p.sound) + '" target="_blank" rel="noopener">' + esc(handle('website', p.sound)) + ' ↗</a>' : '');
+    var c = colourBlock(p);
+    if (d || c) h += '<details class="ar-more-info"><summary>' + esc(ui('filmColour')) + '</summary>' + (d ? '<dl class="ar-facts">' + d + '</dl>' : '') + c + '</details>';
+    h += '<p class="ar-rights">© ' + esc(p.credit || 'ÆRIEL') + ' · ' + esc(tv(p.license)) + '</p>';
     return h;
   }
   /* The Studio's colour profile: named colours with their share, atmosphere and accent colours with the curatorial
@@ -274,6 +311,15 @@
     return h ? '<div class="ar-f ar-f--wide ar-colour"><p class="label">' + esc(ui('colours')) + '</p>' + h + '</div>' : '';
   }
   function onDrawerClick(ev) {
+    var c = ev.target.closest('[data-copy]');
+    if (c) {
+      var url = location.origin + location.pathname + '?photo=' + encodeURIComponent(c.dataset.copy);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        ev.preventDefault();
+        navigator.clipboard.writeText(url).then(function () { c.textContent = ui('linkCopied'); setTimeout(function () { c.textContent = ui('photoLink'); }, 2000); }, function () { location.href = url; });
+      }
+      return;
+    }
     var b = ev.target.closest('[data-k]');
     if (!b) return;
     setFilters([[b.dataset.k, b.dataset.v]], true);
@@ -367,6 +413,15 @@
     }
     applyOrder(); lockHeight(); watch(t);
     pullReset();
+    photoParam(t ? t._p.code : null);
+  }
+  /* ?photo=CODE opens that print's record, so a record can be sent as a link. */
+  function photoParam(code) {
+    var q = new URLSearchParams(location.search);
+    if ((q.get('photo') || null) === code) return;
+    if (code) q.set('photo', code); else q.delete('photo');
+    var s = q.toString();
+    history.replaceState(history.state, '', location.pathname + (s ? '?' + s : '') + location.hash);
   }
   var seq = 0;   // newest action wins: a close that is still folding never undoes a later open
   function toggle(t) {
@@ -420,56 +475,89 @@
   var fseq = 0;
   function matchesAfter(p, next) { var keep = filters; filters = next; var m = matches(p); filters = keep; return m; }
 
+  /* A profile for whatever the wall is filtered to: the name as a heading, then what matters about it. */
+  function profileHead(kind, name, meta) {
+    return '<p class="ar-kind">' + esc(ui(kind)) + '</p><h3 class="ar-pn">' + esc(name) + '</h3>' +
+      (meta.length ? '<p class="ar-meta">' + meta.filter(Boolean).join('<span class="ar-dot" aria-hidden="true">·</span>') + '</p>' : '');
+  }
+  function countMeta() { var n = visibleTiles().length; return esc(n + ' ' + ui(n === 1 ? 'photograph' : 'photographs')); }
+  function section(label, html) { return html ? '<div class="ar-psec"><p class="label">' + esc(label) + '</p>' + html + '</div>' : ''; }
+  /* Everyone who belongs to a house or to one of its chapters, with their scene and titles there. */
+  function members(k) {
+    var rows = [];
+    Object.keys(D.people).forEach(function (pk) {
+      var pp = D.people[pk];
+      (pp.houses || []).forEach(function (x) {
+        if (x.org !== k && ancestors(x.org, []).indexOf(k) < 0) return;
+        rows.push({ n: pp.name, h: '<div class="ar-mrow">' + ent('person', pk, pp.name, 'ar-ent--house') +
+          '<span class="ar-scene">' + esc([x.org !== k ? org(x.org).name : '', x.scene ? sceneName(x.scene) : ''].filter(Boolean).join(' · ')) + '</span>' + titlesHTML(x.titles, true) + '</div>' });
+      });
+      (pp.orgs || []).forEach(function (x) {
+        if (x.org !== k && ancestors(x.org, []).indexOf(k) < 0) return;
+        rows.push({ n: pp.name, h: '<div class="ar-mrow">' + ent('person', pk, pp.name, 'ar-ent--house') + (x.role ? '<span class="ar-scene">' + esc(tv(x.role)) + '</span>' : '') + '</div>' });
+      });
+    });
+    rows.sort(function (a, b) { return a.n.localeCompare(b.n); });
+    return rows.map(function (r) { return r.h; }).join('');
+  }
   function context(k, v) {
     var h = '';
     if (k === 'person' && D.people[v]) {
       var pp = D.people[v], shown = (pp.aka || '').toLowerCase(), named = (pp.name || '').toLowerCase();
       /* the shown alias is already in the name; older builds also repeated it in aliases */
       var also = (pp.aka && named.indexOf(shown) < 0 ? [pp.aka] : []).concat((pp.aliases || []).filter(function (a) { var l = (a || '').toLowerCase(); return l && l !== shown && l !== named; }));
-      if (also.length) h += '<p class="ae-cap">' + esc(ui('aka')) + ': ' + esc(also.join(', ')) + '</p>';
-      if (pp.pronouns) h += '<p class="ae-cap">' + esc(ui('pronouns')) + ': ' + esc(pp.pronouns.map(function (x) { return ui({ male: 'pronMale', female: 'pronFemale', neutral: 'pronNeutral' }[x] || x); }).join(' / ')) + '</p>';
-      var hs = (pp.houses || []).map(function (x) { return tag('house', x.org, org(x.org).name) + (x.titles && x.titles.length ? '<span class="ar-plain">' + esc(ui(x.scene) + ' · ' + x.titles.join(', ')) + '</span>' : ''); }).concat((pp.orgs || []).map(function (x) { return tag(org(x.org).isHouse ? 'house' : 'org', x.org, org(x.org).name); }));
-      if (pp.free) hs.push('<span class="ar-plain">' + esc(ui('free')) + '</span>');
-      if (hs.length) h += '<div class="ar-vals">' + hs.join('') + '</div>';
-      h += linksHTML(pp.links);
+      var meta = [];
+      if (pp.pronouns) meta.push('<span><b>' + esc(ui('pronouns')) + '</b> ' + esc(pp.pronouns.map(function (x) { return ui({ male: 'pronMale', female: 'pronFemale', neutral: 'pronNeutral' }[x] || x); }).join(' / ')) + '</span>');
+      if (also.length) meta.push('<span><b>' + esc(ui('aka')) + '</b> ' + esc(also.join(', ')) + '</span>');
+      meta.push('<span>' + countMeta() + '</span>');
+      h += profileHead('kindPerson', pp.name, meta);
+      var ball = ballroomRows(pp, false);
+      if (ball) h += '<div class="ar-ball">' + ball + '</div>';
       var bio = tr(pp.bio);
       if (bio) h += bioBlock(bio);
       h += attrsHTML(pp.attrs);
+      h += linksHTML(pp.links);
     } else if ((k === 'house' || k === 'org') && D.orgs[v]) {
-      var o = D.orgs[v], bits = [tv(o.type)];
-      if (o.founded) bits.push(ui('founded') + ' ' + o.founded + (o.dissolved ? '–' + o.dissolved : ''));
-      if (o.international) bits.push(ui('international'));
-      if (o.chapter) bits.push(ui('chapter') + ' ' + o.chapter);
-      h += '<p class="ae-cap">' + esc(bits.filter(Boolean).join(' · ')) + '</p>';
-      if (o.parent) h += '<div class="ar-vals"><span class="ar-plain">' + esc(ui('parent')) + '</span>' + tag(D.orgs[o.parent] && D.orgs[o.parent].isHouse ? 'house' : 'org', o.parent, org(o.parent).name) + '</div>';
-      var hist = tr(o.history), eth = tr(o.ethos);
-      if (o.scenes && o.scenes.length) h += '<div class="ar-vals"><span class="ar-plain">' + esc(ui('scenes')) + '</span>' + o.scenes.map(function (x) { return '<span class="ar-plain">' + esc(tv(x)) + '</span>'; }).join('') + '</div>';
+      var o = D.orgs[v], bits = [esc(tv(o.type))];
+      if (o.founded) bits.push(esc(ui('founded') + ' ' + o.founded + (o.dissolved ? '–' + o.dissolved : '')));
+      if (o.international) bits.push(esc(ui('international')));
+      if (o.chapter) bits.push(esc(ui('chapter') + ' ' + o.chapter));
+      if (o.scenes && o.scenes.length) bits.push(esc(o.scenes.map(tv).join(', ')));
+      bits.push(countMeta());
+      h += profileHead(o.isHouse ? 'kindHouse' : 'kindCollective', o.name, bits.filter(Boolean));
+      if (o.parent) h += '<p class="ar-meta">' + esc(ui('parent')) + ' ' + ent(houseKind(o.parent), o.parent, org(o.parent).name) + '</p>';
+      var eth = tr(o.ethos), hist = tr(o.history);
       if (eth) h += bioBlock(eth); if (hist) h += bioBlock(hist);
+      var m = members(v);
+      if (m) h += section(ui('members'), '<div class="ar-ball">' + m + '</div>');
       h += attrsHTML(o.attrs);
     } else if (k === 'event' && D.events[v]) {
       var e = D.events[v], parts = [];
-      if (e.date) { var dd = D.photos.filter(function (p) { return p.event === v && p.date === e.date; })[0]; parts.push(dd ? tr(dd.dateText) : e.date); }
-      if (e.type) parts.push(tv(e.type));
-      h += '<p class="ae-cap">' + esc(parts.join(' · ')) + '</p>';
-      var ev = [];
-      if (e.space) ev.push(tag('space', e.space, spaceName(space(e.space))));
-      if (e.series) ev.push(tag('series', e.series, D.series[e.series].name));
-      if (e.edition) ev.push('<span class="ar-plain">' + esc(ui('edition') + ' ' + e.edition) + '</span>');
-      (e.sonic || []).forEach(function (s) { ev.push(etag('sound', s)); });
-      if (ev.length) h += '<div class="ar-vals">' + ev.join('') + '</div>';
-      if (e.categories) h += '<div class="ar-vals"><span class="ar-plain">' + esc(ui('categories')) + '</span>' + e.categories.map(function (c) { return '<span class="ar-plain">' + esc(tv(c)) + '</span>'; }).join('') + '</div>';
-      if (e.organizers) h += '<div class="ar-vals"><span class="ar-plain">' + esc(ui('organizers')) + '</span>' + e.organizers.map(function (o) { return tag(D.orgs[o] && D.orgs[o].isHouse ? 'house' : 'org', o, org(o).name); }).join('') + '</div>';
-      if (e.crew) h += '<div class="ar-vals"><span class="ar-plain">' + esc(ui('crew')) + '</span>' + e.crew.filter(function (c) { return c.p && D.people[c.p]; }).map(function (c) {
-        return '<span class="ar-pair">' + tag('person', c.p, person(c.p).name) + (c.role ? '<span class="ar-sub">' + esc(tv(c.role)) + '</span>' : '') + '</span>'; }).join('') + '</div>';
+      if (e.date) { var dd = D.photos.filter(function (p) { return p.event === v && p.date === e.date; })[0]; parts.push(esc(dd ? tr(dd.dateText) : e.date)); }
+      if (e.type) parts.push(esc(tv(e.type)));
+      if (e.edition) parts.push(esc(ui('edition') + ' ' + e.edition));
+      parts.push(countMeta());
+      h += profileHead('kindEvent', e.title, parts);
+      var where = [];
+      if (e.space) where.push(ent('space', e.space, spaceName(space(e.space))));
+      if (e.series) where.push(ent('series', e.series, D.series[e.series].name));
+      if (where.length) h += '<p class="ar-line">' + where.join('<span class="ar-dot" aria-hidden="true">·</span>') + '</p>';
+      var chips = (e.sonic || []).map(function (s) { return etag('sound', s); }).concat((e.categories || []).map(function (c) { return '<span class="ar-tag ar-tag--static">' + esc(tv(c)) + '</span>'; }));
+      if (chips.length) h += '<div class="ar-vals">' + chips.join('') + '</div>';
+      if (e.organizers) h += section(ui('organizers'), '<div class="ar-ball">' + e.organizers.map(function (o) { return '<div class="ar-mrow">' + ent(houseKind(o), o, org(o).name, 'ar-ent--house') + '</div>'; }).join('') + '</div>');
+      if (e.crew) h += section(ui('crew'), '<div class="ar-ball">' + e.crew.filter(function (c) { return c.p && D.people[c.p]; }).map(function (c) {
+        return '<div class="ar-mrow">' + ent('person', c.p, person(c.p).name, 'ar-ent--house') + (c.role ? '<span class="ar-scene">' + esc(tv(c.role)) + '</span>' : '') + '</div>'; }).join('') + '</div>');
       h += attrsHTML(e.attrs);
     } else if (k === 'series' && D.series[v]) {
       var s = D.series[v];
-      h += '<p class="ae-cap">' + esc([tv(s.type), s.events ? s.events + ' ' + ui(s.events === 1 ? 'eventOne' : 'eventMany') : '', s.editions ? s.editions + ' ' + ui(s.editions === 1 ? 'edition' : 'editions') : ''].filter(Boolean).join(' · ')) + '</p>';
-      if (s.parent && D.series[s.parent]) h += '<div class="ar-vals"><span class="ar-plain">' + esc(ui('parent')) + '</span>' + tag('series', s.parent, D.series[s.parent].name) + '</div>';
+      h += profileHead('kindSeries', s.name, [esc(tv(s.type)), s.events ? esc(s.events + ' ' + ui(s.events === 1 ? 'eventOne' : 'eventMany')) : '', s.editions ? esc(s.editions + ' ' + ui(s.editions === 1 ? 'edition' : 'editions')) : '', countMeta()].filter(Boolean));
+      if (s.parent && D.series[s.parent]) h += '<p class="ar-meta">' + esc(ui('parent')) + ' ' + ent('series', s.parent, D.series[s.parent].name) + '</p>';
     } else if (k === 'space' && D.spaces[v]) {
       var sp = D.spaces[v];
-      h += '<p class="ae-cap">' + esc([tv(sp.type), sp.address, sp.hood, sp.city, tv(sp.country), sp.status ? tv(sp.status) : null].filter(Boolean).join(' · ')) + '</p>';
-      if (sp.formerNames) h += '<p class="ae-cap">' + esc(ui('formerNames') + ': ' + sp.formerNames.join(', ')) + '</p>';
+      h += profileHead('kindSpace', spaceName(sp), [esc(tv(sp.type)), sp.status ? esc(tv(sp.status)) : '', countMeta()].filter(Boolean));
+      var addr = [sp.address, sp.hood, sp.city, tv(sp.country)].filter(Boolean);
+      if (addr.length) h += '<p class="ar-meta">' + esc(addr.join(', ')) + '</p>';
+      if (sp.formerNames) h += '<p class="ar-meta"><b>' + esc(ui('formerNames')) + '</b> ' + esc(sp.formerNames.join(', ')) + '</p>';
       h += attrsHTML(sp.attrs);
     }
     return h;
@@ -477,6 +565,20 @@
   function bioBlock(text) {
     var first = firstPara(text), more = text.trim() !== first.trim();
     return '<div class="ar-bio"><div class="ar-bio-short">' + md(first) + '</div>' + (more ? '<div class="ar-bio-full" hidden>' + md(text) + '</div><button type="button" class="ar-more" aria-expanded="false">' + esc(ui('more')) + '</button>' : '') + '</div>';
+  }
+  /* Houses and events with photographs on the wall, as a second row of ways in. */
+  function renderBrowse() {
+    var box = document.getElementById('ar-browse');
+    if (!box) return;
+    function row(k, label, keys, name) {
+      keys = keys.filter(function (x) { return tiles.some(function (t) { return (facets.get(t._p)[k] || []).indexOf(x) > -1; }); });
+      if (!keys.length) return '';
+      keys.sort(function (a, b) { return name(a).localeCompare(name(b)); });
+      return '<div class="ar-brow"><p class="label">' + esc(ui(label)) + '</p><div class="ar-bvals">' +
+        keys.map(function (x) { return ent(k, x, name(x)); }).join('') + '</div></div>';
+    }
+    box.innerHTML = row('house', 'browseHouses', Object.keys(D.orgs).filter(function (k) { return D.orgs[k].isHouse; }), function (k) { return D.orgs[k].name; }) +
+      row('event', 'browseEvents', Object.keys(D.events), function (k) { return D.events[k].title; });
   }
   function renderBar() {
     var bar = document.getElementById('ar-active'), n = visibleTiles().length;
@@ -563,6 +665,8 @@
     var t = e.target.closest('[data-k]');
     if (t) setFilters([[t.dataset.k, t.dataset.v]], true);
   });
+  var browse = document.getElementById('ar-browse');
+  if (browse) browse.addEventListener('click', function (e) { var t = e.target.closest('[data-k]'); if (t) setFilters([[t.dataset.k, t.dataset.v]], true); });
   document.querySelectorAll('#ar-quick button').forEach(function (b) {
     b.addEventListener('click', function () { setFilters(b.dataset.k ? [[b.dataset.k, b.dataset.v]] : [], true); });
   });
@@ -573,7 +677,7 @@
     if (!D) return;
     tiles.forEach(labelTile);
     if (openTile) { var d = openTile.querySelector('.ar-drawer'), st = d.scrollTop; d.innerHTML = drawerHTML(openTile._p); d.scrollTop = st; }
-    renderBar();
+    renderBar(); renderBrowse();
   });
 
   /* ---------- cover print: rotates through every photo in the archive ----------
@@ -638,8 +742,14 @@
       tiles.forEach(labelTile);
       filters = readURL();
       tiles.forEach(function (t) { t.hidden = !matches(t._p); });
-      applyOrder(); renderBar();
+      applyOrder(); renderBar(); renderBrowse();
       grid.removeAttribute('aria-busy'); if (status) status.remove();
+      var want = new URLSearchParams(location.search).get('photo'), wt = want && byCode[want];
+      if (wt) {
+        if (wt.hidden) { filters = []; tiles.forEach(function (t) { t.hidden = false; }); applyOrder(); renderBar(); writeURL(false); }
+        setOpen(wt);
+        requestAnimationFrame(function () { wt.scrollIntoView({ block: 'start' }); });
+      } else if (want) photoParam(null);
     })
     .catch(function (err) {
       if (status) status.innerHTML = UNAVAILABLE; /* constant markup, no archive data */

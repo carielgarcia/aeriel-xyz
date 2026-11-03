@@ -455,6 +455,91 @@
       "en": "Artistic intent",
       "es": "Intención artística",
       "pt": "Intenção artística"
+    },
+    "kindPerson": {
+      "en": "Person",
+      "es": "Persona",
+      "pt": "Pessoa"
+    },
+    "kindHouse": {
+      "en": "Ballroom house",
+      "es": "House de ballroom",
+      "pt": "House de ballroom"
+    },
+    "kindCollective": {
+      "en": "Collective",
+      "es": "Colectivo",
+      "pt": "Coletivo"
+    },
+    "kindEvent": {
+      "en": "Event",
+      "es": "Evento",
+      "pt": "Evento"
+    },
+    "kindSeries": {
+      "en": "Series",
+      "es": "Serie",
+      "pt": "Série"
+    },
+    "kindSpace": {
+      "en": "Space",
+      "es": "Espacio",
+      "pt": "Espaço"
+    },
+    "sceneKiki": {
+      "en": "Kiki scene",
+      "es": "Escena kiki",
+      "pt": "Cena kiki"
+    },
+    "sceneMain": {
+      "en": "Main scene",
+      "es": "Escena main",
+      "pt": "Cena main"
+    },
+    "freeAgent": {
+      "en": "007 · no house",
+      "es": "007 · sin house",
+      "pt": "007 · sem house"
+    },
+    "members": {
+      "en": "Members",
+      "es": "Integrantes",
+      "pt": "Integrantes"
+    },
+    "photoLink": {
+      "en": "Copy link to this photo",
+      "es": "Copiar enlace a esta foto",
+      "pt": "Copiar link desta foto"
+    },
+    "linkCopied": {
+      "en": "Link copied",
+      "es": "Enlace copiado",
+      "pt": "Link copiado"
+    },
+    "whereWhen": {
+      "en": "Where and when",
+      "es": "Dónde y cuándo",
+      "pt": "Onde e quando"
+    },
+    "scene": {
+      "en": "The scene",
+      "es": "La escena",
+      "pt": "A cena"
+    },
+    "filmColour": {
+      "en": "Film and colour",
+      "es": "Película y color",
+      "pt": "Filme e cor"
+    },
+    "browseHouses": {
+      "en": "Houses",
+      "es": "Houses",
+      "pt": "Houses"
+    },
+    "browseEvents": {
+      "en": "Events",
+      "es": "Eventos",
+      "pt": "Eventos"
     }
   },
   "filters": {
