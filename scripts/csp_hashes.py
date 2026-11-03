@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Rewrite the inline-script sha256 hashes in _headers from every page (index.html and */index.html).
 
-Run after any change to an inline <script> in index.html (or after build_archive.py regenerates it),
+Run after any change to an inline <script> in index.html,
 otherwise the Content-Security-Policy blocks that script.
 """
 import base64, hashlib, re, sys

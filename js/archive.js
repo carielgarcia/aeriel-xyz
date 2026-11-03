@@ -1,6 +1,6 @@
 /* ÆRIEL archive wall.
    archive.json       → published by ÆRIEL Archive Studio straight to the R2 bucket behind MEDIA (with the
-                        images it points at); data/archive.json in this repo is only the fallback copy
+                        images it points at). There is deliberately no copy in this repo: a copy would outlive takedowns
    data/taxonomy.i18n.json → UI labels and enum values in en / es / pt
 
    Grid: CSS Grid, one tile per print. The serif "i" opens a record drawer. The open print moves to
@@ -623,16 +623,14 @@
   var status = document.getElementById('ar-status');
   var MEDIA = 'https://media.aeriel.xyz';
   function getJSON(u) { return fetch(u).then(function (r) { if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); }); }
-  // The live archive comes from the bucket; the copy in this repo keeps the wall up if the bucket can't be reached.
-  var archive = getJSON(MEDIA + '/data/archive.json').catch(function (err) {
-    if (window.console) console.warn('archive: falling back to data/archive.json', err);
-    return getJSON('/data/archive.json');
-  });
-  Promise.all([archive, getJSON('/data/taxonomy.i18n.json')])
+  /* The archive comes only from the bucket, so a takedown in the Studio is final. If the bucket can't be reached
+     the page says so rather than showing an older copy that could still hold photos since taken down. */
+  var UNAVAILABLE = '<span lang="en">The archive is briefly unavailable. Please try again in a few minutes.</span>' +
+    '<span lang="es">El archivo no está disponible por un momento. Vuelve a intentarlo en unos minutos.</span>' +
+    '<span lang="pt">O arquivo está indisponível no momento. Tente novamente em alguns minutos.</span>';
+  Promise.all([getJSON(MEDIA + '/data/archive.json'), getJSON('/data/taxonomy.i18n.json')])
     .then(function (r) {
       D = r[0]; TX = r[1];
-      /* the repo's fallback copy has paths relative to the site root; the page now lives at /archive/ */
-      D.photos.forEach(function (p) { ['img', 'thumb'].forEach(function (k) { if (p[k] && p[k].src && !/^(https?:)?\/\//.test(p[k].src) && p[k].src.charAt(0) !== '/') p[k].src = '/' + p[k].src; }); });
       coverRotation(D.photos);
       var frag = document.createDocumentFragment();
       D.photos.forEach(function (p, i) { facets.set(p, buildFacets(p)); var t = makeTile(p, i); tiles.push(t); byCode[p.code] = t; frag.appendChild(t); });
@@ -644,7 +642,7 @@
       grid.removeAttribute('aria-busy'); if (status) status.remove();
     })
     .catch(function (err) {
-      if (status) { status.textContent = TX ? ui('failed') : 'The archive did not load. Reload the page to try again.'; }
+      if (status) status.innerHTML = UNAVAILABLE; /* constant markup, no archive data */
       grid.removeAttribute('aria-busy');
       if (window.console) console.error(err);
     });
