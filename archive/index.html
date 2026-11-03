@@ -279,6 +279,7 @@ dialog .pic .ar-full{display:block;max-height:calc(100dvh - 200px);width:auto;ma
 .ae-film{background:none;padding:0;border-radius:var(--radius-none)}
 .slab-end{grid-template-columns:auto 1fr;gap:var(--space-8);align-items:start}
 .slab-end .t{gap:var(--space-2);min-width:0}
+.slab-copy{font:500 18px/27px var(--font-sans);max-width:58ch;margin:var(--space-2) 0 0;color:var(--on-pink)}
 @media (min-width:641px){.slab-end .poster{white-space:nowrap;font-size:min(92px,6.3vw)}}
 .slab-end .mark{height:var(--mark-h,clamp(96px,13vw,190px));width:auto;fill:var(--on-pink);display:block}
 .pull{transform-origin:50% 50%;will-change:transform}
@@ -292,6 +293,98 @@ footer a.net .mark{height:44px;width:auto;fill:currentColor}
 @media (max-width:900px){.slab-end{grid-template-columns:auto 1fr;justify-items:start;text-align:left}}
 @media (max-width:640px){.slab-end{grid-template-columns:1fr;gap:var(--space-6);padding:var(--space-8) var(--space-6)}.slab-end .mark{height:72px!important}}
 @media (max-width:560px){.navr{gap:var(--space-3)}.filters button{padding:8px 10px;font-size:11px}}
+
+/* ---------- archive readability pass ----------
+   Three kinds of label: people, houses, events and places are bold names that open a profile (.ar-ent);
+   categories you can filter by are pills (.ar-tag); everything else is plain text. Nothing in the archive is under 13px
+   except the catalogue code. Ballroom titles are badges in the poster face, never small print. */
+#archive .label,#archive .ae-cap{font-size:13px;line-height:18px}
+.filters button{font-size:13px}
+@media (max-width:560px){.filters button{font-size:13px;padding:9px 11px}}
+.ar-tag{font:500 14px/18px var(--font-sans);letter-spacing:0;text-transform:none;padding:5px 12px;border-radius:var(--radius-pill)}
+.ar-tag--static{cursor:default}
+.ar-tag--static:hover{background:transparent;border-color:var(--line);color:var(--ink)}
+.ar-ent{all:unset;box-sizing:border-box;cursor:pointer;font:700 16px/22px var(--font-sans);color:var(--ink);border-bottom:2px solid var(--pink);max-width:100%;overflow-wrap:anywhere;transition:background-color 120ms linear,color 120ms linear,border-color 120ms linear}
+.ar-ent:hover{background:var(--acid);border-color:var(--acid);color:var(--on-acid)}
+.ar-ent:focus-visible,.ar-plink:focus-visible,.ar-out:focus-visible,.ar-more-info summary:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.ar-ent--name{font:800 clamp(24px,2.4vw,30px)/1.1 var(--font-sans);letter-spacing:-.01em;border-bottom-color:transparent}
+.ar-ent--name:hover{background:transparent;color:var(--ink);border-color:var(--pink)}
+.ar-ent--house{font:800 19px/24px var(--font-sans)}
+.ar-sub,.ar-plain{font:400 14px/20px var(--font-sans);letter-spacing:0;text-transform:none;color:var(--ink-muted);margin:0}
+.ar-dot{color:var(--ink-muted)}
+.ar-line{font:400 15px/26px var(--font-sans);gap:2px 8px;align-items:baseline;color:var(--ink)}
+.ar-line .ar-ent{font-size:15px;font-weight:600;border-bottom-width:1px}
+
+/* tile captions */
+.ar-tcap{margin:var(--space-3) 0 0;display:flex;flex-direction:column;gap:2px;font:400 14px/19px var(--font-sans);color:var(--ink-muted)}
+.ar-tcap b{font:700 15px/20px var(--font-sans);color:var(--ink)}
+.ar-tile.is-open .ar-tcap{display:none}
+@media (max-width:719px){.ar-tcap{font-size:13px;line-height:18px}.ar-tcap b{font-size:14px}}
+
+/* houses and events as a second way into the wall */
+.fbar{margin-bottom:var(--space-4)}
+.ar-browse{display:flex;flex-direction:column;gap:var(--space-3);margin-bottom:var(--space-12)}
+.ar-brow{display:grid;grid-template-columns:88px minmax(0,1fr);gap:var(--space-2) var(--space-4);align-items:baseline}
+.ar-brow .label{color:var(--gold-text)}
+.ar-bvals{display:flex;flex-wrap:wrap;gap:var(--space-2) var(--space-4)}
+.ar-bvals .ar-ent{font-size:15px;font-weight:600;border-bottom-width:1px}
+@media (max-width:560px){.ar-brow{grid-template-columns:1fr}}
+
+/* ballroom rows: one per house, with its scene and titles; one per scene walked 007 */
+.ar-ball{display:flex;flex-direction:column;border-top:1px solid var(--line-subtle)}
+.ar-hrow,.ar-mrow{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2) var(--space-3);padding:var(--space-3) 0;border-bottom:1px solid var(--line-subtle)}
+.ar-scene{font:500 13px/18px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted)}
+.ar-free{font:800 19px/24px var(--font-sans);color:var(--ink)}
+.ar-titles{display:flex;flex-wrap:wrap;gap:var(--space-2);flex-basis:100%}
+.ar-title{font:800 28px/1 var(--font-condensed);letter-spacing:.04em;text-transform:uppercase;background:var(--pink);color:var(--on-pink);padding:7px 12px 5px}
+.ar-titles--s{flex-basis:auto}
+.ar-titles--s .ar-title{font-size:18px;padding:5px 8px 3px}
+.ar-ball--s{border-top:0}
+.ar-ball--s .ar-hrow{padding:var(--space-2) 0;border-bottom:0}
+.ar-ball--s .ar-ent--house,.ar-ball--s .ar-free{font-size:16px;line-height:22px}
+.ar-mrow .ar-titles--s{flex-basis:auto}
+
+/* profile: what the wall is filtered to, with its name as the heading */
+.ar-active{margin:0 0 var(--space-8);gap:var(--space-6)}
+.ar-ctx{max-width:none;gap:var(--space-4)}
+.ar-kind{font:500 13px/18px var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--gold-text);margin:0}
+.ar-pn{font:900 clamp(44px,7vw,88px)/.92 var(--font-sans);letter-spacing:-.035em;margin:0;text-wrap:balance;overflow-wrap:anywhere}
+.ar-meta{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;font:400 15px/22px var(--font-sans);color:var(--ink-muted);margin:0}
+.ar-meta b{color:var(--ink);font-weight:700}
+.ar-ctx .ar-ball,.ar-psec,.ar-ctx .ar-bio{max-width:760px}
+.ar-ctx > .ar-ball{margin-top:var(--space-2)}
+.ar-psec{display:flex;flex-direction:column;gap:var(--space-2);margin-top:var(--space-2)}
+.ar-psec .label{color:var(--gold-text)}
+.ar-links{flex-direction:row;flex-wrap:wrap;gap:var(--space-2) var(--space-6);margin:0}
+.ar-out{font:600 15px/22px var(--font-sans);color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line)}
+.ar-out:hover{border-color:var(--pink)}
+.ar-crumb-k{font-size:12px}
+
+/* the record: grows with its content instead of scrolling inside a box the height of the print */
+.ar-drawer{height:auto;max-height:none;min-height:var(--ph,auto);overflow:visible;gap:20px}
+.ar-dhead{display:flex;justify-content:space-between;align-items:baseline;gap:var(--space-2) var(--space-4);flex-wrap:wrap}
+.ar-code{font:500 12px/16px var(--font-mono);letter-spacing:.1em;color:var(--gold-text);margin:0}
+.ar-plink{font:600 13px/18px var(--font-sans);color:var(--ink-muted);text-decoration:none;border-bottom:1px solid var(--line)}
+.ar-plink:hover{color:var(--ink);border-color:var(--pink)}
+.ar-who{flex-direction:column;flex-wrap:nowrap;gap:var(--space-4);align-items:stretch}
+.ar-person{display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-1)}
+.ar-pname{display:flex;flex-wrap:wrap;gap:var(--space-3);align-items:center}
+.ar-note{display:flex;flex-direction:column;gap:var(--space-2);padding-left:var(--space-4);border-left:2px solid var(--gold-text)}
+.ar-note .label{color:var(--gold-text);margin:0}
+.ar-fields{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.ar-more-info{border-top:1px solid var(--line-subtle);padding-top:var(--space-4);display:flex;flex-direction:column;gap:var(--space-4)}
+.ar-more-info summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:var(--space-2);font:800 13px/18px var(--font-sans);letter-spacing:.06em;text-transform:uppercase;color:var(--ink);width:max-content;max-width:100%}
+.ar-more-info summary::-webkit-details-marker{display:none}
+.ar-more-info summary::before{content:"+";display:inline-grid;place-items:center;width:22px;height:22px;border:2px solid var(--ink);font-size:15px;line-height:1}
+.ar-more-info[open] summary::before{content:"–"}
+.ar-facts{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:var(--space-4) var(--space-6);margin:var(--space-4) 0}
+.ar-fact dt{font:500 12px/16px var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--gold-text)}
+.ar-fact dd{margin:var(--space-2) 0 0;font:400 15px/22px var(--font-sans)}
+.ar-cchip{font-size:13px}
+.ar-clab{font-size:12px}
+.ar-cnames{font-size:13px;line-height:18px}
+.ar-rights{font:400 13px/18px var(--font-mono);color:var(--ink-muted);margin:0}
+@media (max-width:560px){.ar-drawer .ar-fields{grid-template-columns:1fr}.ar-title{font-size:24px}}
 </style>
 
 </head>
@@ -310,11 +403,11 @@ footer a.net .mark{height:44px;width:auto;fill:currentColor}
 
 <header class="cover" id="top">
 <div class="txt">
-<p class="ae-cap">aeriel.xyz · <span lang="en">Placeholder site</span><span lang="es">Sitio provisorio</span><span lang="pt">Site provisório</span></p>
+<p class="ae-cap">aeriel.xyz · Santiago de Chile</p>
 <h1 class="display-xl" aria-label="ÆRIEL"><span class="ae-wide">Æ</span>RIEL</h1>
 <p class="sub"><span lang="en">Analog Archive</span><span lang="es">Archivo analógico</span><span lang="pt">Arquivo analógico</span></p>
 <div class="row"><a class="ae-btn ae-btn--primary" href="#archive"><span lang="en">View the archive →</span><span lang="es">Ver el archivo →</span><span lang="pt">Ver o arquivo →</span></a></div>
-<div class="row"><span class="ae-tag">Polaroid</span><span class="ae-tag">35mm</span><span class="ae-tag ae-tag--acid"><span lang="en">New work coming</span><span lang="es">Nuevo trabajo pronto</span><span lang="pt">Novo trabalho em breve</span></span></div>
+<div class="row"><span class="ae-tag">Polaroid</span><span class="ae-tag">35mm</span><span class="ae-tag ae-tag--acid">Ballroom · Kiki · Drag</span></div>
 </div>
 <div class="blocks" aria-hidden="true">
 <div class="slab"></div><div class="b"></div><div class="c"></div><div class="y"></div>
@@ -329,7 +422,7 @@ footer a.net .mark{height:44px;width:auto;fill:currentColor}
 <div class="arch-head" id="ar-top">
 <p class="label">01 · <span lang="en">Archive</span><span lang="es">Archivo</span><span lang="pt">Arquivo</span></p>
 <h2 class="display-l" id="h-arch"><span lang="en">The archive</span><span lang="es">El archivo</span><span lang="pt">O arquivo</span></h2>
-<p class="body-l"><span lang="en">Polaroids, colour and black and white, with who, where and when. Open the <i>i</i> on a print to read its record; every name, place and date in it filters the wall.</span><span lang="es">Polaroids, en color y en blanco y negro, con quién, dónde y cuándo. Abre la <i>i</i> de una copia para leer su ficha; cada nombre, lugar y fecha filtra el muro.</span><span lang="pt">Polaroids, em cor e em preto e branco, com quem, onde e quando. Abra o <i>i</i> de uma cópia para ler a ficha; cada nome, lugar e data filtra o mural.</span></p>
+<p class="body-l"><span lang="en">Queer artists, performers and moments of joy, care and creation from the ballroom, kiki and drag scenes, on Polaroid and 35mm. Open the <i>i</i> on a print to read who, where and when. Every name opens that person, house or event.</span><span lang="es">Artistas, performers y momentos de alegría, cuidado y creación de las escenas ballroom, kiki y drag, en Polaroid y 35mm. Abre la <i>i</i> de una copia para leer quién, dónde y cuándo. Cada nombre abre a esa persona, house o evento.</span><span lang="pt">Artistas, performers e momentos de alegria, cuidado e criação das cenas ballroom, kiki e drag, em Polaroid e 35mm. Abra o <i>i</i> de uma cópia para ler quem, onde e quando. Cada nome abre essa pessoa, house ou evento.</span></p>
 </div>
 <div class="fbar">
 <div class="filters" id="ar-quick" role="group" data-aria-en="Filter photographs" data-aria-es="Filtrar fotografías" data-aria-pt="Filtrar fotografias" aria-label="Filter photographs">
@@ -341,6 +434,7 @@ footer a.net .mark{height:44px;width:auto;fill:currentColor}
 </div>
 <p class="ae-cap" aria-live="polite" id="ar-n">42 <span lang="en">photographs</span><span lang="es">fotografías</span><span lang="pt">fotografias</span></p>
 </div>
+<div class="ar-browse" id="ar-browse"></div>
 <div class="ar-active" id="ar-active" aria-live="polite" hidden></div>
 <div class="ar-grid" id="ar-grid" aria-busy="true"><p class="ae-cap ar-status" id="ar-status"><span lang="en">Loading the archive</span><span lang="es">Cargando el archivo</span><span lang="pt">Carregando o arquivo</span></p></div>
 <p class="ar-empty" id="ar-empty" hidden></p>
@@ -348,11 +442,12 @@ footer a.net .mark{height:44px;width:auto;fill:currentColor}
 </section>
 </main>
 
-<aside class="slab-end" data-aria-en="Coming soon" data-aria-es="Próximamente" data-aria-pt="Em breve" aria-label="Coming soon">
+<aside class="slab-end" data-aria-en="About the archive" data-aria-es="Sobre el archivo" data-aria-pt="Sobre o arquivo" aria-label="About the archive">
 <svg class="mark" viewBox="-10 -688 1219 688" role="img" aria-label="Æ"><path transform="scale(1,-1)" d="M-10 0 391 688H1201V517H718L747 428H1134V266H799L829 171H1209V0H634L607 91H291L243 0ZM381 262H557L522 387Q519 397 516.0 409.5Q513 422 510.0 435.5Q507 449 504.5 462.5Q502 476 500 486H492Q489 478 484.0 466.0Q479 454 472.5 441.0Q466 428 459.5 414.0Q453 400 446 387Z"/></svg>
 <div class="t">
-<p class="label"><span lang="en">Alpha site</span><span lang="es">Sitio alfa</span><span lang="pt">Site alfa</span></p>
-<p class="poster"><span lang="en">New stuff coming soon</span><span lang="es">Cosas nuevas muy pronto</span><span lang="pt">Coisas novas em breve</span></p>
+<p class="label"><span lang="en">About the archive</span><span lang="es">Sobre el archivo</span><span lang="pt">Sobre o arquivo</span></p>
+<p class="poster"><span lang="en">Joy, care and creation</span><span lang="es">Alegría, cuidado y creación</span><span lang="pt">Alegria, cuidado e criação</span></p>
+<p class="slab-copy"><span lang="en">Queer artists, performers and the people around them, on Polaroid and 35mm. Want a photo of you changed or taken down? Write to contact@aeriel.net.</span><span lang="es">Artistas, performers y comunidad queer, en Polaroid y 35mm. ¿Quieres que cambiemos o retiremos una foto tuya? Escribe a contact@aeriel.net.</span><span lang="pt">Artistas, performers e comunidade queer, em Polaroid e 35mm. Quer mudar ou retirar uma foto sua? Escreva para contact@aeriel.net.</span></p>
 </div>
 </aside>
 
@@ -363,7 +458,7 @@ footer a.net .mark{height:44px;width:auto;fill:currentColor}
 <a class="clink" href="mailto:contact@aeriel.net">contact@aeriel.net</a>
 <a class="clink" href="https://www.instagram.com/aeriel.io/" rel="me noopener" target="_blank">Instagram @aeriel.io ↗</a>
 </div>
-<p class="ae-cap">aeriel.xyz · <span lang="en">Placeholder site · New work coming</span><span lang="es">Sitio provisorio · Nuevo trabajo pronto</span><span lang="pt">Site provisório · Novo trabalho em breve</span></p>
+<p class="ae-cap">aeriel.xyz · <span lang="en">Analog archive</span><span lang="es">Archivo analógico</span><span lang="pt">Arquivo analógico</span></p>
 </footer>
 </div>
 
