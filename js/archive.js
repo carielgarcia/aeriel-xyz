@@ -734,7 +734,7 @@
   var UNAVAILABLE = '<span lang="en">The archive is briefly unavailable. Please try again in a few minutes.</span>' +
     '<span lang="es">El archivo no está disponible por un momento. Vuelve a intentarlo en unos minutos.</span>' +
     '<span lang="pt">O arquivo está indisponível no momento. Tente novamente em alguns minutos.</span>';
-  Promise.all([getJSON(MEDIA + '/data/archive.json'), getJSON('/data/taxonomy.i18n.json')])
+  Promise.all([getJSON(MEDIA + '/data/archive.json'), getJSON('/data/taxonomy.i18n.json?v=f3ff54497b')])
     .then(function (r) {
       D = r[0]; TX = r[1];
       coverRotation(D.photos);
