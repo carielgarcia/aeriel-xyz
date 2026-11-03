@@ -540,6 +540,16 @@
       "en": "View full size",
       "es": "Ver en tamaño completo",
       "pt": "Ver em tamanho real"
+    },
+    "copyColour": {
+      "en": "Copy colour",
+      "es": "Copiar color",
+      "pt": "Copiar cor"
+    },
+    "copied": {
+      "en": "Copied",
+      "es": "Copiado",
+      "pt": "Copiado"
     }
   },
   "filters": {
