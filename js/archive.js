@@ -626,11 +626,13 @@
   // The live archive comes from the bucket; the copy in this repo keeps the wall up if the bucket can't be reached.
   var archive = getJSON(MEDIA + '/data/archive.json').catch(function (err) {
     if (window.console) console.warn('archive: falling back to data/archive.json', err);
-    return getJSON('data/archive.json');
+    return getJSON('/data/archive.json');
   });
-  Promise.all([archive, getJSON('data/taxonomy.i18n.json')])
+  Promise.all([archive, getJSON('/data/taxonomy.i18n.json')])
     .then(function (r) {
       D = r[0]; TX = r[1];
+      /* the repo's fallback copy has paths relative to the site root; the page now lives at /archive/ */
+      D.photos.forEach(function (p) { ['img', 'thumb'].forEach(function (k) { if (p[k] && p[k].src && !/^(https?:)?\/\//.test(p[k].src) && p[k].src.charAt(0) !== '/') p[k].src = '/' + p[k].src; }); });
       coverRotation(D.photos);
       var frag = document.createDocumentFragment();
       D.photos.forEach(function (p, i) { facets.set(p, buildFacets(p)); var t = makeTile(p, i); tiles.push(t); byCode[p.code] = t; frag.appendChild(t); });
