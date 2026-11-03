@@ -1,7 +1,7 @@
 /* Machiavell: members-only reading room.
    One catch-all Pages Function for /machiavell/api/*.
 
-   Bindings (set in the Cloudflare dashboard, see scripts/machiavell/README.md):
+   Bindings (DB in wrangler.toml; the two secrets live in Cloudflare, see scripts/machiavell/README.md):
      DB              D1 database (tables: chapters, chapter_translations, comments, attempts)
      PASSPHRASE      the shared passphrase (secret)
      SESSION_SECRET  long random string used to sign the session cookie (secret)

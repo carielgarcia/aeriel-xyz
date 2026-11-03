@@ -3,23 +3,34 @@
 Lives at `/machiavell`. Static pages in `machiavell/`, API in `functions/machiavell/api/`, data in a D1 database.
 **This repository is public, so chapter text never goes in it.** Chapters live only in D1.
 
-## One-time setup (Cloudflare dashboard + wrangler)
+## Setup
 
-1. Create the database and tables:
-   ```bash
-   npx wrangler d1 create machiavell
-   npx wrangler d1 execute machiavell --remote --file=scripts/machiavell/schema.sql
-   ```
-2. Pages project for aeriel.xyz → Settings → Bindings → **D1 database**: variable name `DB`, database `machiavell`.
-3. Settings → Variables and secrets (as **secrets**, Production and Preview):
-   - `PASSPHRASE`: the phrase you give your friends (compared ignoring case and extra spaces).
-   - `SESSION_SECRET`: a long random string, e.g. `openssl rand -base64 48`.
-   Until all three exist, the API answers `not-configured` and the Doorward says the latch is unwritten.
-4. Redeploy. To try it with placeholder chapters first:
-   ```bash
-   npx wrangler d1 execute machiavell --remote --file=scripts/machiavell/seed-placeholder.sql
-   ```
-   Remove them later: `DELETE FROM chapters WHERE title LIKE '%Placeholder'; DELETE FROM comments;`
+Most of the Cloudflare side is in code now:
+
+- `wrangler.toml` (repo root) names the Pages project, sets the runtime date and binds the `machiavell` D1 database as `DB`.
+  Once deployed it is the source of truth: the dashboard shows those settings read-only.
+- `_routes.json` (repo root) runs the Function only for `/machiavell/api/*`; every other path is served as a plain file.
+- `.github/workflows/machiavell.yml` builds the Functions and runs `scripts/machiavell/check.sh` on every pull request.
+
+The database already exists and has its tables. On a fresh account it would be:
+```bash
+npx wrangler d1 create machiavell        # then put the printed id in wrangler.toml
+npx wrangler d1 execute machiavell --remote --file=scripts/machiavell/schema.sql
+```
+
+The two secrets live only in Cloudflare (never in this repository). Set or change them from the repo root:
+```bash
+npx wrangler pages secret put PASSPHRASE                # the phrase you give your friends (case and extra spaces ignored)
+npx wrangler pages secret put SESSION_SECRET            # a long random string: openssl rand -base64 48
+npx wrangler pages secret put PASSPHRASE --env preview  # repeat both for preview deployments if you want those to open too
+```
+`wrangler pages secret list` shows which exist, not their values. Until `DB`, `PASSPHRASE` and `SESSION_SECRET` all exist
+the API answers `not-configured` and the Doorward says the latch is unwritten. A new secret takes effect on the next deployment.
+
+Preview deployments (`*.aeriel-xyz.pages.dev`, one per branch) use the same database, so a side note left on a preview is real.
+
+**`seed-placeholder.sql` is for a local database only.** It writes chapters 1 to 4 with `INSERT OR REPLACE`, so on the live
+database it would overwrite the real chapters.
 
 ## Releasing a chapter
 
@@ -58,9 +69,14 @@ first piece. Without a map the blocks are matched by position, so the counts mus
 ## Local testing
 
 ```bash
+scripts/machiavell/check.sh            # builds, seeds a throwaway local database, runs smoke.mjs against it
+```
+To click around yourself:
+```bash
 printf 'PASSPHRASE=test phrase\nSESSION_SECRET=anything-long\n' > .dev.vars   # git-ignored
-npx wrangler d1 execute DB --local --file=scripts/machiavell/schema.sql   # needs a wrangler.toml with a DB binding, or use --persist-to as in the session
-npx wrangler pages dev . --d1=DB
+npx wrangler d1 execute DB --local --file=scripts/machiavell/schema.sql
+npx wrangler d1 execute DB --local --file=scripts/machiavell/seed-placeholder.sql
+npx wrangler pages dev .               # http://localhost:8788/machiavell/
 ```
 
 ## Moderation

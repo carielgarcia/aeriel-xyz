@@ -1,0 +1,38 @@
+name: Machiavell reading room
+
+on:
+  pull_request:
+    paths:
+      - "machiavell/**"
+      - "functions/**"
+      - "scripts/machiavell/**"
+      - "wrangler.toml"
+      - "_routes.json"
+      - "_headers"
+      - ".github/workflows/machiavell.yml"
+  push:
+    branches: [main]
+    paths:
+      - "machiavell/**"
+      - "functions/**"
+      - "scripts/machiavell/**"
+      - "wrangler.toml"
+      - "_routes.json"
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # Builds the Pages Functions, then runs the API against a throwaway local D1 with test values.
+      # No Cloudflare credentials are used; nothing here touches the live database.
+      - run: scripts/machiavell/check.sh
+        env:
+          WRANGLER_SEND_METRICS: "false"

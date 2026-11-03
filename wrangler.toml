@@ -1,0 +1,18 @@
+# Cloudflare Pages configuration for aeriel.xyz.
+#
+# Once this file is deployed it is the source of truth for the project's bindings and runtime settings:
+# the dashboard shows them read-only. Secrets are NOT kept here (this repository is public); they stay
+# in Cloudflare and are set with `wrangler pages secret put` (see scripts/machiavell/README.md).
+#
+# `name` must be the Pages project's exact name (Workers & Pages → the project → its title).
+
+name = "aeriel-xyz"
+pages_build_output_dir = "."
+compatibility_date = "2026-10-01"
+
+# Machiavell reading room (/machiavell). Chapters, translations, side notes and login attempts.
+# The id is not a secret: without an API token for this account it opens nothing.
+[[d1_databases]]
+binding = "DB"
+database_name = "machiavell"
+database_id = "4162b870-682d-4dd7-b97d-67161327ff87"
