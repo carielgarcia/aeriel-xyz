@@ -395,6 +395,15 @@ footer a.net .mark{height:44px;width:auto;fill:currentColor}
 /* keep the code inside the record at both ends of a row */
 .ar-sws .ar-sw:first-child::after,.ar-pal .ar-sw:nth-child(-n+12)::after{left:0;transform:none}
 .ar-sws .ar-sw:last-child::after,.ar-pal .ar-sw:nth-last-child(-n+12)::after{left:auto;right:0;transform:none}
+
+/* scene rows: "Kiki scene: House of Keller [titles]" */
+.ar-hrow .ar-scene{min-width:0}
+/* a person's name opens their bio and photos: say so */
+.ar-ent--name{border-bottom-color:var(--pink)}
+.ar-profile{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font:700 13px/18px var(--font-sans);letter-spacing:.02em;padding:5px 12px;border:2px solid var(--ink);color:var(--ink);transition:background-color 120ms linear,color 120ms linear,border-color 120ms linear}
+.ar-profile:hover{background:var(--acid);border-color:var(--acid);color:var(--on-acid)}
+.ar-profile:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.ar-back{margin-right:var(--space-2)}
 </style>
 
 </head>
@@ -583,6 +592,6 @@ sizeMark();
 
 })();
 </script>
-<script src="/js/archive.js?v=3f8efba919" defer></script>
+<script src="/js/archive.js?v=a73c58150b" defer></script>
 </body>
 </html>

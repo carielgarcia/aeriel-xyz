@@ -191,19 +191,20 @@
   function titlesHTML(titles, small) {
     return titles && titles.length ? '<span class="ar-titles' + (small ? ' ar-titles--s' : '') + '">' + titles.map(function (t) { return '<span class="ar-title">' + esc(t) + '</span>'; }).join('') + '</span>' : '';
   }
-  /* One row per house (house, scene, titles), then one row per scene where the person walks 007, then collectives. */
+  /* One row per scene, kiki first: "Kiki scene: House of Keller [titles]" or "Main scene: 007". Collectives follow. */
+  var SCENES = ['kiki', 'main'];
   function ballroomRows(pp, small) {
+    var by = {}, keys = [];
+    function slot(sc) { sc = sc || ''; if (!by[sc]) { by[sc] = []; keys.push(sc); } return by[sc]; }
+    (pp.houses || []).forEach(function (x) { slot(x.scene).push(ent('house', x.org, org(x.org).name, 'ar-ent--house') + titlesHTML(x.titles, small)); });
+    (pp.free || []).forEach(function (sc) { slot(sc).unshift('<span class="ar-free">007</span>'); });
+    keys.sort(function (a, b) { var i = SCENES.indexOf(a), j = SCENES.indexOf(b); return (i < 0 ? 9 : i) - (j < 0 ? 9 : j); });
     var rows = [];
-    (pp.houses || []).forEach(function (x) {
-      rows.push('<div class="ar-hrow">' + ent('house', x.org, org(x.org).name, 'ar-ent--house') +
-        (x.scene ? '<span class="ar-scene">' + esc(sceneName(x.scene)) + '</span>' : '') + titlesHTML(x.titles, small) + '</div>');
-    });
-    (pp.free || []).forEach(function (s) {
-      rows.push('<div class="ar-hrow ar-hrow--free"><span class="ar-free">' + esc(ui('freeAgent')) + '</span><span class="ar-scene">' + esc(sceneName(s)) + '</span></div>');
+    keys.forEach(function (sc) {
+      by[sc].forEach(function (h) { rows.push('<div class="ar-hrow">' + (sc ? '<span class="ar-scene">' + esc(sceneName(sc)) + ':</span>' : '') + h + '</div>'); });
     });
     (pp.orgs || []).forEach(function (x) {
-      rows.push('<div class="ar-hrow">' + ent(houseKind(x.org), x.org, org(x.org).name, 'ar-ent--house') +
-        (x.role ? '<span class="ar-scene">' + esc(tv(x.role)) + '</span>' : '') + '</div>');
+      rows.push('<div class="ar-hrow">' + (x.role ? '<span class="ar-scene">' + esc(tv(x.role)) + ':</span>' : '') + ent(houseKind(x.org), x.org, org(x.org).name, 'ar-ent--house') + '</div>');
     });
     return rows.join('');
   }
@@ -223,6 +224,7 @@
         if (x.persona) sub.push(ui('as') + ' ' + x.persona);
         if (x.look) sub.push(ui('look') + ': ' + x.look);
         return '<div class="ar-person"><div class="ar-pname">' + ent('person', x.p, pp.name, 'ar-ent--name') +
+          '<button type="button" class="ar-profile" data-k="person" data-v="' + esc(x.p) + '">' + esc(ui('seeProfile')) + ' <span aria-hidden="true">→</span></button>' +
           (x.role && p.people.length > 1 ? tag('role', slug(x.role), tv(x.role)) : '') + '</div>' +
           (sub.length ? '<p class="ar-sub">' + esc(sub.join(' · ')) + '</p>' : '') +
           '<div class="ar-ball ar-ball--s">' + ballroomRows(pp, true) + '</div></div>';
@@ -463,21 +465,28 @@
     q.forEach(function (v, k) { if (TX.filters[k] && v) out.push([k, v]); });
     return out;
   }
-  function writeURL(push) {
+  function writeURL(push, from) {
     var q = new URLSearchParams(location.search);
     Object.keys(TX.filters).forEach(function (k) { q.delete(k); });
     filters.forEach(function (f) { q.append(f[0], f[1]); });
     var s = q.toString(), url = location.pathname + (s ? '?' + s : '') + location.hash;
-    if (url !== location.pathname + location.search + location.hash) history[push ? 'pushState' : 'replaceState']({ ar: 1 }, '', url);
+    if (url === location.pathname + location.search + location.hash) return;
+    var st = history.state && history.state.ar ? history.state : { ar: 1, d: 0 };
+    if (push) {
+      /* the entry we leave keeps its scroll position (and its ?photo=, written by photoParam), so Back lands there */
+      history.replaceState({ ar: 1, d: st.d || 0, y: from ? from.y : scrollY }, '', from ? from.url : location.pathname + location.search + location.hash);
+      history.pushState({ ar: 1, d: (st.d || 0) + 1 }, '', url);
+    } else history.replaceState({ ar: 1, d: st.d || 0 }, '', url);
   }
   function setFilters(next, push) {
     var same = JSON.stringify(next) === JSON.stringify(filters);
-    if (same && !openTile) return;
+    if (same && !openTile) return Promise.resolve();
+    var from = push ? { url: location.pathname + location.search + location.hash, y: scrollY } : null;   // before the open record closes
     var leaving = tiles.filter(function (t) { return !t.hidden && !matchesAfter(t._p, next); });
     var closing = openTile, gen = ++fseq; seq++;
     var pre = [fold(closing)];
     if (motion()) leaving.forEach(function (t) { pre.push(t.querySelector('.ar-ph').animate([{ opacity: 1 }, { opacity: 0, transform: 'perspective(1200px) translateZ(-80px)' }], { duration: 200, easing: 'cubic-bezier(.4,0,1,1)', fill: 'forwards' }).finished.catch(function () {})); });
-    Promise.all(pre).then(function () {
+    return Promise.all(pre).then(function () {
       if (gen !== fseq) return;   // a newer filter change superseded this one
       var first = rects();
       leaving.forEach(function (t) { first.delete(t); t.querySelector('.ar-ph').getAnimations().forEach(function (a) { a.cancel(); }); });
@@ -485,7 +494,7 @@
       if (closing && openTile === closing) setOpen(null);
       tiles.forEach(function (t) { t.hidden = !matches(t._p); });
       applyOrder();
-      renderBar(); writeURL(push);
+      writeURL(push, from); renderBar();
       play(first);
       var head = document.getElementById('ar-top');
       if (push && head && head.getBoundingClientRect().top < 0) head.scrollIntoView({ behavior: motion() ? 'smooth' : 'auto' });
@@ -617,7 +626,8 @@
     var empty = document.getElementById('ar-empty');
     empty.hidden = n > 0; empty.textContent = ui('none');
     if (!filters.length) { bar.hidden = true; bar.innerHTML = ''; return; }
-    var h = '<div class="ar-crumbs"><p class="label">' + esc(ui('filterBy')) + '</p>';
+    var canBack = history.state && history.state.ar && history.state.d > 0;
+    var h = '<div class="ar-crumbs"><button type="button" class="ae-btn ae-btn--sm ar-back" data-back><span aria-hidden="true">←</span> ' + esc(ui(canBack ? 'back' : 'allPhotos')) + '</button><p class="label">' + esc(ui('filterBy')) + '</p>';
     h += filters.map(function (f) {
       var lab = labels[f[0]] && labels[f[0]][f[1]] ? labels[f[0]][f[1]]() : f[1];
       return '<button type="button" class="ar-crumb" data-rm="' + esc(f[0]) + '" data-rv="' + esc(f[1]) + '" aria-label="' + esc(ui('remove') + fl(f[0]) + ' ' + lab) + '"><span class="ar-crumb-k">' + esc(fl(f[0])) + '</span> ' + esc(lab) + ' <span aria-hidden="true">✕</span></button>';
@@ -687,6 +697,7 @@
     var m = e.target.closest('.ar-more');
     if (m) { var b = m.parentNode, full = b.querySelector('.ar-bio-full'), open = full.hidden; full.hidden = !open; b.querySelector('.ar-bio-short').hidden = open; m.setAttribute('aria-expanded', String(open)); m.textContent = ui(open ? 'less' : 'more'); return; }
     if (e.target.closest('[data-clear]')) { setFilters([], true); return; }
+    if (e.target.closest('[data-back]')) { if (history.state && history.state.ar && history.state.d > 0) history.back(); else setFilters([], true); return; }
     var r = e.target.closest('[data-rm]');
     if (r) { setFilters(filters.filter(function (f) { return !(f[0] === r.dataset.rm && f[1] === r.dataset.rv); }), true); return; }
     var t = e.target.closest('[data-k]');
@@ -697,7 +708,19 @@
   document.querySelectorAll('#ar-quick button').forEach(function (b) {
     b.addEventListener('click', function () { setFilters(b.dataset.k ? [[b.dataset.k, b.dataset.v]] : [], true); });
   });
-  window.addEventListener('popstate', function () { if (D) setFilters(readURL(), false); });
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  /* Back and Forward: restore the filter, then the record that was open (?photo=) or the scroll position */
+  window.addEventListener('popstate', function (e) {
+    if (!D) return;
+    var st = e.state || {}, code = new URLSearchParams(location.search).get('photo');
+    setFilters(readURL(), false).then(function () {
+      var t = code && byCode[code];
+      if (t && !t.hidden) {
+        if (openTile !== t) setOpen(t);
+        t.scrollIntoView({ block: 'start' });
+      } else if (typeof st.y === 'number') window.scrollTo(0, st.y);
+    });
+  });
   var lastCols = 0;
   if (window.ResizeObserver) new ResizeObserver(function () { var n = cols(); if (n !== lastCols) { lastCols = n; applyOrder(); } lockHeight(); }).observe(grid);
   document.addEventListener('ae:lang', function () {
@@ -759,7 +782,7 @@
   var UNAVAILABLE = '<span lang="en">The archive is briefly unavailable. Please try again in a few minutes.</span>' +
     '<span lang="es">El archivo no está disponible por un momento. Vuelve a intentarlo en unos minutos.</span>' +
     '<span lang="pt">O arquivo está indisponível no momento. Tente novamente em alguns minutos.</span>';
-  Promise.all([getJSON(MEDIA + '/data/archive.json'), getJSON('/data/taxonomy.i18n.json?v=7205cf1978')])
+  Promise.all([getJSON(MEDIA + '/data/archive.json'), getJSON('/data/taxonomy.i18n.json?v=5d52ce3177')])
     .then(function (r) {
       D = r[0]; TX = r[1];
       coverRotation(D.photos);
