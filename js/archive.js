@@ -281,31 +281,56 @@
      swatches they fall under, the 128-colour strip, the dominant colours and the frame border. */
   function colourBlock(p) {
     var HEX = /^#[0-9a-f]{6}$/i, l = lang();
-    function sw(hex, title) { return HEX.test(hex || '') ? '<span class="ar-sw" style="background:' + hex + '" title="' + esc(title || hex) + '"></span>' : ''; }
-    function swNames(ids) {
-      var seen = {};
-      return (ids || []).map(function (i) { var s = (TX.swatches || {})[String(i)]; return s ? (s[l] || s.en) : null; })
-        .filter(function (n) { if (!n || seen[n]) return false; seen[n] = 1; return true; }).join(' · ');
+    /* every colour is a button: hover or focus shows its code, a click or tap copies it */
+    function sw(hex, extra, cls) {
+      if (!HEX.test(hex || '')) return '';
+      var code = hex.toUpperCase(), tip = code + (extra ? ' · ' + extra : '');
+      return '<button type="button" class="ar-sw' + (cls ? ' ' + cls : '') + '" style="background:' + hex + '" data-hex="' + code + '" data-tip="' + esc(tip) + '" data-tip0="' + esc(tip) + '" aria-label="' + esc(ui('copyColour') + ' ' + tip) + '"></button>';
     }
+    function pct(v) { return v == null ? '' : Math.round(v * 1000) / 10 + '%'; }
+    /* the curatorial swatches a group falls under, each with its own colour so the name sits next to the right block */
+    function families(ids) {
+      var seen = {};
+      return (ids || []).map(function (i) { return (TX.swatches || {})[String(i)]; }).filter(function (s) {
+        if (!s || seen[s.en]) return false; seen[s.en] = 1; return true;
+      }).map(function (s) { return '<span class="ar-cchip">' + sw(s.hex, null, 'ar-sw--dot') + esc(s[l] || s.en) + '</span>'; }).join('');
+    }
+    function group(label, inner) { return inner ? '<div class="ar-cgroup"><p class="ar-clab">' + esc(label) + '</p>' + inner + '</div>' : ''; }
     function row(label, cols, ids) {
       if (!cols || !cols.length) return '';
-      return '<div class="ar-crow"><span class="ar-clab">' + esc(ui(label)) + '</span><span class="ar-sws">' +
-        cols.map(function (c) { return sw(c[0], c[0] + ' · ' + Math.round(c[1] * 1000) / 10 + '%'); }).join('') + '</span>' +
-        (swNames(ids) ? '<span class="ar-cnames">' + esc(swNames(ids)) + '</span>' : '') + '</div>';
+      var fam = families(ids);
+      return group(ui(label), '<div class="ar-sws">' + cols.map(function (c) { return sw(c[0], pct(c[1])); }).join('') + '</div>' +
+        (fam ? '<div class="ar-chips">' + fam + '</div>' : ''));
     }
     var h = '';
-    if (p.named && p.named.length) h += '<div class="ar-chips">' + p.named.map(function (c) {
+    if (p.named && p.named.length) h += group(ui('colours'), '<div class="ar-chips">' + p.named.map(function (c) {
       var n = (TX.colorNames || {})[c[0]] || {};
-      return '<span class="ar-cchip"><i style="background:' + (HEX.test(n.hex || '') ? n.hex : '#888') + '"></i>' + esc(n[l] || n.en || c[0]) + ' ' + Math.round(c[1] * 100) + '%</span>';
-    }).join('') + '</div>';
-    if ((p.atm && p.atm.length) || (p.acc && p.acc.length)) h += '<div class="ar-cbox">' + row('atmosphere', p.atm, p.swAtm) + row('accent', p.acc, p.swAcc) + '</div>';
-    if (p.palette && p.palette.length) h += '<p class="ar-sub">' + esc(ui('palette')) + '</p><div class="ar-pal" role="img" aria-label="' + esc(ui('palette')) + '">' +
-      p.palette.map(function (c) { return '<span style="background:' + esc(c[0]) + ';flex-grow:' + (c[1] == null ? 1 : Math.max(c[1], 0.5)) + '" title="' + esc(c[0]) + '"></span>'; }).join('') + '</div>';
-    if (p.dominant && p.dominant.length) h += '<p class="ar-sub">' + esc(ui('dominant')) + '</p><div class="ar-dom">' + p.dominant.map(function (c) { return sw(c); }).join('') + '</div>';
-    if (HEX.test(p.border || '')) h += '<p class="ar-sub ar-border">' + sw(p.border) + esc(ui('frameColor')) + ' ' + esc(p.border.toUpperCase()) + '</p>';
-    return h ? '<div class="ar-f ar-f--wide ar-colour"><p class="label">' + esc(ui('colours')) + '</p>' + h + '</div>' : '';
+      return '<span class="ar-cchip">' + sw(n.hex, null, 'ar-sw--dot') + esc(n[l] || n.en || c[0]) + ' ' + Math.round(c[1] * 100) + '%</span>';
+    }).join('') + '</div>');
+    h += row('atmosphere', p.atm, p.swAtm);
+    h += row('accent', p.acc, p.swAcc);
+    if (p.palette && p.palette.length) h += group(ui('palette'), '<div class="ar-pal">' +
+      p.palette.map(function (c) { return sw(c[0]).replace('style="', 'style="flex-grow:' + (c[1] == null ? 1 : Math.max(c[1], 0.5)) + ';'); }).join('') + '</div>');
+    if (p.dominant && p.dominant.length) h += group(ui('dominant'), '<div class="ar-sws">' + p.dominant.map(function (c) { return sw(c); }).join('') + '</div>');
+    if (HEX.test(p.border || '')) h += group(ui('frameColor'), '<div class="ar-sws ar-sws--one">' + sw(p.border) + '</div>');
+    return h ? '<div class="ar-f ar-f--wide ar-colour">' + h + '</div>' : '';
+  }
+  /* copy a colour code; the tip under the pointer says so for a moment */
+  function copyColour(b) {
+    var code = b.dataset.hex;
+    function done() {
+      b.dataset.tip = ui('copied') + ' ' + code; b.classList.add('is-copied');
+      clearTimeout(b._t); b._t = setTimeout(function () { b.classList.remove('is-copied'); b.dataset.tip = b.dataset.tip0; }, 1400);
+    }
+    function fallback() {
+      var ta = document.createElement('textarea'); ta.value = code; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch (e) {} ta.remove(); done();
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(code).then(done, fallback); else fallback();
   }
   function onDrawerClick(ev) {
+    var hx = ev.target.closest('[data-hex]');
+    if (hx) { copyColour(hx); return; }
     if (ev.target.closest('[data-close-record]')) { if (openTile) toggle(openTile); return; }
     var c = ev.target.closest('[data-copy]');
     if (c) {
@@ -734,7 +759,7 @@
   var UNAVAILABLE = '<span lang="en">The archive is briefly unavailable. Please try again in a few minutes.</span>' +
     '<span lang="es">El archivo no está disponible por un momento. Vuelve a intentarlo en unos minutos.</span>' +
     '<span lang="pt">O arquivo está indisponível no momento. Tente novamente em alguns minutos.</span>';
-  Promise.all([getJSON(MEDIA + '/data/archive.json'), getJSON('/data/taxonomy.i18n.json?v=f3ff54497b')])
+  Promise.all([getJSON(MEDIA + '/data/archive.json'), getJSON('/data/taxonomy.i18n.json?v=26d8cfd163')])
     .then(function (r) {
       D = r[0]; TX = r[1];
       coverRotation(D.photos);
