@@ -6,7 +6,8 @@ cd "$(dirname "$0")/../.."
 WRANGLER="${WRANGLER:-npx --yes wrangler@4.150.0}"
 STATE="$(mktemp -d)"
 PORT="${PORT:-8788}"
-trap 'kill "${DEV_PID:-}" 2>/dev/null || true; rm -rf "$STATE" "$STATE.out"; [ -n "${MADE_VARS:-}" ] && rm -f .dev.vars' EXIT
+# wrangler starts workerd children; run it in its own process group and stop the whole group.
+trap '[ -n "${DEV_PID:-}" ] && kill -- -"$DEV_PID" 2>/dev/null; true; rm -rf "$STATE" "$STATE.out"; [ -n "${MADE_VARS:-}" ] && rm -f .dev.vars' EXIT
 
 echo "== build functions"
 $WRANGLER pages functions build --outdir="$STATE/fn" >/dev/null
@@ -21,7 +22,8 @@ if [ ! -f .dev.vars ]; then
 fi
 
 echo "== serve on :$PORT"
-$WRANGLER pages dev . --port "$PORT" --ip 127.0.0.1 --persist-to="$STATE/d1" --show-interactive-dev-session=false >"$STATE.out" 2>&1 &
+if curl -s -o /dev/null "http://127.0.0.1:$PORT/"; then echo "port $PORT is already in use; stop that server or set PORT" >&2; exit 1; fi
+setsid $WRANGLER pages dev . --port "$PORT" --ip 127.0.0.1 --persist-to="$STATE/d1" --show-interactive-dev-session=false >"$STATE.out" 2>&1 &
 DEV_PID=$!
 for _ in $(seq 60); do
   curl -sf -o /dev/null "http://127.0.0.1:$PORT/machiavell/" && break
