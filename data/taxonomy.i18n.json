@@ -531,15 +531,15 @@
       "es": "Película y color",
       "pt": "Filme e cor"
     },
-    "browseHouses": {
-      "en": "Houses",
-      "es": "Houses",
-      "pt": "Houses"
+    "openRecord": {
+      "en": "Open the record",
+      "es": "Abrir la ficha",
+      "pt": "Abrir a ficha"
     },
-    "browseEvents": {
-      "en": "Events",
-      "es": "Eventos",
-      "pt": "Eventos"
+    "viewFull": {
+      "en": "View full size",
+      "es": "Ver en tamaño completo",
+      "pt": "Ver em tamanho real"
     }
   },
   "filters": {

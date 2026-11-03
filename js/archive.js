@@ -122,26 +122,20 @@
       '<div class="ar-ph"><div class="ar-pull">' +
       '<button class="ar-open" type="button"><img class="ar-img" src="' + esc(p.thumb.src) + '" srcset="' + esc(p.thumb.src) + ' ' + p.thumb.w + 'w, ' + esc(p.img.src) + ' ' + p.img.w + 'w" ' +
       'sizes="(min-width:1100px) 25vw, (min-width:720px) 33vw, (min-width:400px) 50vw, 100vw" width="' + p.thumb.w + '" height="' + p.thumb.h + '" alt="" loading="' + (i < 8 ? 'eager' : 'lazy') + '" decoding="async"></button>' +
-      '<button class="ar-i" type="button" aria-expanded="false" aria-controls="ar-d-' + p.code + '"><span aria-hidden="true">i</span></button>' +
-      '</div><p class="ar-tcap"></p></div>' +
+      '</div></div>' +
       '<div class="ar-drawer" id="ar-d-' + p.code + '" role="region" tabindex="-1" hidden></div>';
     t._p = p;
-    t.querySelector('.ar-i').addEventListener('click', function () { toggle(t); });
-    t.querySelector('.ar-open').addEventListener('click', function () { openViewer(t); });
+    /* the print itself is the control: first click opens its record, a click on the open print shows it full size */
+    t.querySelector('.ar-open').addEventListener('click', function () { if (openTile === t) openViewer(t); else toggle(t); });
     t.querySelector('.ar-drawer').addEventListener('click', onDrawerClick);
     return t;
   }
-  /* Under each print: who is in it, and the event or year. */
-  function tileCaption(p) {
-    var n = names(p), e = p.event && D.events[p.event];
-    return (n.length ? '<b>' + esc(listJoin(n)) + '</b>' : '') + '<span>' + esc(e ? e.title : (p.year || '')) + '</span>';
-  }
   function labelTile(t) {
     var a = alt(t._p);
-    t.querySelector('.ar-tcap').innerHTML = tileCaption(t._p);
     t.querySelector('.ar-img').alt = a;
-    t.querySelector('.ar-open').setAttribute('aria-label', ui('open') + a);
-    t.querySelector('.ar-i').setAttribute('aria-label', (t === openTile ? ui('closeInfo') : ui('info')) + ' · ' + t._p.code);
+    var b = t.querySelector('.ar-open');
+    b.setAttribute('aria-label', (t === openTile ? ui('viewFull') : ui('openRecord')) + ': ' + a);
+    b.setAttribute('aria-expanded', String(t === openTile));
     t.querySelector('.ar-drawer').setAttribute('aria-label', ui('info') + ' · ' + t._p.code);
   }
 
@@ -221,7 +215,8 @@
   function drawerHTML(p) {
     var h = '', e = p.event ? D.events[p.event] : null, s = p.space ? space(p.space) : null;
     h += '<div class="ar-dhead"><p class="ar-code">' + esc(p.code) + '</p>' +
-      '<a class="ar-plink" href="?photo=' + encodeURIComponent(p.code) + '" data-copy="' + esc(p.code) + '">' + esc(ui('photoLink')) + '</a></div>';
+      '<span class="ar-dact"><a class="ar-plink" href="?photo=' + encodeURIComponent(p.code) + '" data-copy="' + esc(p.code) + '">' + esc(ui('photoLink')) + '</a>' +
+      '<button type="button" class="ar-close" data-close-record aria-label="' + esc(ui('closeInfo')) + '">✕</button></span></div>';
     if (p.people) {
       h += '<div class="ar-who">' + p.people.map(function (x) {
         var pp = person(x.p), sub = [];
@@ -311,6 +306,7 @@
     return h ? '<div class="ar-f ar-f--wide ar-colour"><p class="label">' + esc(ui('colours')) + '</p>' + h + '</div>' : '';
   }
   function onDrawerClick(ev) {
+    if (ev.target.closest('[data-close-record]')) { if (openTile) toggle(openTile); return; }
     var c = ev.target.closest('[data-copy]');
     if (c) {
       var url = location.origin + location.pathname + '?photo=' + encodeURIComponent(c.dataset.copy);
@@ -399,7 +395,6 @@
       prev.classList.remove('is-open');
       prev.querySelector('.ar-drawer').hidden = true;
       prev.querySelector('.ar-drawer').getAnimations && prev.querySelector('.ar-drawer').getAnimations().forEach(function (a) { a.cancel(); });
-      prev.querySelector('.ar-i').setAttribute('aria-expanded', 'false');
       prev.style.removeProperty('--ph');
       openTile = null; labelTile(prev);
     }
@@ -408,7 +403,6 @@
       var d = t.querySelector('.ar-drawer');
       d.innerHTML = drawerHTML(t._p); d.hidden = false; d.scrollTop = 0;
       t.classList.add('is-open');
-      t.querySelector('.ar-i').setAttribute('aria-expanded', 'true');
       labelTile(t);
     }
     applyOrder(); lockHeight(); watch(t);
@@ -429,7 +423,7 @@
     if (openTile === t) {
       fold(t).then(function () {
         if (gen !== seq || openTile !== t) return;
-        first = rects(); setOpen(null); play(first); t.querySelector('.ar-i').focus();
+        first = rects(); setOpen(null); play(first); t.querySelector('.ar-open').focus();
       });
       return;
     }
@@ -566,19 +560,27 @@
     var first = firstPara(text), more = text.trim() !== first.trim();
     return '<div class="ar-bio"><div class="ar-bio-short">' + md(first) + '</div>' + (more ? '<div class="ar-bio-full" hidden>' + md(text) + '</div><button type="button" class="ar-more" aria-expanded="false">' + esc(ui('more')) + '</button>' : '') + '</div>';
   }
-  /* Houses and events with photographs on the wall, as a second row of ways in. */
-  function renderBrowse() {
-    var box = document.getElementById('ar-browse');
-    if (!box) return;
-    function row(k, label, keys, name) {
-      keys = keys.filter(function (x) { return tiles.some(function (t) { return (facets.get(t._p)[k] || []).indexOf(x) > -1; }); });
-      if (!keys.length) return '';
-      keys.sort(function (a, b) { return name(a).localeCompare(name(b)); });
-      return '<div class="ar-brow"><p class="label">' + esc(ui(label)) + '</p><div class="ar-bvals">' +
-        keys.map(function (x) { return ent(k, x, name(x)); }).join('') + '</div></div>';
-    }
-    box.innerHTML = row('house', 'browseHouses', Object.keys(D.orgs).filter(function (k) { return D.orgs[k].isHouse; }), function (k) { return D.orgs[k].name; }) +
-      row('event', 'browseEvents', Object.keys(D.events), function (k) { return D.events[k].title; });
+  /* ---------- order: a new random hang on every visit, or by date ---------- */
+  var sort = 'random', hang = [];
+  function shuffle() {
+    var a = tiles.slice(), i, j, x;
+    for (i = a.length - 1; i > 0; i--) { j = Math.floor(Math.random() * (i + 1)); x = a[i]; a[i] = a[j]; a[j] = x; }
+    hang = a; tiles = a.slice();
+  }
+  function when(p) { return p.date || (p.year ? p.year + '-99-99' : null); }
+  function setSort(mode) {
+    if (mode === sort) return;
+    var first = rects(); sort = mode;
+    if (mode === 'random') tiles = hang.slice();
+    else tiles = hang.slice().sort(function (a, b) {
+      var x = when(a._p), y = when(b._p);
+      if (!x || !y) return x ? -1 : y ? 1 : 0;   // undated prints go last either way
+      return mode === 'old' ? (x < y ? -1 : x > y ? 1 : 0) : (x > y ? -1 : x < y ? 1 : 0);
+    });
+    applyOrder(); lockHeight(); renderSort(); play(first);
+  }
+  function renderSort() {
+    document.querySelectorAll('#ar-sort [data-sort]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.sort === sort)); });
   }
   function renderBar() {
     var bar = document.getElementById('ar-active'), n = visibleTiles().length;
@@ -665,8 +667,8 @@
     var t = e.target.closest('[data-k]');
     if (t) setFilters([[t.dataset.k, t.dataset.v]], true);
   });
-  var browse = document.getElementById('ar-browse');
-  if (browse) browse.addEventListener('click', function (e) { var t = e.target.closest('[data-k]'); if (t) setFilters([[t.dataset.k, t.dataset.v]], true); });
+  var sortBox = document.getElementById('ar-sort');
+  if (sortBox) sortBox.addEventListener('click', function (e) { var b = e.target.closest('[data-sort]'); if (b) setSort(b.dataset.sort); });
   document.querySelectorAll('#ar-quick button').forEach(function (b) {
     b.addEventListener('click', function () { setFilters(b.dataset.k ? [[b.dataset.k, b.dataset.v]] : [], true); });
   });
@@ -677,7 +679,7 @@
     if (!D) return;
     tiles.forEach(labelTile);
     if (openTile) { var d = openTile.querySelector('.ar-drawer'), st = d.scrollTop; d.innerHTML = drawerHTML(openTile._p); d.scrollTop = st; }
-    renderBar(); renderBrowse();
+    renderBar();
   });
 
   /* ---------- cover print: rotates through every photo in the archive ----------
@@ -742,7 +744,7 @@
       tiles.forEach(labelTile);
       filters = readURL();
       tiles.forEach(function (t) { t.hidden = !matches(t._p); });
-      applyOrder(); renderBar(); renderBrowse();
+      shuffle(); applyOrder(); renderBar(); renderSort();
       grid.removeAttribute('aria-busy'); if (status) status.remove();
       var want = new URLSearchParams(location.search).get('photo'), wt = want && byCode[want];
       if (wt) {

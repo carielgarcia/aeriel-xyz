@@ -197,13 +197,6 @@ nav .home{font:900 22px/1 var(--font-sans);letter-spacing:-.02em;color:var(--ink
 .ar-open{all:unset;display:block;cursor:zoom-in;width:100%}
 .ar-open:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
 .ar-img{display:block;width:100%;height:auto;aspect-ratio:var(--ar);border-radius:var(--radius-sm);box-shadow:var(--shadow-print);background:var(--border,var(--polaroid))}
-/* the i sits on the Polaroid's bottom margin, lower right: a round sticker, fixed ink so it reads on white and gold frames in both themes */
-.ar-i{all:unset;box-sizing:border-box;position:absolute;right:5%;bottom:3.6%;width:30px;height:30px;border-radius:var(--radius-pill);display:grid;place-items:center;cursor:pointer;background:#1a1a1a;color:#ffffff;font:italic 400 19px/1 Georgia,"Times New Roman",Times,serif;transition:background-color 120ms linear,color 120ms linear}
-.ar-i span{transform:translateY(-1px)}
-.ar-i:hover{background:var(--acid);color:var(--on-acid)}
-.ar-i[aria-expanded="true"]{background:var(--pink);color:var(--on-pink)}
-.ar-i:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
-@media (max-width:719px){.ar-i{width:26px;height:26px;font-size:16px}}
 /* open: the tile spans the row; print in column 1, drawer across the rest, locked to the print's height */
 .ar-tile.is-open{grid-column:1/-1;display:grid;grid-template-columns:calc((100% - (var(--cols) - 1) * var(--g)) / var(--cols)) minmax(0,1fr);column-gap:var(--g);align-items:start;z-index:2}
 .ar-drawer{height:var(--ph,auto);max-height:var(--ph,none);overflow-y:auto;overscroll-behavior:contain;background:var(--surface-200);color:var(--ink);padding:var(--space-6);display:flex;flex-direction:column;gap:var(--space-4);scrollbar-width:thin;scrollbar-color:var(--line) transparent}
@@ -315,20 +308,6 @@ footer a.net .mark{height:44px;width:auto;fill:currentColor}
 .ar-line{font:400 15px/26px var(--font-sans);gap:2px 8px;align-items:baseline;color:var(--ink)}
 .ar-line .ar-ent{font-size:15px;font-weight:600;border-bottom-width:1px}
 
-/* tile captions */
-.ar-tcap{margin:var(--space-3) 0 0;display:flex;flex-direction:column;gap:2px;font:400 14px/19px var(--font-sans);color:var(--ink-muted)}
-.ar-tcap b{font:700 15px/20px var(--font-sans);color:var(--ink)}
-.ar-tile.is-open .ar-tcap{display:none}
-@media (max-width:719px){.ar-tcap{font-size:13px;line-height:18px}.ar-tcap b{font-size:14px}}
-
-/* houses and events as a second way into the wall */
-.fbar{margin-bottom:var(--space-4)}
-.ar-browse{display:flex;flex-direction:column;gap:var(--space-3);margin-bottom:var(--space-12)}
-.ar-brow{display:grid;grid-template-columns:88px minmax(0,1fr);gap:var(--space-2) var(--space-4);align-items:baseline}
-.ar-brow .label{color:var(--gold-text)}
-.ar-bvals{display:flex;flex-wrap:wrap;gap:var(--space-2) var(--space-4)}
-.ar-bvals .ar-ent{font-size:15px;font-weight:600;border-bottom-width:1px}
-@media (max-width:560px){.ar-brow{grid-template-columns:1fr}}
 
 /* ballroom rows: one per house, with its scene and titles; one per scene walked 007 */
 .ar-ball{display:flex;flex-direction:column;border-top:1px solid var(--line-subtle)}
@@ -385,6 +364,16 @@ footer a.net .mark{height:44px;width:auto;fill:currentColor}
 .ar-cnames{font-size:13px;line-height:18px}
 .ar-rights{font:400 13px/18px var(--font-mono);color:var(--ink-muted);margin:0}
 @media (max-width:560px){.ar-drawer .ar-fields{grid-template-columns:1fr}.ar-title{font-size:24px}}
+
+/* the print is the control: pointer while closed, zoom on the open one; the record closes from its own ✕ or Escape */
+.ar-open{cursor:pointer}
+.ar-tile.is-open .ar-open{cursor:zoom-in}
+.ar-sort{margin-left:auto}
+.ar-dact{display:flex;align-items:center;gap:var(--space-4)}
+.ar-close{all:unset;box-sizing:border-box;cursor:pointer;display:grid;place-items:center;width:36px;height:36px;border:2px solid var(--ink);font:800 16px/1 var(--font-sans);color:var(--ink);transition:background-color 120ms linear,color 120ms linear}
+.ar-close:hover{background:var(--acid);border-color:var(--acid);color:var(--on-acid)}
+.ar-close:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+@media (max-width:900px){.ar-sort{margin-left:0}}
 </style>
 
 </head>
@@ -422,7 +411,7 @@ footer a.net .mark{height:44px;width:auto;fill:currentColor}
 <div class="arch-head" id="ar-top">
 <p class="label">01 · <span lang="en">Archive</span><span lang="es">Archivo</span><span lang="pt">Arquivo</span></p>
 <h2 class="display-l" id="h-arch"><span lang="en">The archive</span><span lang="es">El archivo</span><span lang="pt">O arquivo</span></h2>
-<p class="body-l"><span lang="en">Queer artists, performers and moments of joy, care and creation from the ballroom, kiki and drag scenes, on Polaroid and 35mm. Open the <i>i</i> on a print to read who, where and when. Every name opens that person, house or event.</span><span lang="es">Artistas, performers y momentos de alegría, cuidado y creación de las escenas ballroom, kiki y drag, en Polaroid y 35mm. Abre la <i>i</i> de una copia para leer quién, dónde y cuándo. Cada nombre abre a esa persona, house o evento.</span><span lang="pt">Artistas, performers e momentos de alegria, cuidado e criação das cenas ballroom, kiki e drag, em Polaroid e 35mm. Abra o <i>i</i> de uma cópia para ler quem, onde e quando. Cada nome abre essa pessoa, house ou evento.</span></p>
+<p class="body-l"><span lang="en">Queer artists, performers and moments of joy, care and creation from the ballroom, kiki and drag scenes, on Polaroid and 35mm. Click a print to read who, where and when; click it again to see it full size.</span><span lang="es">Artistas, performers y momentos de alegría, cuidado y creación de las escenas ballroom, kiki y drag, en Polaroid y 35mm. Haz clic en una copia para leer quién, dónde y cuándo; otro clic la muestra en tamaño completo.</span><span lang="pt">Artistas, performers e momentos de alegria, cuidado e criação das cenas ballroom, kiki e drag, em Polaroid e 35mm. Clique numa cópia para ler quem, onde e quando; outro clique a mostra em tamanho real.</span></p>
 </div>
 <div class="fbar">
 <div class="filters" id="ar-quick" role="group" data-aria-en="Filter photographs" data-aria-es="Filtrar fotografías" data-aria-pt="Filtrar fotografias" aria-label="Filter photographs">
@@ -432,9 +421,13 @@ footer a.net .mark{height:44px;width:auto;fill:currentColor}
 <button type="button" data-k="frame" data-v="classic-white" aria-pressed="false"><span lang="en">White frame</span><span lang="es">Marco blanco</span><span lang="pt">Moldura branca</span></button>
 <button type="button" data-k="frame" data-v="color-frame" aria-pressed="false"><span lang="en">Colour frame</span><span lang="es">Marco de color</span><span lang="pt">Moldura colorida</span></button>
 </div>
+<div class="filters ar-sort" id="ar-sort" role="group" data-aria-en="Order" data-aria-es="Orden" data-aria-pt="Ordem" aria-label="Order">
+<button type="button" data-sort="random" aria-pressed="true"><span lang="en">Random</span><span lang="es">Al azar</span><span lang="pt">Aleatório</span></button>
+<button type="button" data-sort="old" aria-pressed="false"><span lang="en">Oldest first</span><span lang="es">Más antiguas</span><span lang="pt">Mais antigas</span></button>
+<button type="button" data-sort="new" aria-pressed="false"><span lang="en">Newest first</span><span lang="es">Más recientes</span><span lang="pt">Mais recentes</span></button>
+</div>
 <p class="ae-cap" aria-live="polite" id="ar-n">42 <span lang="en">photographs</span><span lang="es">fotografías</span><span lang="pt">fotografias</span></p>
 </div>
-<div class="ar-browse" id="ar-browse"></div>
 <div class="ar-active" id="ar-active" aria-live="polite" hidden></div>
 <div class="ar-grid" id="ar-grid" aria-busy="true"><p class="ae-cap ar-status" id="ar-status"><span lang="en">Loading the archive</span><span lang="es">Cargando el archivo</span><span lang="pt">Carregando o arquivo</span></p></div>
 <p class="ar-empty" id="ar-empty" hidden></p>
