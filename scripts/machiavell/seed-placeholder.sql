@@ -1,3 +1,4 @@
+-- LOCAL DATABASE ONLY (wrangler d1 execute DB --local ...). On the live database this overwrites chapters 1-4.
 -- PLACEHOLDER chapters for testing. Not the book. Remove with:  DELETE FROM chapters WHERE title LIKE '%Placeholder';
 INSERT OR REPLACE INTO chapters (n,title,epigraph,body,released_at) VALUES (1,'The First Placeholder','Placeholder epigraph, to see how it sits.','Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 
