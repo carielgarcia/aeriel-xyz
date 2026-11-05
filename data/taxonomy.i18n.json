@@ -992,6 +992,18 @@
     "Band / Music Collective": {
       "es": "Banda o colectivo musical",
       "pt": "Banda ou coletivo musical"
+    },
+    "Host Collective": {
+      "es": "Colectivo anfitrión",
+      "pt": "Coletivo anfitrião"
+    },
+    "Light leak": {
+      "es": "Filtración de luz",
+      "pt": "Vazamento de luz"
+    },
+    "Editorial": {
+      "es": "Editorial",
+      "pt": "Editorial"
     }
   },
   "swatches": {
