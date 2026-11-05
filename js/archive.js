@@ -531,9 +531,9 @@
   function context(k, v) {
     var h = '';
     if (k === 'person' && D.people[v]) {
-      var pp = D.people[v], shown = (pp.aka || '').toLowerCase(), named = (pp.name || '').toLowerCase();
+      var pp = D.people[v], shown = (pp.aka || '').toLowerCase(), named = (pp.name || '').toLowerCase(), plain = (pp.plain || '').toLowerCase();
       /* the shown alias is already in the name; older builds also repeated it in aliases */
-      var also = (pp.aka && named.indexOf(shown) < 0 ? [pp.aka] : []).concat((pp.aliases || []).filter(function (a) { var l = (a || '').toLowerCase(); return l && l !== shown && l !== named; }));
+      var also = (pp.aka && named.indexOf(shown) < 0 ? [pp.aka] : []).concat((pp.aliases || []).filter(function (a) { var l = (a || '').toLowerCase(); return l && l !== shown && l !== named && l !== plain; }));
       var meta = [];
       if (pp.pronouns) meta.push('<span><b>' + esc(ui('pronouns')) + '</b> ' + esc(pp.pronouns.map(function (x) { return ui({ male: 'pronMale', female: 'pronFemale', neutral: 'pronNeutral' }[x] || x); }).join(' / ')) + '</span>');
       if (also.length) meta.push('<span><b>' + esc(ui('aka')) + '</b> ' + esc(also.join(', ')) + '</span>');
@@ -788,9 +788,43 @@
       return Array.prototype.map.call(new Uint8Array(b), function (x) { return ('0' + x.toString(16)).slice(-2); }).join('').slice(0, 16);
     });
   }
+  /* A ballroom person's name is built from their parts (the Studio's rule): titles, then Name or AKA, then the Kiki
+     house word, then the Main house word. A scene with no house counts as 007, but 007 is written only when both
+     scenes are 007 (once, never twice). The houses and titles lists themselves stay as they are for the record rows.
+     Needs people[k].houses = [{org, scene: 'kiki'|'main', titles}]. The original name is kept in .plain. */
+  var TITLE_FORM = { icon: 'Iconic', trailblazer: 'Trailblazing', legend: 'Legendary' };
+  var TITLE_RANK = ['legendary', 'iconic', 'statement', 'stonewall', 'star', 'trailblazing', 'father', 'mother', 'parent', 'princess', 'prince', 'queen', 'king'];
+  function houseWord(d, k) {
+    var o = d.orgs && d.orgs[k]; if (!o) return '';
+    if (o.short) return o.short;
+    var par = o.parent && d.orgs[o.parent]; if (par && par.short) return par.short;
+    var n = (par || o).name || '';
+    ['International House of ', 'House of ', 'Haus of ', 'Casa de ', 'Kiki House of '].some(function (pre) { if (n.indexOf(pre) === 0) { n = n.slice(pre.length); return true; } });
+    return n.replace(/\s+[-—]\s+.*$/, '').trim();
+  }
+  function ballroomNames(d) {
+    Object.keys(d.people || {}).forEach(function (k) {
+      var p = d.people[k], hs = p.houses;
+      if (!hs || !hs.length || typeof p.name !== 'string' || p.plain) return;
+      var base = p.name; if (/^[“"][^”"]*[”"]$/.test(base) && p.aka) base = p.aka;
+      var word = function (scene) { var h = hs.filter(function (x) { return x.scene === scene; })[0]; return h ? houseWord(d, h.org) : ''; };
+      var kiki = word('kiki'), main = word('main');
+      var seen = {}, titles = [];
+      hs.forEach(function (h) { (h.titles || []).forEach(function (t) {
+        var f = TITLE_FORM[String(t).toLowerCase()] || t, key = f.toLowerCase();
+        if (!seen[key]) { seen[key] = 1; titles.push(f); }
+      }); });
+      var rank = function (t) { var i = TITLE_RANK.indexOf(t.toLowerCase()); return i < 0 ? TITLE_RANK.length : i; };
+      titles = titles.map(function (t, i) { return { t: t, i: i }; }).sort(function (a, b) { return rank(a.t) - rank(b.t) || a.i - b.i; }).map(function (x) { return x.t; });
+      var parts = titles.concat([base, kiki, main]).filter(Boolean);
+      if (!kiki && !main) { if (!p.kiki007 && !p.main007) return; parts = titles.concat([base, '007']); }
+      p.plain = p.name; p.name = parts.join(' ');
+    });
+  }
   function applyFixes(d, fx) {
     var jobs = [];
     Object.keys(d.people || {}).forEach(function (k) { var n = d.people[k]; if (typeof n.name === 'string') n.name = n.name.trim(); });
+    ballroomNames(d);
     var mp = (fx && fx.mergePeople) || {};
     Object.keys(mp).forEach(function (bad) {
       var good = mp[bad]; if (!d.people[bad] || !d.people[good]) return;
