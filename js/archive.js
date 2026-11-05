@@ -782,7 +782,39 @@
   var UNAVAILABLE = '<span lang="en">The archive is briefly unavailable. Please try again in a few minutes.</span>' +
     '<span lang="es">El archivo no está disponible por un momento. Vuelve a intentarlo en unos minutos.</span>' +
     '<span lang="pt">O arquivo está indisponível no momento. Tente novamente em alguns minutos.</span>';
-  Promise.all([getJSON(MEDIA + '/data/archive.json'), getJSON('/data/taxonomy.i18n.json?v=cfae170e11')])
+  /* Corrections kept in /data/fixes.json (merged people, texts missing a language). Failing to load them never blocks the wall. */
+  function sha16(t) {
+    return crypto.subtle.digest('SHA-256', new TextEncoder().encode(t.trim())).then(function (b) {
+      return Array.prototype.map.call(new Uint8Array(b), function (x) { return ('0' + x.toString(16)).slice(-2); }).join('').slice(0, 16);
+    });
+  }
+  function applyFixes(d, fx) {
+    var jobs = [];
+    Object.keys(d.people || {}).forEach(function (k) { var n = d.people[k]; if (typeof n.name === 'string') n.name = n.name.trim(); });
+    var mp = (fx && fx.mergePeople) || {};
+    Object.keys(mp).forEach(function (bad) {
+      var good = mp[bad]; if (!d.people[bad] || !d.people[good]) return;
+      var seen = function (a) { var s = {}; return a.filter(function (x) { if (s[x.p]) return false; s[x.p] = 1; return true; }); };
+      d.photos.forEach(function (p) { if (p.people) { p.people.forEach(function (x) { if (x.p === bad) x.p = good; }); p.people = seen(p.people); } });
+      Object.keys(d.events || {}).forEach(function (e) { var c = d.events[e].crew; if (c) c.forEach(function (x) { if (x.p === bad) x.p = good; }); });
+      delete d.people[bad];
+    });
+    var T = (fx && fx.translations) || {};
+    (function walk(o) {
+      if (Array.isArray(o)) return o.forEach(walk);
+      if (!o || typeof o !== 'object') return;
+      var ks = Object.keys(o);
+      if (o.src && ks.every(function (k) { return k === 'src' || k === 'en' || k === 'es' || k === 'pt'; })) {
+        if (['en', 'es', 'pt'].some(function (l) { return !o[l]; }) && typeof o[o.src] === 'string')
+          jobs.push(sha16(o[o.src]).then(function (h) { var e = T[h]; if (e) ['en', 'es', 'pt'].forEach(function (l) { if (!o[l] && e[l]) o[l] = e[l]; }); }));
+        return;
+      }
+      ks.forEach(function (k) { walk(o[k]); });
+    })(d);
+    return Promise.all(jobs).then(function () { return d; });
+  }
+  Promise.all([getJSON(MEDIA + '/data/archive.json'), getJSON('/data/taxonomy.i18n.json?v=cfae170e11'), getJSON('/data/fixes.json?v=93760d1d12').catch(function () { return null; })])
+    .then(function (r) { return applyFixes(r[0], r[2]).then(function () { return r; }); })
     .then(function (r) {
       D = r[0]; TX = r[1];
       coverRotation(D.photos);
