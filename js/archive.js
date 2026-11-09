@@ -843,6 +843,40 @@
       p.plain = p.name; p.name = parts.join(' ');
     });
   }
+  /* A text's language label is only a guess made when it was saved, so it can be wrong (Spanish saved as "en").
+     Read the words instead: stop words, ñ ã õ ç, and endings like -ando / -ción / -ção. Only moves a text when sure. */
+  var SW = {
+    en: 'the a an and of to in is was were for with on at by from that this it as are be has have his her their our my i we you but not or when after before while who which she he they them him'.split(' '),
+    es: 'el la los las un una unos unas y de del en es fue por con para que se su sus al lo como pero mi muy más esta este esa ese estaba habíamos él ella quien cuando después antes mientras sin sobre entre'.split(' '),
+    pt: 'o a os as um uma uns umas e de do da dos das em é foi por com para que se seu sua seus suas ao como mas meu minha muito mais esta este essa esse não ele ela quem quando depois antes enquanto sem sobre entre'.split(' ')
+  };
+  function guessLang(t) {
+    var sc = { en: 0, es: 0, pt: 0 }, ws = String(t).match(/[^\W\d_]+/g) || [];
+    ws.forEach(function (w) {
+      var lw = w.toLowerCase(), low = w.charAt(0) === w.charAt(0).toLowerCase();
+      ['en', 'es', 'pt'].forEach(function (l) { if (SW[l].indexOf(lw) > -1) sc[l]++; });
+      if (!low) return;
+      if (/[ñ¿¡]/.test(lw)) sc.es += 2;
+      if (/[ãõç]/.test(lw)) sc.pt += 2;
+      if (/[áéíóúü]/.test(lw)) { sc.es++; sc.pt++; }
+      if (lw.length > 5) {
+        if (/(ando|iendo)$/.test(lw)) sc.es += 2;
+        if (/(ción|ciones)$/.test(lw)) sc.es += 2;
+        if (/(ção|ções)$/.test(lw)) sc.pt += 2;
+      }
+    });
+    var best = 'en', top = -1, second = -1;
+    ['en', 'es', 'pt'].forEach(function (l) { if (sc[l] > top) { second = top; top = sc[l]; best = l; } else if (sc[l] > second) second = sc[l]; });
+    return top - second >= 2 ? { lang: best, margin: top - second } : null;
+  }
+  function relabel(o) {
+    ['en', 'es', 'pt'].forEach(function (l) {
+      var t = o[l]; if (typeof t !== 'string' || !t) return;
+      var g = guessLang(t); if (!g || g.lang === l || o[g.lang]) return;
+      if (l !== 'en' && g.lang !== 'en' && g.margin < 4) return;   /* es and pt look alike: need more proof */
+      o[g.lang] = t; delete o[l]; if (o.src === l) o.src = g.lang;
+    });
+  }
   function applyFixes(d, fx) {
     var jobs = [];
     Object.keys(d.people || {}).forEach(function (k) { var n = d.people[k]; if (typeof n.name === 'string') n.name = n.name.trim(); });
@@ -861,6 +895,7 @@
       if (!o || typeof o !== 'object') return;
       var ks = Object.keys(o);
       if (o.src && ks.every(function (k) { return k === 'src' || k === 'en' || k === 'es' || k === 'pt'; })) {
+        relabel(o);
         if (['en', 'es', 'pt'].some(function (l) { return !o[l]; }) && typeof o[o.src] === 'string')
           jobs.push(sha16(o[o.src]).then(function (h) { var e = T[h]; if (e) ['en', 'es', 'pt'].forEach(function (l) { if (!o[l] && e[l]) o[l] = e[l]; }); }));
         return;
@@ -869,7 +904,7 @@
     })(d);
     return Promise.all(jobs).then(function () { return d; });
   }
-  Promise.all([getJSON(MEDIA + '/data/archive.json'), getJSON('/data/taxonomy.i18n.json?v=53080a679c'), getJSON('/data/fixes.json?v=d1fdb4ca61').catch(function () { return null; })])
+  Promise.all([getJSON(MEDIA + '/data/archive.json'), getJSON('/data/taxonomy.i18n.json?v=53080a679c'), getJSON('/data/fixes.json?v=7b936701ca').catch(function () { return null; })])
     .then(function (r) { return applyFixes(r[0], r[2]).then(function () { return r; }); })
     .then(function (r) {
       D = r[0]; TX = r[1];
