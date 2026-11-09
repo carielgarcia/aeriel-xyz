@@ -293,6 +293,7 @@ footer a.net .mark{height:44px;width:auto;fill:currentColor}
    except the catalogue code. Ballroom titles are badges in the poster face, never small print. */
 #archive .label,#archive .ae-cap{font-size:13px;line-height:18px}
 .filters button{font-size:13px}
+.ar-mode{flex-basis:100%}.ar-mode button[aria-pressed="true"]{background:var(--pink);color:var(--on-pink);border-color:var(--pink)}
 @media (max-width:560px){.filters button{font-size:13px;padding:9px 11px}}
 .ar-tag{font:500 14px/18px var(--font-sans);letter-spacing:0;text-transform:none;padding:5px 12px;border-radius:var(--radius-pill)}
 .ar-tag--static{cursor:default}
@@ -444,6 +445,11 @@ footer a.net .mark{height:44px;width:auto;fill:currentColor}
 <p class="body-l"><span lang="en">Queer artists, performers and moments of joy, care and creation from the ballroom, kiki and drag scenes, on Polaroid and 35mm. Click a print to read who, where and when; click it again to see it full size.</span><span lang="es">Artistas, performers y momentos de alegría, cuidado y creación de las escenas ballroom, kiki y drag, en Polaroid y 35mm. Haz clic en una copia para leer quién, dónde y cuándo; otro clic la muestra en tamaño completo.</span><span lang="pt">Artistas, performers e momentos de alegria, cuidado e criação das cenas ballroom, kiki e drag, em Polaroid e 35mm. Clique numa cópia para ler quem, onde e quando; outro clique a mostra em tamanho real.</span></p>
 </div>
 <div class="fbar">
+<div class="filters ar-mode" id="ar-mode" role="group" data-aria-en="Ballroom mode" data-aria-es="Modo ballroom" data-aria-pt="Modo ballroom" aria-label="Ballroom mode">
+<button type="button" data-mode="" aria-pressed="true"><span lang="en">All scenes</span><span lang="es">Todas las escenas</span><span lang="pt">Todas as cenas</span></button>
+<button type="button" data-mode="ballroom" aria-pressed="false"><span lang="en">Ballroom mode</span><span lang="es">Modo ballroom</span><span lang="pt">Modo ballroom</span></button>
+<button type="button" data-mode="other" aria-pressed="false"><span lang="en">Non-ballroom</span><span lang="es">No ballroom</span><span lang="pt">Não ballroom</span></button>
+</div>
 <div class="filters" id="ar-quick" role="group" data-aria-en="Filter photographs" data-aria-es="Filtrar fotografías" data-aria-pt="Filtrar fotografias" aria-label="Filter photographs">
 <button type="button" aria-pressed="true"><span lang="en">All</span><span lang="es">Todo</span><span lang="pt">Tudo</span></button>
 <button type="button" data-k="color" data-v="full-color" aria-pressed="false"><span lang="en">Colour</span><span lang="es">Color</span><span lang="pt">Cor</span></button>
@@ -592,6 +598,6 @@ sizeMark();
 
 })();
 </script>
-<script src="/js/archive.js?v=b4c3fed4dd" defer></script>
+<script src="/js/archive.js?v=8026dc0592" defer></script>
 </body>
 </html>

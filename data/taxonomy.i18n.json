@@ -565,6 +565,16 @@
       "en": "All photographs",
       "es": "Todas las fotografías",
       "pt": "Todas as fotografias"
+    },
+    "modeBall": {
+      "en": "Ballroom",
+      "es": "Ballroom",
+      "pt": "Ballroom"
+    },
+    "modeOther": {
+      "en": "Non-ballroom",
+      "es": "No ballroom",
+      "pt": "Não ballroom"
     }
   },
   "filters": {
@@ -692,6 +702,11 @@
       "en": "Sound",
       "es": "Sonido",
       "pt": "Som"
+    },
+    "mode": {
+      "en": "Mode",
+      "es": "Modo",
+      "pt": "Modo"
     }
   },
   "values": {

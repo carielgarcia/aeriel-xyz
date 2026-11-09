@@ -66,8 +66,21 @@
   /* facets: filter key → list of slugs a photo matches; labels[key][slug] → display function */
   function addLabel(k, s, fn) { (labels[k] = labels[k] || {})[s] = fn; }
   function enumFacet(f, k, v) { if (v == null || v === '') return; var s = slug(v); (f[k] = f[k] || []).push(s); addLabel(k, s, function () { return tv(v); }); }
+  /* Ballroom mode. A photo is ballroom when someone in it belongs to a house (or holds a title), when a house is tied
+     to it directly, or when it was taken at a ball / kiki / vogue / runway event or one a house organises.
+     Everything else is "non-ballroom"; the two never overlap. */
+  var BALL_WORDS = /ball|kiki|vogue|runway/i;
+  function isBall(p) {
+    if ((p.people || []).some(function (x) { var pp = person(x.p); return (pp.houses || []).length || (pp.houses || []).some(function (h) { return (h.titles || []).length; }); })) return true;
+    var po = photoOrgs(p); if (po.houses.length) return true;
+    var e = p.event && D.events[p.event]; if (!e) return false;
+    if (BALL_WORDS.test(e.type || '')) return true;
+    var sr = e.series && D.series[e.series]; if (sr && BALL_WORDS.test(sr.type || '')) return true;
+    return (e.organizers || []).some(function (o) { return org(o).isHouse; });
+  }
   function buildFacets(p) {
     var f = {};
+    var bm = isBall(p) ? 'ballroom' : 'other'; f.mode = [bm]; addLabel('mode', bm, function () { return ui(bm === 'ballroom' ? 'modeBall' : 'modeOther'); });
     (p.people || []).forEach(function (x) {
       (f.person = f.person || []).push(x.p); addLabel('person', x.p, function () { return person(x.p).name; });
       enumFacet(f, 'role', x.role);
@@ -462,7 +475,7 @@
   /* ---------- filters ---------- */
   function readURL() {
     var q = new URLSearchParams(location.search), out = [];
-    q.forEach(function (v, k) { if (TX.filters[k] && v) out.push([k, v]); });
+    q.forEach(function (v, k) { if (TX.filters[k] && v && (k !== 'mode' || v === 'ballroom' || v === 'other')) out.push([k, v]); });
     return out;
   }
   function writeURL(push, from) {
@@ -501,6 +514,10 @@
     });
   }
   var fseq = 0;
+  /* the mode is a master filter: quick filters and links keep it, Clear drops it */
+  function modeOf(fs) { return (fs || filters).filter(function (f) { return f[0] === 'mode'; }); }
+  function plain(fs) { return (fs || filters).filter(function (f) { return f[0] !== 'mode'; }); }
+  function withMode(next) { return modeOf().concat(next); }
   function matchesAfter(p, next) { var keep = filters; filters = next; var m = matches(p); filters = keep; return m; }
 
   /* A profile for whatever the wall is filtered to: the name as a heading, then what matters about it. */
@@ -620,9 +637,11 @@
     var bar = document.getElementById('ar-active'), n = visibleTiles().length;
     document.getElementById('ar-n').textContent = n + ' ' + ui(n === 1 ? 'photograph' : 'photographs');
     document.querySelectorAll('#ar-quick button').forEach(function (b) {
-      var on = b.dataset.k ? filters.length === 1 && filters[0][0] === b.dataset.k && filters[0][1] === b.dataset.v : !filters.length;
+      var pl = plain(), on = b.dataset.k ? pl.length === 1 && pl[0][0] === b.dataset.k && pl[0][1] === b.dataset.v : !pl.length;
       b.setAttribute('aria-pressed', String(on));
     });
+    var md = modeOf()[0];
+    document.querySelectorAll('#ar-mode [data-mode]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.mode === (md ? md[1] : ''))); });
     var empty = document.getElementById('ar-empty');
     empty.hidden = n > 0; empty.textContent = ui('none');
     if (!filters.length) { bar.hidden = true; bar.innerHTML = ''; return; }
@@ -633,7 +652,7 @@
       return '<button type="button" class="ar-crumb" data-rm="' + esc(f[0]) + '" data-rv="' + esc(f[1]) + '" aria-label="' + esc(ui('remove') + fl(f[0]) + ' ' + lab) + '"><span class="ar-crumb-k">' + esc(fl(f[0])) + '</span> ' + esc(lab) + ' <span aria-hidden="true">✕</span></button>';
     }).join('');
     h += '<button type="button" class="ae-btn ae-btn--sm ar-clear" data-clear>' + esc(ui('clear')) + ' ✕</button></div>';
-    if (filters.length === 1) { var c = context(filters[0][0], filters[0][1]); if (c) h += '<div class="ar-ctx">' + c + '</div>'; }
+    var pf = plain(); if (pf.length === 1) { var c = context(pf[0][0], pf[0][1]); if (c) h += '<div class="ar-ctx">' + c + '</div>'; }
     bar.innerHTML = h; bar.hidden = false;
   }
 
@@ -701,12 +720,15 @@
     var r = e.target.closest('[data-rm]');
     if (r) { setFilters(filters.filter(function (f) { return !(f[0] === r.dataset.rm && f[1] === r.dataset.rv); }), true); return; }
     var t = e.target.closest('[data-k]');
-    if (t) setFilters([[t.dataset.k, t.dataset.v]], true);
+    if (t) setFilters(withMode([[t.dataset.k, t.dataset.v]]), true);
   });
   var sortBox = document.getElementById('ar-sort');
   if (sortBox) sortBox.addEventListener('click', function (e) { var b = e.target.closest('[data-sort]'); if (b) setSort(b.dataset.sort); });
   document.querySelectorAll('#ar-quick button').forEach(function (b) {
-    b.addEventListener('click', function () { setFilters(b.dataset.k ? [[b.dataset.k, b.dataset.v]] : [], true); });
+    b.addEventListener('click', function () { setFilters(withMode(b.dataset.k ? [[b.dataset.k, b.dataset.v]] : []), true); });
+  });
+  document.querySelectorAll('#ar-mode [data-mode]').forEach(function (b) {
+    b.addEventListener('click', function () { setFilters((b.dataset.mode ? [['mode', b.dataset.mode]] : []).concat(plain()), true); });
   });
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   /* Back and Forward: restore the filter, then the record that was open (?photo=) or the scroll position */
@@ -847,7 +869,7 @@
     })(d);
     return Promise.all(jobs).then(function () { return d; });
   }
-  Promise.all([getJSON(MEDIA + '/data/archive.json'), getJSON('/data/taxonomy.i18n.json?v=98f3913c67'), getJSON('/data/fixes.json?v=ea1db892a5').catch(function () { return null; })])
+  Promise.all([getJSON(MEDIA + '/data/archive.json'), getJSON('/data/taxonomy.i18n.json?v=e100f8d08b'), getJSON('/data/fixes.json?v=ea1db892a5').catch(function () { return null; })])
     .then(function (r) { return applyFixes(r[0], r[2]).then(function () { return r; }); })
     .then(function (r) {
       D = r[0]; TX = r[1];
