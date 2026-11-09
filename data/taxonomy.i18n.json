@@ -1019,6 +1019,18 @@
     "Editorial": {
       "es": "Editorial",
       "pt": "Editorial"
+    },
+    "Protest/March": {
+      "es": "Protesta o marcha",
+      "pt": "Protesto ou marcha"
+    },
+    "Golden Hour": {
+      "es": "Hora dorada",
+      "pt": "Hora dourada"
+    },
+    "Defunct/Closed": {
+      "es": "Cerrado o desaparecido",
+      "pt": "Fechado ou extinto"
     }
   },
   "swatches": {

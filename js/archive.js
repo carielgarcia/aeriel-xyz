@@ -869,7 +869,7 @@
     })(d);
     return Promise.all(jobs).then(function () { return d; });
   }
-  Promise.all([getJSON(MEDIA + '/data/archive.json'), getJSON('/data/taxonomy.i18n.json?v=e100f8d08b'), getJSON('/data/fixes.json?v=ea1db892a5').catch(function () { return null; })])
+  Promise.all([getJSON(MEDIA + '/data/archive.json'), getJSON('/data/taxonomy.i18n.json?v=53080a679c'), getJSON('/data/fixes.json?v=d1fdb4ca61').catch(function () { return null; })])
     .then(function (r) { return applyFixes(r[0], r[2]).then(function () { return r; }); })
     .then(function (r) {
       D = r[0]; TX = r[1];
